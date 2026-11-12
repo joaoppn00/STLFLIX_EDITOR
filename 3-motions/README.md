@@ -29,14 +29,16 @@ plano-de-cenas.md ──dsl.mjs──▶ cenas ──modelos/<modelo>/motor.mjs�
 ```
 
 - **`motor/dsl.mjs`**: lê o plano (e escreve, na migração). Testado em ida e volta com as 205 cenas aprovadas das VSLs do Shark.
-- **`modelos/<modelo>/motor.mjs`**: o visual. Hoje existe o **`shark-vsl`**, o motor das VSLs do Shark (HTML, CSS, animações GSAP), extraído **sem mudanças**. Gera composições idênticas byte a byte às originais, e o render sai idêntico pixel a pixel.
+- **`modelos/<modelo>/motor.mjs`**: o visual. Hoje existem dois:
+  - **`shark-vsl`** (padrão): o motor das VSLs do Shark (HTML, CSS, animações GSAP), extraído **sem mudanças**. Gera composições idênticas byte a byte às originais, e o render sai idêntico pixel a pixel.
+  - **`stlflix-cenas`**: o shark-vsl com 9 peças novas adaptadas das cenas do catálogo do HyperFrames (notificação, lista, contador de dinheiro, checklist, preço caindo, trilho, hub, card com reflexo, botão com toque). As peças do shark-vsl saem iguais. Ver `modelos/stlflix-cenas/README.md`.
 - **Pasta de trabalho** `<projeto>/motions-hf/<plano>/`: projeto HyperFrames criado sozinho, com junções para `2-design-system` (assets STLFLIX, GSAP, efeitos e o kit da campanha). Não edite à mão: é refeita a cada `gerar` ou `render`.
 
 ## Configuração (`config.json` do projeto)
 
 ```json
 "motions": {
-  "modelo": "shark-vsl",                                modelo visual (pasta em 3-motions/modelos/)
+  "modelo": "shark-vsl",                                modelo visual (pasta em 3-motions/modelos/: shark-vsl ou stlflix-cenas)
   "campanha": "bf26",                                   pasta em 2-design-system/campanhas/ (cores no campanha.json, ícones e logo)
   "faixa": { "top": 130, "height": 430 },               onde os motions ficam no quadro (acima da cabeça)
   "referencia": "04-plano-de-cenas/referencia.png",     quadro do apresentador, só para a prévia
@@ -50,7 +52,7 @@ Node.js 20+, ffmpeg no PATH e internet na primeira vez (o `npx` baixa o HyperFra
 
 ## Novos modelos
 
-Cada modelo visual é uma pasta em `modelos/`. Como criar um: `modelos/shark-vsl/README.md`.
+Cada modelo visual é uma pasta em `modelos/`. Como criar um: `modelos/shark-vsl/README.md`. Como trazer uma cena do catálogo do HyperFrames para a identidade STLFLIX: `modelos/stlflix-cenas/README.md` (fim do arquivo).
 
 ## Novos tipos de peça ou efeitos
 

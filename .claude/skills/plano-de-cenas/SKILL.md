@@ -1,6 +1,6 @@
 ---
 name: plano-de-cenas
-description: Ajuda o editor a escrever e validar o plano-de-cenas.md (motions por bloco, frase-gatilho e descrição das peças no modelo Shark-VSL), incluindo fazer um rascunho de um bloco ou da VSL inteira a partir da transcrição e da copy. Use quando o editor estiver montando o plano de cenas, pedir rascunho ou sugestões de motions para um trecho, ou quiser conferir se o plano está no formato certo.
+description: Ajuda o editor a escrever e validar o plano-de-cenas.md (motions por bloco, frase-gatilho e descrição das peças nos modelos Shark-VSL e STLFLIX-Cenas), incluindo fazer um rascunho de um bloco ou da VSL inteira a partir da transcrição e da copy. Use quando o editor estiver montando o plano de cenas, pedir rascunho ou sugestões de motions para um trecho, ou quiser conferir se o plano está no formato certo.
 ---
 
 # Plano de cenas
@@ -20,6 +20,7 @@ O plano é **do editor**: ele decide o que entra. O Claude pode fazer um **rascu
 - O **id** (`B05H`) é também o nome do `.mov`. Bloco + letra, sem repetir.
 - A **frase-gatilho** entre aspas é copiada da transcrição: é onde o motion entra na timeline. Use 4 a 8 palavras distintas da fala; evite frases que se repetem no vídeo.
 - As linhas de baixo descrevem o motion (modelo Shark-VSL: faixa de lettering acima da cabeça). Cada linha `>` é uma **batida**: as peças separadas por `|` aparecem juntas a partir daquele segundo, e a próxima linha `>` **substitui** a anterior. Não quebre uma batida em várias linhas `>`.
+- **Cenas novas** (modelo `stlflix-cenas`, veja `motions.modelo` no `config.json` da VSL): notificação, lista de cards, contador de dinheiro, checklist com selo, preço caindo, trilho de etapas, hub de caminhos, card com reflexo e botão com toque, por `json: {"k": ...}`. Sintaxe em `3-motions/modelos/stlflix-cenas/README.md`; plano aprovado de exemplo em `3-motions/modelos/stlflix-cenas/exemplo-plano.md`. Os tempos dentro do json vêm da transcrição palavra a palavra (`06-transcricoes/<seq>.json`), para o ✓, o card ou o número caírem na palavra falada. Numa VSL com outro modelo, só proponha cenas novas se o editor quiser trocar de modelo.
 
 ## Rascunho ("Faz um rascunho do plano do bloco 5", "…do plano de cenas da VSL-X")
 

@@ -61,6 +61,21 @@ A `conta` descobre sozinha prefixo e sufixo: `R$ 5 mil` conta de R$ 0 mil a R$ 5
 - **O motion acompanha a fala**: confira se a frase-gatilho está no começo do que a tela mostra.
 - **Cada sequência tem o seu plano** (corpo, corpo curto, leads), porque versões curtas usam outras falas.
 
+## Cenas novas (modelo STLFLIX-Cenas)
+
+Com `"motions": { "modelo": "stlflix-cenas" }` no `config.json`, o plano ganha 9 peças além das de cima: **notificação, lista de cards, contador de dinheiro, checklist com selo, preço caindo, trilho de etapas, hub de caminhos, card com reflexo e botão com toque**. Elas entram por `json: {...}` numa batida, junto com as peças normais:
+
+```
+- **M11** · R$ 2.000 de volta — "E o melhor, R$ 2.000 voltam para você"
+  duração: 6.1
+  > 0.1 | kicker: E O MELHOR | json: {"k":"dinheiro","de":0,"ate":2000,"pre":"R$ ","dur":1.3} | legenda: de volta em cupons de filamento [atraso=1.9]
+```
+
+A sintaxe de cada uma, com exemplo, está em `3-motions/modelos/stlflix-cenas/README.md`, e um plano inteiro aprovado (VSL 2198, 13 cenas) em `3-motions/modelos/stlflix-cenas/exemplo-plano.md`. Os tempos dentro do `json` (o `d` de cada item, o `check`, o `dur`…) são contados do início da peça: pegue o tempo de cada palavra na transcrição para o efeito cair na palavra falada.
+
+- Use as cenas novas onde a fala **mostra uma coisa acontecendo**: acesso liberado (notificação), lista dita em voz alta (lista, checklist), valor que chega (contador), comparação de preço (preço caindo), caminho de A a B (trilho), um produto e vários caminhos (hub), preço da oferta (card), "clica no botão" (botão com toque).
+- Continue misturando com as peças clássicas: na 2198 foram 8 cenas novas e 5 clássicas em 2:48.
+
 ## Conferir
 
 ```

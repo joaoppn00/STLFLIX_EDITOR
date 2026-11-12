@@ -121,12 +121,27 @@ function iconesQueFaltam(proj, todas) {      // ícone com nome errado sai como 
   const pasta = path.join(DS, "campanhas", proj.mv.campanha);
   const tem = fs.existsSync(pasta) ? fs.readdirSync(pasta).filter((n) => n.endsWith(".png")).map((n) => n.slice(0, -4)) : [];
   const erros = [];
+  const modelo = proj.mv.modelo || "shark-vsl";
   for (const c of todas) for (const f of (c.cena ? c.cena.fases : [])) for (const e of f.els) {
-    for (const nome of e.k === "ico" ? [e.nome] : e.k === "icos" ? e.nomes : []) {
+    if (PECAS_DO_MODELO[e.k] && PECAS_DO_MODELO[e.k] !== modelo) {
+      erros.push(`linha ${c.linha}: ${c.id} usa a peça "${e.k}", que só existe no modelo ${PECAS_DO_MODELO[e.k]} (esta VSL usa ${modelo}: mude "motions" → "modelo" no config.json)`);
+    }
+    for (const nome of iconesDaPeca(e)) {
       if (!tem.includes(nome)) erros.push(`linha ${c.linha}: ${c.id} usa o ícone "${nome}", que não existe na campanha ${proj.mv.campanha} (tem: ${tem.filter((n) => n !== "logo-kv").join(", ")})`);
     }
   }
   return erros;
+}
+
+// Peças que só um modelo desenha (entram no plano por `json: {"k": ...}`). O render falharia no meio com "peça desconhecida".
+const PECAS_DO_MODELO = Object.fromEntries(["notif", "lista", "dinheiro", "checklist", "preco", "trilho", "hub", "cartao", "ctatoque"].map((k) => [k, "stlflix-cenas"]));
+function iconesDaPeca(e) {                     // nomes de ícone da campanha usados pela peça (inclusive dentro das peças em json)
+  if (e.k === "ico") return [e.nome];
+  if (e.k === "icos") return e.nomes || [];
+  if (e.k === "lista") return (e.items || []).map((it) => it.ico).filter(Boolean);
+  if (e.k === "hub") return [e.centro && e.centro.ico, ...(e.items || []).map((it) => it.ico)].filter(Boolean);
+  if (e.k === "dinheiro") return e.icones || ["moeda", "pilha-moedas", "carretel"];
+  return [];
 }
 
 function cenasDoPlano(arquivo) {
