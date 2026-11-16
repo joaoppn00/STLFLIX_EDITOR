@@ -63,7 +63,7 @@ A `conta` descobre sozinha prefixo e sufixo: `R$ 5 mil` conta de R$ 0 mil a R$ 5
 
 ## Cenas novas (modelo STLFLIX-Cenas)
 
-Com `"motions": { "modelo": "stlflix-cenas" }` no `config.json`, o plano ganha 9 peças além das de cima: **notificação, lista de cards, contador de dinheiro, checklist com selo, preço caindo, trilho de etapas, hub de caminhos, card com reflexo e botão com toque**. Elas entram por `json: {...}` numa batida, junto com as peças normais:
+Com `"motions": { "modelo": "stlflix-cenas" }` no `config.json`, o plano ganha 9 peças além das de cima: **notificação, lista de cards, contador de dinheiro, checklist com selo, preço caindo, trilho de etapas, hub de caminhos, card com reflexo, botão com toque e celular com B-roll da plataforma**. Elas entram por `json: {...}` numa batida, junto com as peças normais:
 
 ```
 - **M11** · R$ 2.000 de volta — "E o melhor, R$ 2.000 voltam para você"

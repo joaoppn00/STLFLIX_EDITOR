@@ -130,11 +130,40 @@ function iconesQueFaltam(proj, todas) {      // ícone com nome errado sai como 
       if (!tem.includes(nome)) erros.push(`linha ${c.linha}: ${c.id} usa o ícone "${nome}", que não existe na campanha ${proj.mv.campanha} (tem: ${tem.filter((n) => n !== "logo-kv").join(", ")})`);
     }
   }
-  return erros;
+  return erros.concat(brollsQueFaltam(proj, todas));
 }
 
 // Peças que só um modelo desenha (entram no plano por `json: {"k": ...}`). O render falharia no meio com "peça desconhecida".
-const PECAS_DO_MODELO = Object.fromEntries(["notif", "lista", "dinheiro", "checklist", "preco", "trilho", "hub", "cartao", "ctatoque"].map((k) => [k, "stlflix-cenas"]));
+const PECAS_DO_MODELO = Object.fromEntries(["notif", "lista", "dinheiro", "checklist", "preco", "trilho", "hub", "cartao", "ctatoque", "celular"].map((k) => [k, "stlflix-cenas"]));
+
+// ───── B-rolls da plataforma (peça "celular") ─────
+// Os vídeos ficam no Drive (não vão para o Git): o kit copia para <pasta de trabalho>/brolls só os que o plano usa.
+const BROLLS_PADRAO = "G:/Drives compartilhados/MKT 2/STUDIO/00 - ASSETS/1. STLFLIX/B-ROLLs/Plataforma/PT";
+const pastaBrolls = (proj) => proj.cam(proj.mv.brolls || BROLLS_PADRAO);
+const videosDoPlano = (cenas) => [...new Set(cenas.flatMap((c) => ((c.cena || c).fases || []).flatMap((f) => f.els.filter((e) => e.k === "celular" && e.video).map((e) => e.video))))];
+function copiarBrolls(proj, w, cenas) {
+  const vids = videosDoPlano(cenas);
+  if (!vids.length) return;
+  const de = pastaBrolls(proj), para = path.join(w, "brolls");
+  fs.mkdirSync(para, { recursive: true });
+  for (const v of vids) {
+    const a = path.join(de, v), b = path.join(para, v);
+    if (!fs.existsSync(a)) throw new Error(`o vídeo "${v}" não está em ${de} (mude "motions" → "brolls" no config.json se a pasta for outra)`);
+    if (!fs.existsSync(b) || fs.statSync(b).size !== fs.statSync(a).size) fs.copyFileSync(a, b);
+  }
+  // duração de cada vídeo: o celular sai antes de a tela ficar preta (o motor lê e._vlen)
+  const dur = {};
+  for (const v of vids) {
+    const r = spawnSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path.join(para, v)], { encoding: "utf8" });
+    dur[v] = parseFloat(r.stdout) || 0;
+  }
+  for (const c of cenas) for (const f of ((c.cena || c).fases || [])) for (const e of f.els) if (e.k === "celular" && dur[e.video]) e._vlen = dur[e.video];
+}
+function brollsQueFaltam(proj, todas) {
+  const de = pastaBrolls(proj), erros = [];
+  for (const c of todas) for (const v of videosDoPlano([c])) if (!fs.existsSync(path.join(de, v))) erros.push(`linha ${c.linha}: ${c.id} usa o vídeo "${v}", que não está em ${de}`);
+  return erros;
+}
 function iconesDaPeca(e) {                     // nomes de ícone da campanha usados pela peça (inclusive dentro das peças em json)
   if (e.k === "ico") return [e.nome];
   if (e.k === "icos") return e.nomes || [];
@@ -195,6 +224,7 @@ async function carregarModelo(nome) {          // cada modelo visual é uma past
 
 function render(construir, proj, chave, cenas, { so, porParte = 30 }) {
   const w = pastaDeTrabalho(proj, chave);
+  copiarBrolls(proj, w, cenas);
   const alvo = so ? cenas.filter((c) => so.includes(c.id)) : cenas;
   if (!alvo.length) throw new Error("nenhuma cena para renderizar");
   const imps = new Map(cenas.map((c) => [c.id, impressao(proj, c)]));   // antes do motor, que pode mexer nas cenas
@@ -354,6 +384,7 @@ async function main() {
   const construir = await carregarModelo(proj.mv.modelo);
   if (o.cmd === "gerar" || o.cmd === "previa") {
     const w = pastaDeTrabalho(proj, chave);
+    copiarBrolls(proj, w, geraveis);
     const { total } = construir(geraveis, { pasta: w, faixa: proj.mv.faixa, campanha: proj.mv.campanha });
     console.log(`✓ ${geraveis.length} cenas geradas em ${w} (reel de ${Math.floor(total / 60)} min ${Math.round(total % 60)} s)`);
     if (o.cmd === "previa") sh("npx", ["--yes", `hyperframes@${proj.mv.hyperframes}`, "preview"], { cwd: w });

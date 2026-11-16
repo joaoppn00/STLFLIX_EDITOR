@@ -111,7 +111,7 @@ Quando o editor pedir para atualizar: confira que `git status` não tem mudança
 - `projetos/_MODELO-VSL/`: modelo de projeto (config comentado no `4-filmcraft/README.md` e `3-motions/README.md`).
 - `3-motions/modelos/`: os modelos visuais, escolhidos por `motions.modelo` no `config.json` da VSL. Mudanças num motor valem para todo o time: só com pedido explícito e teste com `render --so`.
   - `shark-vsl` (padrão): faixa de lettering acima da cabeça.
-  - `stlflix-cenas`: o shark-vsl + 9 peças novas adaptadas do catálogo do HyperFrames (notificação, lista, contador de dinheiro, checklist, preço caindo, trilho, hub, card com reflexo, botão com toque), por `json: {...}` no plano. Sintaxe e exemplo no `README.md` da pasta. O `validar` acusa peça nova numa VSL com outro modelo.
+  - `stlflix-cenas`: o shark-vsl + 10 peças novas adaptadas do catálogo do HyperFrames (notificação, lista, contador de dinheiro, checklist, preço caindo, trilho, hub, card com reflexo, botão com toque, celular com B-roll da plataforma), por `json: {...}` no plano. Sintaxe e exemplo no `README.md` da pasta. O `validar` acusa peça nova numa VSL com outro modelo.
 - `2-design-system/`: assets da marca e das campanhas. Cada campanha (`campanhas/<código>/`) tem `campanha.json` (cores e texto do logo), os ícones e o `logo-kv.png`; guia em `campanhas/README.md`, skill `campanha`. Campanha nova muda o kit: suba para o GitHub para o time receber.
 - `5-guias/`: aprendizados do FilmCraft, estilo de edição, linguagem do plano de cenas.
 - `PLANO.md`: fases e decisões do kit.

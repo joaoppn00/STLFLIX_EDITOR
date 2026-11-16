@@ -1,6 +1,6 @@
 # Modelo STLFLIX-Cenas
 
-O **Shark-VSL com cenas novas**. Fica a mesma identidade das VSLs: lettering na faixa acima da cabeça do apresentador, Sora + Inter, gradiente verde→azul na palavra-chave, verde só para resultado e CTA, ícones da campanha. Por cima disso entram **9 peças novas**, adaptadas das cenas do catálogo do HyperFrames ("Scenes & demos") e redesenhadas no visual da STLFLIX.
+O **Shark-VSL com cenas novas**. Fica a mesma identidade das VSLs: lettering na faixa acima da cabeça do apresentador, Sora + Inter, gradiente verde→azul na palavra-chave, verde só para resultado e CTA, ícones da campanha. Por cima disso entram **10 peças novas**, adaptadas das cenas do catálogo do HyperFrames ("Scenes & demos") e redesenhadas no visual da STLFLIX.
 
 Aprovado na VSL 2198 (upsell do Luan, Black November, novembro de 2026), com 13 cenas. O plano completo dela está em `exemplo-plano.md`, nesta pasta.
 
@@ -39,6 +39,11 @@ Tempos (`d`, `check`, `a`, `b`, `ini`, `selo.d`…) são **segundos a partir do 
 | `hub` | Ícone central com legenda; linhas em gradiente desenham até cada caminho (com ponto de luz na ponta) no `d` de cada item | constellation-hub | `{"k":"hub","d":0,"centro":{"ico":"casa-marketplace","t":"mesmo produto"},"items":[{"ico":"casa-feira","t":"Feira","d":3.5}]}` — 3 itens |
 | `cartao` | Card que pousa com tranco contido e um reflexo diagonal que passa uma vez. Bom para preço/custo (fica branco: verde é só resultado) | gloss-sweep | `{"k":"cartao","d":0.15,"texto":"+ R$ 1.997"}` (opcional: `sub`) |
 | `ctatoque` | O botão de CTA (com seta e brilho) mais um toque animado que aperta o botão em `toque` s e solta uma onda | gesture-tap | `{"k":"ctatoque","d":0.3,"text":"COMPLETAR MINHA OFERTA","toque":0.9}` |
+| `celular` | Celular da marca com um B-roll da plataforma tocando na tela: sobe inclinado e assenta com mola, flutua, um reflexo passa e ele cai antes de o vídeo acabar. `pos`: `centro` (grande, fundo escurecido — um corte para a tela) ou `direita`/`esquerda` (menor, ao lado do apresentador, sem escurecer). O título da batida continua na faixa de cima | browser-device-stage + physical-exit | `{"k":"celular","d":0.4,"pos":"centro","video":"broll_site_10_seller_pedidos.mp4"}` (opcionais: `de` = segundo do vídeo onde começa, `vdur`, `escurecer` 0–1) |
+
+### Vídeos do `celular`
+
+Os B-rolls da plataforma (1080×1920) ficam no Drive, em `G:/Drives compartilhados/MKT 2/STUDIO/00 - ASSETS/1. STLFLIX/B-ROLLs/Plataforma/PT` (outra pasta: `"motions": { "brolls": "<pasta>" }` no `config.json`). Não vão para o Git: o kit copia para a pasta de trabalho só os que o plano usa e mede a duração de cada um. O `validar` avisa se o arquivo não existir. Hoje há: STLFLIX (ficha do modelo, categorias, coleções, logo, ecossistema), STLAI (como funciona, ferramentas), STLSeller (adicionar loja, pedidos) e STL Academy (aula, cursos).
 
 ## Cuidados
 

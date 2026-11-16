@@ -42,6 +42,9 @@ const NUM_BG = degrade(RES) === degrade(DG) ? "var(--grad-title)" : degrade(RES)
 const GAP = 0.6;                                       // intervalo entre cenas no reel (facilita o corte)
 for (const s of cenas) if (s.topo) s.fases.forEach((ph, pi) => { for (const e of ph.els) if (e.k === "title") e.imp = { label: ph.els.some((x) => x.k === "label"), icone: ph.els.some((x) => x.k === "ico"), caneta: true }; });   // caneta em todas as batidas (o usuário preferiu assim)
 
+// celular: o vídeo da tela dura até o fim da batida (ou da cena), salvo "vdur" no plano
+for (const s of cenas) s.fases.forEach((ph, pi) => { const prox = s.fases[pi + 1]; for (const e of ph.els) if (e.k === "celular") e._fim = prox ? prox.at - 0.35 : s.dur; });
+
 // Frases-tese: o título ganha peso (variable-axis-type do registry, na Sora variável: 200 → 700, palavra-chave 800).
 const PESO = new Set([]);   // nesta VSL as frases-tese usam VX() direto
 for (const s of cenas) if (PESO.has(s.id)) for (const ph of s.fases) for (const e of ph.els) if (e.k === "title") e.vax = true;
@@ -171,6 +174,12 @@ function elHTML(e, at) {
       return `<div class="el hub" data-noanim="1" ${a(at)}><svg class="hl" viewBox="0 0 952 400" width="952" height="400"><defs><linearGradient id="hg${k}" gradientUnits="userSpaceOnUse" x1="${hx + 105}" y1="0" x2="${nx}" y2="0">${DG.map((c, i) => `<stop offset="${(i / Math.max(1, DG.length - 1)).toFixed(2)}" stop-color="${c}"/>`).join("")}</linearGradient></defs>${cs.map((c, i) => `<path class="hp" d="M${c[0]} ${c[1]} C ${c[2]} ${c[3]}, ${c[4]} ${c[5]}, ${c[6]} ${c[7]}" data-c="${c.join(",")}" pathLength="1" stroke="url(#hg${k})" ${a(at + e.items[i].d)}/>`).join("")}</svg><div class="hc" style="left:${hx}px;top:${hy}px"><div class="hico"><img src="${campanha}/${e.centro.ico}.png" alt=""></div><span>${esc(e.centro.t)}</span></div>${e.items.map((it, i) => `<div class="hn" style="left:${nx}px;top:${ys[i]}px" ${a(at + it.d + 0.4)}><div class="hico s"><img src="${campanha}/${it.ico}.png" alt=""></div><span>${rich(it.t)}</span></div><i class="hdot"></i>`).join("")}</div>`;
     }
     case "cartao": return `<div class="el cartao" data-noanim="1" ${a(at)}><div class="cc"><span class="cct">${rich(e.texto)}</span>${e.sub ? `<span class="ccs">${esc(e.sub)}</span>` : ""}<i class="ccg"></i></div></div>`;
+    case "celular": {   // celular com o B-roll da plataforma na tela (browser-device-stage + physical-exit)
+      const pos = e.pos || "centro", esc_ = e.escurecer ?? (pos === "centro" ? 0.6 : 0);
+      const resto = e._vlen ? e._vlen - (e.de || 0) - 0.05 : Infinity;   // não passa do fim do vídeo (tela preta)
+      const vdur = Math.max(0.5, Math.min(e.vdur ?? (e._fim - at), resto));
+      return `<div class="el celular cel-${pos}" data-noanim="1" ${a(at)} data-esc="${esc_}" data-fim="${(at + vdur).toFixed(2)}">${esc_ ? '<i class="cdim"></i>' : ""}<div class="cpos"><div class="cfone"><div class="ctela"><video class="clip" src="brolls/${esc(e.video)}" data-start="${(+at).toFixed(2)}" data-duration="${vdur.toFixed(2)}" data-track-index="3" data-media-start="${e.de || 0}" muted playsinline></video><i class="cgloss"></i></div><i class="cilha"></i></div></div></div>`;
+    }
     case "ctatoque": return `<div class="el cta ctt" ${a(at)} data-tap="${e.toque ?? 0.9}"><span class="btn">${esc(e.text)}<i class="shine"></i></span><span class="down">↓</span><i class="tri"></i><i class="rip"></i><i class="tap"></i></div>`;
   }
   throw new Error("peça desconhecida: " + e.k);
@@ -382,6 +391,27 @@ __ROOT__ { position: absolute; inset: 0; overflow: hidden; font-family: var(--fo
 .tap, .rip { position: absolute; left: calc(50% + 250px); top: 57px; display: block; border-radius: 50%; opacity: 0; pointer-events: none; }
 .tap { width: 96px; height: 96px; margin: -48px 0 0 -48px; z-index: 3; background: rgba(255,255,255,.3); border: 4px solid rgba(255,255,255,.92); box-shadow: 0 8px 22px rgba(0,0,0,.45); }
 .rip { width: 130px; height: 130px; margin: -65px 0 0 -65px; z-index: 2; border: 5px solid ${COR2}; box-shadow: 0 0 22px rgba(${rgb(COR2)},.6); }
+/* celular: posicionado no quadro inteiro (fora da faixa); "centro" escurece o fundo e vira um corte para a tela */
+.celular { position: absolute; left: 0; top: 0; width: 0; height: 0; text-shadow: none; }
+.cdim { position: absolute; left: -${BAND.side}px; top: -${BAND.top}px; width: ${W}px; height: ${H}px; z-index: -1; display: block; opacity: 0;
+  background: radial-gradient(ellipse at 50% 62%, rgba(6,9,20,.55), rgba(6,9,20,.92) 75%); }
+.cpos { position: absolute; perspective: 1700px; }
+.cel-centro .cpos { left: ${W / 2 - BAND.side}px; top: ${640 - BAND.top}px; }
+.cel-direita .cpos { left: ${W - BAND.side - 60 - 200}px; top: ${880 - BAND.top}px; }
+.cel-esquerda .cpos { left: ${60 - BAND.side + 200}px; top: ${880 - BAND.top}px; }
+.cfone { position: relative; padding: 16px; border-radius: 72px; opacity: 0; transform-style: preserve-3d;
+  background: linear-gradient(160deg, #2a2d3a 0%, #12131b 45%, #0b0c12 100%); border: 2px solid rgba(246,250,254,.2);
+  box-shadow: 0 0 0 2px rgba(0,0,0,.6), 0 40px 90px rgba(0,0,0,.6), 0 0 80px rgba(${rgb(COR3)},.28), inset 0 1px 0 rgba(255,255,255,.15); }
+.cel-centro .ctela { width: 540px; height: 960px; }
+.cel-direita .ctela, .cel-esquerda .ctela { width: 368px; height: 654px; }
+.cel-direita .cfone, .cel-esquerda .cfone { padding: 12px; border-radius: 54px; }
+.ctela { position: relative; overflow: hidden; border-radius: 56px; background: #05060a; }
+.cel-direita .ctela, .cel-esquerda .ctela { border-radius: 42px; }
+.ctela video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cgloss { position: absolute; top: -30%; bottom: -30%; left: 0; width: 26%; display: block; opacity: .6;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0)); }
+.cilha { position: absolute; left: 50%; top: 30px; width: 128px; height: 34px; margin-left: -64px; border-radius: 17px; background: #000; display: block; }
+.cel-direita .cilha, .cel-esquerda .cilha { top: 22px; width: 92px; height: 26px; margin-left: -46px; }
 .dburst img { position: absolute; left: 0; top: 0; width: auto; opacity: 0; filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); }
 `;
 
@@ -669,6 +699,28 @@ const RUNTIME = `
     tl.to(tap, { scale: 1, duration: 0.2, ease: "power2.out" }, tt + 0.1);
     tl.fromTo(rip, { opacity: 0.85, scale: 0.3 }, { opacity: 0, scale: 2.6, duration: 0.65, ease: "power2.out" }, tt + 0.05);
     tl.to(tap, { opacity: 0, x: 70, y: 80, duration: 0.4, ease: "power2.in" }, tt + 0.55);
+  });
+  // celular: sobe inclinado e assenta com mola (forma fechada, seek-safe), flutua, um reflexo passa; sai caindo (physical-exit)
+  q(".celular").forEach(function (el) {
+    var t0 = at(el), fim = parseFloat(el.getAttribute("data-fim")), esc = parseFloat(el.getAttribute("data-esc"));
+    var fone = el.querySelector(".cfone"), dim = el.querySelector(".cdim");
+    var OM = 9.5, ZE = 0.62, OD = OM * Math.sqrt(1 - ZE * ZE);
+    var env = function (t) { return Math.exp(-ZE * OM * t) * (Math.cos(OD * t) + (ZE * OM / OD) * Math.sin(OD * t)); };
+    var d = { t: 0 }, ENT = 1.3;
+    gsap.set(fone, { xPercent: -50, y: 760, rotationX: 22, rotationY: -16, rotationZ: -4, scale: 0.88 });
+    tl.fromTo(fone, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "none" }, t0);
+    tl.fromTo(d, { t: 0 }, { t: ENT, duration: ENT, ease: "none", immediateRender: true, onUpdate: function () {
+      var k = env(d.t);
+      gsap.set(fone, { xPercent: -50, y: 760 * k, rotationX: 22 * k, rotationY: -16 * k, rotationZ: -4 * k, scale: 1 - 0.12 * k });
+    } }, t0);
+    var flut = Math.max(0, fim - 0.7 - (t0 + ENT)), voltas = Math.floor(flut / 1.6), par = voltas - (voltas % 2);   // nº par: termina em repouso antes da saída
+    if (par > 0) tl.fromTo(fone, { y: 0, rotationY: 0 }, { y: -10, rotationY: 2.5, duration: 1.6, ease: "sine.inOut", yoyo: true, repeat: par - 1 }, t0 + ENT);
+    tl.fromTo(el.querySelector(".cgloss"), { xPercent: -140, skewX: -18 }, { xPercent: 520, skewX: -18, duration: 1.0, ease: "power2.inOut" }, t0 + 0.9);
+    if (dim) {
+      tl.fromTo(dim, { opacity: 0 }, { opacity: esc / 0.92, duration: 0.45, ease: "power2.out" }, t0);
+      tl.to(dim, { opacity: 0, duration: 0.45, ease: "power2.in" }, fim - 0.45);
+    }
+    tl.to(fone, { y: 260, rotationX: -14, rotationZ: 6, opacity: 0, duration: 0.55, ease: "power3.in" }, fim - 0.6);
   });
   tl.to(R.querySelector(".band"), { opacity: 0, y: -24, duration: 0.45, ease: "power2.in" }, DUR - 0.55);
   window.__timelines[ID] = tl;
