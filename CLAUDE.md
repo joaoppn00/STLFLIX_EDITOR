@@ -63,8 +63,9 @@ powershell -ExecutionPolicy Bypass -File 1-instalacao/instalar.ps1 [-Verificar]
 | `blocos <seq>` | Refaz só o documento por blocos | não |
 | `plano` | Valida o plano de cenas e lista as cenas sem .mov | não |
 | `gatilhos <seq> [--plano arquivo]` | Confere as frases-gatilho na transcrição (sem FilmCraft nem .mov); serve para rascunho | não |
+| `rascunho-plano <seq> [--roteiro arq]` | Rascunho do plano a partir das marcações da copy: cada `[MOTION]` e `[TELA: lettering "…"]` do bloco da sequência vira cena no tempo da fala, com gatilho copiado da transcrição e peças sugeridas pelo tipo de fala → `04-plano-de-cenas/rascunho-<seq>.md` | não |
 | `motions <seq> [--aplicar]` | Mostra o encaixe dos motions nas frases-gatilho; `--aplicar` coloca na V2 | **com --aplicar** |
-| `enquadrar [seqs] [--aplicar]` | Escala e âncora padrão nos takes da câmera | **com --aplicar** |
+| `enquadrar [seqs] --auto [--so takes] [--aplicar]` | **Enquadramento automático**: acha o rosto em cada take (OpenCV, mediana de 7 quadros; entende câmera gravando girada) e calcula escala, posição e âncora para a cabeça ficar logo abaixo da faixa dos motions (alvo medido no enquadramento aprovado da 2124; muda em `takes.enquadramento_auto`). Gera a prévia de cada take em `06-transcricoes/enquadramento/` (linha azul = faixa dos motions) e atualiza o quadro de referência dos motions. Sem `--auto`: escala e âncora fixas do config | **com --aplicar** |
 | `checar [seqs] [--rapido]` | Checagens antes de exportar | não |
 | `reconectar` | Resolve o "MEDIA UNREADABLE" do Drive (acha a letra do Drive sozinho; G: na maioria das máquinas) | só os links |
 | `exportar-xml [seqs] [--destino]` | XML FCP7 para o Drive, guardando o anterior | não |
@@ -94,7 +95,8 @@ Cada etapa tem uma skill em `.claude/skills/`: `instalar-kit`, `nova-vsl`, `camp
 1. `nova` → editor preenche `config.json`, `01-roteiro/teleprompter.txt` e as pastas de assets; importa os brutos no projeto do FilmCraft.
 2. `abrir` → `transcrever-brutos`.
 3. **Decupagem com o Claude** (skill `decupar`): Claude escreve `decupagem-<seq>.md` cruzando os brutos com a copy e os pontos para conferir do `brutos.md` → `decupar <seq> --conferir` até não sobrar emenda suspeita → editor aprova → `decupar <seq> --aplicar` → `transcrever <seq>` (já revisa a montagem) → corrige o que a revisão apontar → editor revisa e salva.
-4. Editor escreve `04-plano-de-cenas/plano-de-cenas.md` a partir da transcrição e da copy, ou pede um rascunho (`5-guias/plano-de-cenas.md`).
+4. `enquadrar --auto` → mostre as prévias → `--aplicar` com o ok do editor (deixa o quadro de referência dos motions igual ao vídeo).
+5. Editor escreve `04-plano-de-cenas/plano-de-cenas.md` a partir da transcrição e da copy, ou pede um rascunho: comece por `rascunho-plano <seq>` (as marcações da copy) e complete com a skill `plano-de-cenas`.
 5. `motions.mjs render --so …` (teste) → render completo.
 6. `motions <seq>` → aprovação → `--aplicar`; `enquadrar --aplicar`. Editor revisa e salva.
 7. `reconectar` → `checar` (zero erros) → exportar vídeo → `exportar-xml`.

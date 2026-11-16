@@ -140,6 +140,16 @@ def cmd_transcrever(proj, a):
     print(revisao.tabela_revisao(revisao.revisar(proj, a.sequencia)))
 
 
+def cmd_rascunho_plano(proj, a):
+    from . import rascunho
+    caminho, cenas, fora = rascunho.gerar(proj, a.sequencia, a.roteiro)
+    for c in cenas:
+        print(f"  {mmss(c['t0'])}  \"{c['gatilho']}\"  →  {c['pecas'][:70]}")
+    for f in fora:
+        print(f"  · marcação de uma frase que não está nesta sequência (ou foi falada diferente): \"{f[:70]}\"")
+    print(f"✓ {len(cenas)} cenas em {caminho} — confira com `node 3-motions/motions.mjs validar --projeto <VSL> --arquivo` e refine as peças")
+
+
 def cmd_revisar(proj, a):
     from . import revisao
     print(revisao.tabela_revisao(revisao.revisar(proj, a.sequencia)))
@@ -263,6 +273,8 @@ def cmd_motions(proj, a):
 
 
 def cmd_enquadrar(proj, a):
+    if a.auto:
+        return _enquadrar_auto(proj, a)
     t = proj["takes"]
     alvo = _seqs(proj, a.sequencias)
     fc = FC()
@@ -273,6 +285,52 @@ def cmd_enquadrar(proj, a):
         return
     for nome, n in enquadrar.aplicar(fc, alvo, t["prefixo"], t["escala"], t["ancora"]).items():
         print(f"  ✓ {nome}: {n} takes ajustados")
+
+
+def _enquadrar_auto(proj, a):
+    """Acha o rosto em cada take, calcula o enquadramento e gera a prévia; --aplicar põe nos clipes da V1."""
+    from . import decupagem, rosto
+    try:
+        takes = json.load(open(os.path.join(decupagem.pasta_brutos(proj), "takes.json"), encoding="utf-8"))
+    except (OSError, ValueError):
+        takes = {}
+    if a.so:
+        takes = {k: v for k, v in takes.items() if k in a.so.split(",")}
+    if not takes:
+        print("✗ nenhum take conhecido: rode transcrever-brutos antes (é ele que anota onde está cada take)", file=sys.stderr)
+        sys.exit(2)
+    faixa = dict({"top": 130, "height": 430}, **((proj.cfg.get("motions") or {}).get("faixa") or {}))
+    alvo_cfg = proj["takes"].get("enquadramento_auto")
+    pasta = os.path.join(proj.pasta_de("transcricoes"), "enquadramento")
+    por_take, primeira = {}, None
+    for take, info in sorted(takes.items()):
+        if not os.path.exists(info["path"]):
+            print(f"  ✗ {take}: não achei {info['path']}")
+            continue
+        try:
+            med = rosto.medir(info["path"])
+        except ValueError as e:
+            print(f"  ✗ {e}")
+            continue
+        enq = rosto.calcular(med, alvo=alvo_cfg)
+        por_take[take] = enq
+        img = rosto.previa(info["path"], enq, os.path.join(pasta, f"{take}.png"), faixa=faixa)
+        primeira = primeira or (info["path"], enq)
+        aviso = "  ⚠ o rosto muda de lugar ao longo do take: confira a prévia" if med["mexeu"] else ""
+        print(f"  {take}: escala {enq['escala']:.1f} · posição X {enq['posicao'][0]:.0f} Y {enq['posicao'][1]:.0f} · âncora "
+              f"{enq['ancora'][0]:.0f},{enq['ancora'][1]:.0f} (rosto em {med['quadros']} quadros){aviso}")
+        print(f"      prévia: {img}")
+    if primeira:                                       # o quadro de referência das prévias dos motions vira o real
+        ref = (proj.cfg.get("motions") or {}).get("referencia") or "04-plano-de-cenas/referencia.png"
+        rosto.previa(primeira[0], primeira[1], proj.caminho(ref))
+        json.dump(por_take, open(os.path.join(pasta, "enquadramento.json"), "w", encoding="utf-8"), indent=1)
+    if not a.aplicar:
+        print("(nada foi alterado no FilmCraft: confira as prévias — a linha azul é a faixa dos motions — e rode com --aplicar)")
+        return
+    alvo = _seqs(proj, a.sequencias)
+    for nome, n in rosto.aplicar(FC(), alvo, por_take).items():
+        print(f"  ✓ {nome}: {n} clipes enquadrados")
+    print("Revise na timeline e salve com Ctrl+S.")
 
 
 def cmd_checar(proj, a):
@@ -338,6 +396,9 @@ def main(argv=None):
     p.add_argument("--conferir", action="store_true", help="ouve de perto os dois lados de cada emenda e procura repetição e fala baixa nos trechos")
     p = sub.add_parser("revisar", help="procura repetições e frases da copy que faltam na sequência montada (depois de transcrever)")
     p.add_argument("sequencia")
+    p = sub.add_parser("rascunho-plano", help="rascunho do plano de cenas a partir das marcações [MOTION] e [TELA] da copy (depois de transcrever a sequência)")
+    p.add_argument("sequencia")
+    p.add_argument("--roteiro", help="outro arquivo de copy (padrão: o roteiro do config)")
     p = sub.add_parser("transcrever", help="exporta o áudio da sequência, transcreve com Whisper e divide por blocos")
     p.add_argument("sequencia")
     p = sub.add_parser("blocos", help="refaz só o documento por blocos a partir da transcrição existente")
@@ -350,9 +411,11 @@ def main(argv=None):
     p.add_argument("sequencia")
     p.add_argument("--plano", help="outro plano de cenas (padrão: o do config)")
     p.add_argument("--aplicar", action="store_true")
-    p = sub.add_parser("enquadrar", help="escala e âncora padrão nos takes da câmera (--aplicar para mudar)")
+    p = sub.add_parser("enquadrar", help="enquadra os takes da câmera: --auto acha o rosto e calcula escala/posição (com prévia); --aplicar muda")
     p.add_argument("sequencias", nargs="*")
     p.add_argument("--aplicar", action="store_true")
+    p.add_argument("--auto", action="store_true", help="acha o rosto em cada take e calcula o enquadramento (cabeça logo abaixo da faixa dos motions)")
+    p.add_argument("--so", help="só estes takes, ex.: C3147,C3149")
     p = sub.add_parser("checar", help="checagens antes de exportar (mídia preta, trilhas, pan, áudio faltando)")
     p.add_argument("sequencias", nargs="*")
     p.add_argument("--rapido", action="store_true", help="pula o teste de render (quadros pretos)")

@@ -69,6 +69,10 @@ Logo depois de montar, rode `transcrever <seq>`: além do documento por blocos, 
 
 Depois: lembre o **Ctrl+S**, peça para o editor revisar e, quando ele aprovar a montagem, rode `checar <seq>` (a transcrição da sequência montada é a base do plano de cenas e do encaixe dos motions).
 
+## 6. Enquadrar
+
+`./stlflix.cmd --projeto <VSL> enquadrar --auto` acha o rosto em cada take e calcula escala e posição para a cabeça ficar logo abaixo da faixa dos motions, igual em todos os takes. Mostre ao editor as prévias (`06-transcricoes/enquadramento/<take>.png`; a linha azul é a faixa dos motions) e, com o ok, rode de novo com `--aplicar`. Take onde o rosto mudou de lugar (aviso ⚠) ou não foi achado: o editor enquadra esse à mão.
+
 ## Refazer um trecho
 
 Mude só as linhas do bloco no `decupagem-<seq>.md` e monte de novo: o backup é refeito, e a montagem anterior (com os ajustes do editor) fica na sequência duplicada. Se o editor já ajustou muita coisa à mão, prefira mostrar o trecho novo e deixar ele colar na timeline.

@@ -24,6 +24,8 @@ O plano é **do editor**: ele decide o que entra. O Claude pode fazer um **rascu
 
 ## Rascunho ("Faz um rascunho do plano do bloco 5", "…do plano de cenas da VSL-X")
 
+0. **Comece pelas marcações da copy**: `./stlflix.cmd --projeto <VSL> rascunho-plano <seq>` lê o teleprompter e transforma cada `[MOTION]` (o motion é da frase de antes da marcação) e cada `[TELA: lettering "…"]` do bloco da sequência numa cena, no tempo da fala, com a frase-gatilho copiada da transcrição e peças sugeridas pelo tipo de fala (valor → contador, número → número com contagem, lista → chips ✓, lettering com "·" → chips, lettering simples → título). `[TELA: …]` sem aspas é B-roll (não vira cena). Ele grava `04-plano-de-cenas/rascunho-<seq>.md` com a origem e a fala de cada cena. Esse é o **esqueleto que o roteirista pediu**: refine as peças (troque por peças do modelo da VSL quando couber, acerte tempos dentro da frase com a transcrição palavra a palavra) e **complete** com as cenas que a copy não marcou, pelos critérios abaixo. Sem marcações na copy, o rascunho sai vazio e você faz tudo pelos passos seguintes.
+
 1. **O que ler** (da pasta da VSL, `./stlflix.cmd vsls` mostra onde fica):
    - a transcrição da sequência, `06-transcricoes/<seq>.md`, no trecho do bloco pedido (é o que foi **falado**, com o tempo de cada frase);
    - o roteiro, `01-roteiro/teleprompter.txt`, no mesmo bloco (a intenção da copy: o que é promessa, número, prova, CTA);
