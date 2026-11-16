@@ -320,7 +320,7 @@ __ROOT__ { position: absolute; inset: 0; overflow: hidden; font-family: var(--fo
 .dglow { position: absolute; left: 50%; top: 50%; width: 980px; height: 400px; margin: -200px 0 0 -490px; border-radius: 50%; z-index: 0; pointer-events: none; opacity: 0;
   background: radial-gradient(ellipse at center, rgba(${rgb(CAMP.cores.brilho)},.42), rgba(${rgb(COR3)},.12) 45%, rgba(${rgb(COR3)},0) 68%); }
 .dburst { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 1; pointer-events: none; }
-.dinheiro ~ .label, .dinheiro ~ .kicker { position: relative; z-index: 4; }
+.phase:has(.dinheiro) .label, .phase:has(.dinheiro) .kicker { position: relative; z-index: 4; }   /* textos da batida na frente dos ícones (antes e depois do número) */
 /* checklist (marker-checklist-card): card da marca, linhas apagadas que acendem e ganham ✓ no nome falado, selo carimbado */
 .ckl { position: relative; width: 952px; display: flex; justify-content: center; text-shadow: none; }
 .ckc { display: flex; flex-direction: column; gap: 8px; width: 880px; padding: 22px 40px 22px 32px; border-radius: 36px; text-align: left;
@@ -570,8 +570,9 @@ const RUNTIME = `
       var img = document.createElement("img"), nome = icos[i % icos.length];
       img.src = camp + "/" + nome + ".png"; img.style.height = (nome === "moeda" ? 70 + (i % 3) * 8 : 84 + (i % 3) * 10) + "px";
       burst.appendChild(img);
-      var ang = (i / NB) * 6.283185 + (i % 3) * 0.12, rx = 450 + (i % 3) * 38, ry = 170 + (i % 3) * 26;
-      var x = Math.cos(ang) * rx, y = Math.min(60, Math.sin(ang) * ry);   // embaixo para na altura do número: a legenda fica livre
+      // arco de cima e dos lados (de 153° a 387°): nenhum ícone fica embaixo do número nem sobre a legenda
+      var ang = Math.PI * (0.85 + 1.3 * i / (NB - 1)) + (i % 3) * 0.05, rx = 470 + (i % 3) * 34, ry = 175 + (i % 3) * 24;
+      var x = Math.cos(ang) * rx, y = Math.min(70, Math.sin(ang) * ry);
       var dl = (i % 6) * 0.03, rot = ((i * 43) % 120) - 60;
       tl.fromTo(img, { x: 0, y: 0, xPercent: -50, yPercent: -50, scale: 0.2, opacity: 0, rotation: 0 },
         { x: x, y: y, scale: 1, opacity: 1, rotation: rot, duration: 0.74 + (i % 5) * 0.045, ease: "power4.out" }, land + 0.08 + dl);
