@@ -338,7 +338,7 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line);
 
   <section class="bloco" id="conversar">
     <h2>Como conversar com o Claude</h2>
-    <p class="intro">O <b>Claude Code</b> é uma janela de conversa, como um chat. Você escreve o que precisa em português, do seu jeito, e ele faz no seu computador: abre o FilmCraft, lê as pastas, coloca os motions. Não precisa saber programar nem decorar comandos.</p>
+    <p class="intro">O <b>app do Claude</b> (aba <b>Code</b>) é uma janela de conversa, como um chat. Você escreve o que precisa em português, do seu jeito, e ele faz no seu computador: abre o FilmCraft, lê as pastas, coloca os motions. Não precisa saber programar nem decorar comandos.</p>
     <div class="conversa-grade">
       <div class="chat">
         <div class="cab">Exemplo de conversa</div>
@@ -348,10 +348,10 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line);
         <div class="msg claude"><span class="quem">Claude</span>Pronto: 43 motions na trilha V2. Dá uma olhada na timeline e salve com <b>Ctrl+S</b>.</div>
       </div>
       <div class="dicas">
-        <div class="dica"><div class="ico">📂</div><div><b>Abra sempre na pasta do kit</b><span>Ao abrir o Claude Code, escolha a pasta do kit, <code class="kit-pasta">C:\STLFLIX_EDITOR</code>. É ali que ele encontra as instruções e a lista das suas VSLs.</span></div></div>
+        <div class="dica"><div class="ico">📂</div><div><b>Abra sempre na pasta do kit</b><span>Ao começar uma conversa nova no app do Claude (aba Code), escolha a pasta do kit, <code class="kit-pasta">C:\STLFLIX_EDITOR</code>. É ali que ele encontra as instruções e a lista das suas VSLs.</span></div></div>
         <div class="dica"><div class="ico">💬</div><div><b>Fale normal</b><span>“Transcreve o lead B”, “o motion do bloco 5 entrou atrasado”, “o áudio está estranho”. Se ele não entender, ele pergunta.</span></div></div>
         <div class="dica"><div class="ico">✅</div><div><b>Ele pede antes de mexer</b><span>Para mudar a timeline, ele mostra o plano e espera você responder “pode colocar”. Se não gostar, diga o que mudar.</span></div></div>
-        <div class="dica"><div class="ico">🔐</div><div><b>Pedidos de permissão</b><span>O Claude Code pergunta antes de usar o computador (abrir programa, rodar ferramenta). Na dúvida, pergunte a ele o que aquilo faz antes de permitir.</span></div></div>
+        <div class="dica"><div class="ico">🔐</div><div><b>Pedidos de permissão</b><span>O Claude pergunta antes de usar o computador (abrir programa, rodar ferramenta). Na dúvida, pergunte a ele o que aquilo faz antes de permitir.</span></div></div>
         <div class="dica"><div class="ico">🛑</div><div><b>Para parar</b><span>Aperte <b>Esc</b> ou escreva “para”. Se estiver mexendo em outro projeto no FilmCraft, avise: “calma, estou em outro projeto”.</span></div></div>
         <div class="dica"><div class="ico">💾</div><div><b>Salvar é com você</b><span>Ele não salva o projeto do FilmCraft. Depois de revisar, aperte <b>Ctrl+S</b>.</span></div></div>
       </div>
@@ -491,7 +491,7 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line);
     <h2>Palavras que você vai ver</h2>
     <p class="intro">O kit usa alguns termos que talvez sejam novos.</p>
     <div class="glossario">
-      <div class="termo"><b>Claude Code</b><span>O programa onde você conversa com o Claude. Ele consegue usar o seu computador para fazer as tarefas.</span></div>
+      <div class="termo"><b>App do Claude (aba Code)</b><span>O programa onde você conversa com o Claude. Ele consegue usar o seu computador para fazer as tarefas.</span></div>
       <div class="termo"><b>Kit</b><span>A pasta <code class="kit-pasta">C:\STLFLIX_EDITOR</code>: instruções, ferramentas e o visual da STLFLIX que o Claude usa. As suas VSLs ficam fora dela.</span></div>
       <div class="termo"><b>Sequência</b><span>Uma timeline dentro do projeto do FilmCraft, como “Corpo decupado” ou “Lead A”.</span></div>
       <div class="termo"><b>Transcrição</b><span>O texto de tudo o que foi falado na sequência, com o tempo de cada frase.</span></div>
@@ -602,7 +602,7 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line);
         '<p class="dim">Cada VSL ganha uma pasta própria, no lugar do computador que você escolher. Dê um nome curto, sem espaços:</p>' +
         '<input class="campo" id="nome-nova" placeholder="VSL-Nome" autocomplete="off" spellcheck="false">' +
         '<p id="aviso-nome" style="color:var(--aviso);font-size:14px" hidden>Já existe uma VSL com esse nome. Escolha outro, ou abra a que já existe no menu.</p>' +
-        "<p>Tenha em mãos o roteiro do teleprompter (.txt) e o projeto da VSL salvo no FilmCraft. Abra o Claude Code na pasta do kit e mande:</p>" +
+        "<p>Tenha em mãos o roteiro do teleprompter (.txt) e o projeto da VSL salvo no FilmCraft. Comece uma conversa no app do Claude, na pasta do kit, e mande:</p>" +
         '<div class="pedido"><span id="pedido-nova">Cria uma VSL nova chamada VSL-Nome</span><button>copiar</button></div>' +
         '<p class="dim" style="margin:12px 0 0;font-size:14px">Ele pergunta onde salvar a pasta (abre a janela do Windows para você escolher; pode ser junto do projeto do FilmCraft) e mais algumas coisas. Depois, peça “Abre o painel” e ela aparece no menu.</p>' +
         (D.projetos.length ? '<p style="margin:10px 0 0;font-size:14px"><button class="linkbtn" data-ir="escolher">voltar para as VSLs</button></p>' : "");
@@ -624,7 +624,7 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line);
       var px = atual.proximo;
       cartao.innerHTML = '<div class="rotulo">Trabalhando em</div><h3>' + esc(atual.nome) + "</h3>" +
         '<div class="vsl-pasta">' + esc(atual.pasta) + "</div>" + barra(contagem(atual)) +
-        '<p style="margin-bottom:6px">Ao abrir o Claude Code, avise em qual VSL vai trabalhar:</p>' + pedido("Vamos trabalhar na " + atual.id) +
+        '<p style="margin-bottom:6px">Ao começar a conversa no app do Claude, avise em qual VSL vai trabalhar:</p>' + pedido("Vamos trabalhar na " + atual.id) +
         '<div class="proximo" style="margin:16px 0 12px"><div class="rotulo">Próximo passo</div><p><b>' + esc(px.titulo) + "</b>: " + esc(px.detalhe) + "</p>" +
         (px.pedido ? pedido(px.pedido) : '<p class="dim" style="margin:0">Essa parte é com você.</p>') + "</div>" +
         '<p style="margin:0;font-size:14px"><a href="#suas-vsls">ver tudo desta VSL</a> · ' +

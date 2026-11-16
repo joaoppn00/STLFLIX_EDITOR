@@ -20,6 +20,6 @@ Detalhes e histórico em `5-guias/FilmCraft_Guia_Aprendizados.md` (seção 6).
 | Transcrição lenta / "device cpu" | Sem placa NVIDIA ou bibliotecas CUDA | Com NVIDIA: rode o instalador de novo (instala o extra `[gpu]`). |
 | Render de motions para no meio | Disco temporário cheio | Libere espaço em C: ou use `--por-parte 15`. |
 | `stlflix.cmd` não acha o Python | Instalador não rodou | Skill `instalar-kit`. |
-| Comando do Git/Node/ffmpeg "não encontrado" logo após instalar | PATH do terminal antigo | Fechar e abrir o Claude Code. |
+| Comando do Git/Node/ffmpeg "não encontrado" logo após instalar | PATH do terminal antigo | Fechar e abrir o app do Claude e começar uma conversa nova na pasta do kit. |
 
 Se o problema for novo: investigue com o editor, resolva com backup, e no fim proponha acrescentar uma linha nesta tabela e no guia.

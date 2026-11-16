@@ -174,6 +174,6 @@ if ($faltam.Count -eq 0) {
 }
 Write-Host ("Falta resolver: " + (($faltam | ForEach-Object { $_.item }) -join ", "))
 if ($faltam | Where-Object { $_.item -in @("Git", "Node.js", "Python", "ffmpeg") }) {
-    Write-Host "Se algo acabou de ser instalado, feche e abra o terminal e rode o instalador de novo."
+    Write-Host "Se algo acabou de ser instalado, feche e abra o app do Claude (conversa nova na pasta do kit) e rode o instalador de novo."
 }
 exit 1

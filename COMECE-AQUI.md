@@ -15,7 +15,7 @@ Você conversa com o Claude em português, como num chat. **Ele sempre mostra o 
 
 ## Do que você precisa
 
-- **Claude Code** instalado e com login feito. É o programa onde você conversa com o Claude. Se ainda não tem, peça ajuda a quem te passou este link.
+- O **app do Claude para computador** (https://claude.ai/download), com login feito e a aba **Code** liberada. É onde você conversa com o Claude. Se ainda não tem, peça ajuda a quem te passou este link.
 - **Uma conta no GitHub** (gratuita, em https://github.com) **com o convite aceito** para o repositório do kit. O kit é privado: passe o seu nome de usuário do GitHub para quem te mandou o link, e aceite o convite que chega no seu e-mail.
 - **FilmCraft 0.13 ou mais novo.** Ele é instalado pelo **ArtCraft Launcher**: baixe em https://getartcraft.com.
 - **Google Drive para computador** conectado (normalmente aparece como unidade G:; o kit acha a letra sozinho), onde ficam os brutos e as entregas.
@@ -25,7 +25,7 @@ O resto (Git, Node.js, Python, ffmpeg, as ferramentas de transcrição e de moti
 
 ## Instalar (uma vez só)
 
-1. Abra o **Claude Code**.
+1. Abra o **app do Claude**, vá na aba **Code** e comece uma conversa nova. Se ele pedir uma pasta, escolha qualquer uma (por exemplo, Documentos): o kit vai ser baixado para `C:\STLFLIX_EDITOR`.
 2. Copie e cole esta mensagem:
 
    > Instale o kit STLFLIX_EDITOR deste repositório: `<link do repositório>`. Clone em `C:\STLFLIX_EDITOR` e siga as instruções de instalação do próprio kit.
@@ -33,13 +33,15 @@ O resto (Git, Node.js, Python, ffmpeg, as ferramentas de transcrição e de moti
 3. Acompanhe. O Claude vai:
    - baixar o kit. Na primeira vez pode abrir uma **janela de login do GitHub**: entre com a sua conta (a mesma que recebeu o convite);
    - conferir o que já está instalado no computador e te mostrar o que falta;
-   - pedir **permissão** para baixar e instalar. É normal: o Claude Code sempre pergunta antes de usar o computador. Se tiver dúvida sobre algum pedido, pergunte a ele o que aquilo faz;
-   - talvez pedir para você **fechar e abrir o Claude Code** no meio do caminho, para o Windows enxergar o que acabou de ser instalado.
+   - pedir **permissão** para baixar e instalar. É normal: o Claude sempre pergunta antes de usar o computador. Se tiver dúvida sobre algum pedido, pergunte a ele o que aquilo faz;
+   - talvez pedir para você **fechar e abrir o app do Claude** no meio do caminho, para o Windows enxergar o que acabou de ser instalado.
 
    Na primeira vez leva de 5 a 15 minutos.
-4. No fim, ele abre o **painel do editor** no navegador e cria o atalho **Painel STLFLIX** na sua área de trabalho.
+4. No fim, ele abre o **painel do editor** no navegador, cria o atalho **Painel STLFLIX** na sua área de trabalho e te mostra como começar uma conversa nova **na pasta do kit**, que é onde você vai trabalhar daqui para frente.
 
-A partir daí, **sempre abra o Claude Code na pasta `C:\STLFLIX_EDITOR`**. É ali que ele encontra as instruções do kit e as suas VSLs.
+A partir daí, **comece sempre a conversa na pasta `C:\STLFLIX_EDITOR`**: no app do Claude, aba **Code** → conversa nova → escolha essa pasta. É ali que ele encontra as instruções do kit e as suas VSLs.
+
+**O que acontece quando você abre a conversa:** o Claude se apresenta (na primeira vez, explica como o kit funciona), avisa que vai abrir o **painel** no seu navegador, abre e pergunta em qual VSL vamos trabalhar. Se ainda faltar instalar alguma coisa neste computador, ele avisa e pede o seu ok antes.
 
 ## O painel do editor
 

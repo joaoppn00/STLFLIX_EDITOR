@@ -13,7 +13,7 @@ description: Instala ou confere o ambiente do STLFLIX_EDITOR (Git, Node, Python,
 3. Explique o que falta e, com o ok do editor, rode a instalação (pode levar 5–15 min: baixa o faster-whisper e, com placa NVIDIA, as bibliotecas CUDA):
    `powershell -ExecutionPolicy Bypass -File 1-instalacao/instalar.ps1`
    Rode em segundo plano e avise quando terminar.
-4. Se o Git, Node, Python ou ffmpeg acabaram de ser instalados pelo winget, o terminal atual não enxerga: peça para fechar e abrir o Claude Code (ou o terminal) e rode `-Verificar` de novo.
+4. Se o Git, Node, Python ou ffmpeg acabaram de ser instalados pelo winget, o terminal atual não enxerga: peça para fechar e abrir o app do Claude e começar uma conversa nova (aba Code → pasta `C:\STLFLIX_EDITOR`), e rode `-Verificar` de novo.
 5. **FilmCraft não é instalado pelo script.** O editor baixa o **ArtCraft Launcher** em https://getartcraft.com, instala o FilmCraft por ele e mantém na versão **0.13 ou mais nova**. O script só confere `C:\Program Files\FilmCraft\filmcraft.exe`.
 6. O instalador baixa o modelo do Whisper (large-v3-turbo, ~1,6 GB) se ele ainda não estiver no computador; avise o editor que demora na primeira vez. Internet lenta? `-SemModelo` pula essa parte, e a primeira transcrição baixa sozinha.
 
@@ -24,4 +24,11 @@ description: Instala ou confere o ambiente do STLFLIX_EDITOR (Git, Node, Python,
 
 ## Ao terminar
 
-Tudo `[ok]` → mostre o resumo final do script, abra o painel (`./stlflix.cmd painel`) e siga para a skill `nova-vsl`.
+Tudo `[ok]` → mostre o resumo final do script, avise que vai abrir o painel do editor no navegador e abra (`./stlflix.cmd painel`, a partir da pasta do kit).
+
+**Se esta conversa não começou na pasta do kit** (o editor só colou o link numa conversa qualquer), as instruções e as boas-vindas do kit ainda não estão valendo aqui. Termine com o passo a passo, em linguagem simples:
+1. No app do Claude, aba **Code**, clique em **nova conversa**.
+2. Escolha a pasta **`C:\STLFLIX_EDITOR`** (onde o kit foi baixado).
+3. Mande "Oi": o Claude se apresenta, abre o painel e pergunta em qual VSL vamos trabalhar.
+
+Se a conversa já está na pasta do kit, siga direto para a skill `nova-vsl`.

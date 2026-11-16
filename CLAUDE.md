@@ -2,6 +2,16 @@
 
 Kit do time de edição da STLFLIX para VSLs 9:16. Junta a edição no **FilmCraft** (operado pelo canal de controle) com os **motions da marca** gerados no HyperFrames a partir do plano de cenas que o editor escreve. Quem conversa com você é um editor de vídeo: responda em **português do Brasil**, sem jargão de programação, e cite posições como timecode da timeline.
 
+## Ao começar uma conversa
+
+Os editores abrem o kit pelo **app do Claude para computador (aba Code)**, numa conversa na pasta do kit. Toda conversa nova roda `1-instalacao/boas-vindas.ps1` (hook `SessionStart` em `.claude/settings.json`), que entrega a situação do computador e o roteiro da primeira resposta:
+
+- **INSTALAR**: explique o kit em poucas linhas, diga o que falta preparar e o tempo, e peça o ok para instalar (skill `instalar-kit`).
+- **PRIMEIRA-VEZ**: explique o kit em poucas linhas, avise "vou abrir o painel no seu navegador", abra (`./stlflix.cmd painel`) e pergunte a VSL.
+- **DIA-A-DIA**: uma linha de saudação, avise e abra o painel, pergunte a VSL.
+
+Faça isso só uma vez por conversa, mesmo que o editor já tenha pedido outra coisa (então atenda o pedido em seguida). Se ele não quiser o painel agora, não abra. A explicação longa aparece só uma vez por computador (marca em `%LOCALAPPDATA%\STLFLIX_EDITOR\boas-vindas.json`).
+
 ## Qual VSL
 
 O kit serve para qualquer VSL de qualquer editor do time. Nenhuma VSL é a "padrão": não assuma a VSL-Shark nem a primeira da pasta.

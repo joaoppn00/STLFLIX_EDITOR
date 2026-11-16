@@ -37,5 +37,20 @@
       "PowerShell(git checkout*)",
       "PowerShell(Remove-Item*)"
     ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File 1-instalacao/boas-vindas.ps1",
+            "timeout": 30,
+            "statusMessage": "Preparando as boas-vindas do STLFLIX_EDITOR..."
+          }
+        ]
+      }
+    ]
   }
 }
