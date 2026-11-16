@@ -101,7 +101,7 @@ def escrever_brutos_md(proj, max_palavra_s=0.8, pausa_s=2.0):
     (o Whisper funde tropeços repetidos numa palavra longa: fique com a última repetição limpa)."""
     pasta = pasta_brutos(proj)
     grafias = proj["transcricao"].get("grafias")
-    takes = sorted(n[:-5] for n in os.listdir(pasta) if n.endswith(".json") and n != "takes.json")
+    takes = sorted(n[:-5] for n in os.listdir(pasta) if n.endswith(".json") and n != "takes.json" and not n.endswith(".literal.json"))
     linhas = [f"# Transcrição dos brutos — {proj['nome'] or os.path.basename(proj.pasta)}", "",
               "Tempos = posição no bruto (mm:ss.d). ⚠ = palavra esticada (possível tropeço repetido). "
               "Use para escrever a decupagem: `decupagem-<seq>.md`.", ""]
@@ -117,6 +117,12 @@ def escrever_brutos_md(proj, max_palavra_s=0.8, pausa_s=2.0):
             linhas.append(f"- **{mmss(s['start'])}–{mmss(s['end'])}** {aplicar_grafias(s['text'].strip(), grafias)}{alerta}")
             fim_ant = s["end"]
         linhas.append("")
+        lit = os.path.join(pasta, take + ".literal.json")      # passada literal (revisao.detalhar_take)
+        if os.path.exists(lit):
+            from .revisao import pontos_md
+            pts = pontos_md(json.load(open(lit, encoding="utf-8")))
+            linhas += [f"### {take} · pontos para conferir (passada literal, janelas curtas e fala baixa)", ""]
+            linhas += (pts or ["- nada suspeito neste take"]) + [""]
     caminho = os.path.join(proj.pasta_de("transcricoes"), "brutos.md")
     open(caminho, "w", encoding="utf-8").write("\n".join(linhas))
     return caminho, takes

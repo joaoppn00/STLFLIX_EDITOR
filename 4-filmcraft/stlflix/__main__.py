@@ -134,9 +134,15 @@ def cmd_transcrever(proj, a):
     r = transcrever(wav, proj.arquivo_transcricao(a.sequencia), cfg["modelo"], cfg["idioma"], cfg["nomes"])
     print(f"  {r['palavras']} palavras em {r['segundos']}s ({r['device']})")
     tr = json.load(open(proj.arquivo_transcricao(a.sequencia), encoding="utf-8"))
-    for t, w in suspeitas(tr)[:15]:
-        print(f"  ⚠ palavra esticada em {mmss(t)}: '{w}' (possível tropeço repetido)")
     _blocos(proj, a.sequencia, tr, mapa)
+    from . import revisao
+    print("revisão da montagem (repetições e frases da copy):")
+    print(revisao.tabela_revisao(revisao.revisar(proj, a.sequencia)))
+
+
+def cmd_revisar(proj, a):
+    from . import revisao
+    print(revisao.tabela_revisao(revisao.revisar(proj, a.sequencia)))
 
 
 def cmd_transcrever_brutos(proj, a):
@@ -157,6 +163,17 @@ def cmd_transcrever_brutos(proj, a):
     print(f"{len(takes)} takes ({onde}): {', '.join(sorted(takes))}")
     for take, r in decupagem.transcrever_brutos(proj, takes, so, a.refazer):
         print(f"  {take}: " + ("já transcrito" if r is None else f"{r['palavras']} palavras em {r['segundos']}s ({r['device']})"))
+    if not a.rapido:                                       # o método que acha repetição escondida (revisao.py)
+        from . import revisao
+        pasta = decupagem.pasta_brutos(proj)
+        print("passada detalhada (literal + janelas curtas + fala baixa)…")
+        for take in sorted(takes):
+            if so and take not in so:
+                continue
+            wav = os.path.join(pasta, take + ".wav")
+            if os.path.exists(wav):
+                r = revisao.detalhar_take(proj, wav, os.path.join(pasta, take + ".literal.json"), a.refazer)
+                print(f"  {take}: {len(r['repeticoes'])} repetições · {len(r['esticadas'])} esticadas · {len(r['baixas'])} falas baixas")
     caminho, feitos = decupagem.escrever_brutos_md(proj)
     print(f"documento: {caminho} ({len(feitos)} takes)")
 
@@ -169,6 +186,10 @@ def cmd_decupar(proj, a):
         print(decupagem.tabela(clipes, trechos))
         for e in erros:
             print(f"  ✗ {e}")
+        if a.conferir:
+            from . import revisao
+            print("\nconferindo as emendas (os dois lados de cada corte ouvidos de perto)…")
+            print(revisao.tabela_cortes(revisao.conferir_cortes(proj, trechos)))
         print("(nada foi alterado; rode de novo com --aplicar para montar a sequência)")
         sys.exit(1 if erros else 0)
     r = decupagem.aplicar(FC(), proj, a.sequencia, arquivo)
@@ -309,10 +330,14 @@ def main(argv=None):
     p.add_argument("--pasta", help="pasta com os brutos (padrão: os importados no FilmCraft aberto, ou 02-brutos)")
     p.add_argument("--so", help="só estes takes, ex.: C2347,C2348")
     p.add_argument("--refazer", action="store_true", help="transcreve de novo os que já foram transcritos")
+    p.add_argument("--rapido", action="store_true", help="pula a passada detalhada (literal, janelas curtas e fala baixa)")
     p = sub.add_parser("decupar", help="mostra os cortes da decupagem aprovada (decupagem-<seq>.md); --aplicar monta a sequência")
     p.add_argument("sequencia")
     p.add_argument("--plano", help="outro arquivo de decupagem (padrão: 06-transcricoes/decupagem-<seq>.md)")
     p.add_argument("--aplicar", action="store_true")
+    p.add_argument("--conferir", action="store_true", help="ouve de perto os dois lados de cada emenda e procura repetição e fala baixa nos trechos")
+    p = sub.add_parser("revisar", help="procura repetições e frases da copy que faltam na sequência montada (depois de transcrever)")
+    p.add_argument("sequencia")
     p = sub.add_parser("transcrever", help="exporta o áudio da sequência, transcreve com Whisper e divide por blocos")
     p.add_argument("sequencia")
     p = sub.add_parser("blocos", help="refaz só o documento por blocos a partir da transcrição existente")

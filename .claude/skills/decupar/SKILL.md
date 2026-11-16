@@ -12,6 +12,12 @@ O editor aprova a decupagem e revisa a timeline; o Claude faz o trabalho braçal
 - Os takes da câmera começam com `takes.prefixo` do config (ex.: `C23`). O jeito mais simples: o editor importa os brutos no projeto do FilmCraft e abre pelo kit (`abrir`).
 - `./stlflix.cmd --projeto <VSL> transcrever-brutos` (rode em segundo plano; ~1 min por 10 min de bruto com GPU). Sem o FilmCraft aberto ele procura em `02-brutos`; ou passe `--pasta "<pasta dos brutos>"`. Só alguns takes: `--so C2347,C2348`. Takes já transcritos são pulados.
 - Resultado: `06-transcricoes/brutos.md` (todos os takes, frase a frase, com o tempo no bruto, pausas longas e `⚠ esticada` onde o Whisper fundiu uma repetição) e `06-transcricoes/brutos/<take>.json|.wav`.
+- **Passada detalhada** (automática; leva mais ~1 min por 4 min de bruto; `--rapido` pula): o Whisper normal **limpa** a fala — junta "o cliente está… o cliente já entra" numa frase, não escreve uma claquete dita baixinho, engole a frase refeita 30 s depois. Por isso cada take ganha, no fim da sua parte do `brutos.md`, os **pontos para conferir**:
+  - `⟳ disse duas vezes` — a mesma sequência de palavras repetida (frases longas refeitas até 1 min depois aparecem inteiras);
+  - `⟳ repetição ouvida de perto` — uma janela de 4 s, transcrita sem contexto, escreveu o tropeço;
+  - `⚠ palavra esticada` — palavra que "dura" 1,5 s ou mais: quase sempre esconde uma pausa com repetição;
+  - `🔈 fala baixa` — fala que a transcrição normal não pegou (claquete, frase repetida em voz baixa). **Nunca deixe uma fala baixa dentro de um trecho `usa` sem decidir o que ela é.**
+  Os dados completos (palavra a palavra, janelas) ficam em `brutos/<take>.literal.json`: use para achar o ponto exato de corte entre um tropeço e a versão boa.
 
 ## 2. Escrever a decupagem
 
@@ -22,6 +28,8 @@ Leia `brutos.md` e o roteiro `01-roteiro/teleprompter.txt` (blocos `--- BLOCO 5 
 - ad-lib que funciona (fala natural fora da copy) pode entrar: anote no comentário;
 - onde a fala mudou o sentido da copy (número, nome, preço, promessa), escreva `conferir:`; onde cabe uma imagem de apoio, `tela:`;
 - `⚠ esticada` no `brutos.md` costuma ser repetição escondida: prefira outra versão daquela frase ou corte antes;
+- passe por **todos os pontos para conferir** de cada take: cada um vira um corte (`descarta` do tropeço, com o trecho bom em `usa`) ou um "não é tropeço" consciente (a copy repete de propósito, ou é ad-lib bom);
+- tropeço no meio da frase: corte num silêncio dos dois lados (os tempos das palavras estão no `.literal.json`), ficando com o começo da 1ª tentativa e o resto da última quando isso deixa a frase inteira;
 - os tempos marcam o trecho com folga, nas pausas antes e depois da fala (o kit acha o ponto exato pela energia do áudio). Não precisa cortar pausas internas: o kit corta as de 0,3 s ou mais.
 
 Grave em `06-transcricoes/decupagem-<seq>.md` (`<seq>` = chave do config, ex.: `corpo`). Formato (a ordem dos `usa` é a ordem na timeline):
@@ -43,7 +51,7 @@ Tipos: `usa`, `alternativa`, `descarta`, `nota` (conversa ou recado que vale ano
 
 ## 3. Mostrar e aprovar
 
-1. `./stlflix.cmd --projeto <VSL> decupar <seq>` mostra os cortes calculados por bloco, os avisos e o total (minutos de fala, nº de clipes e de crossfades). Corrija os erros (trecho repetido, take não transcrito, trecho sem fala).
+1. `./stlflix.cmd --projeto <VSL> decupar <seq> --conferir` mostra os cortes calculados por bloco, os avisos e o total (minutos de fala, nº de clipes e de crossfades), e depois **ouve de perto os dois lados de cada emenda**: avisa fala baixa ou repetição dentro de um trecho `usa`, emenda que repete palavras dos dois lados (sobrou pedaço do tropeço) e corte que cai no meio da fala. Corrija os erros e repita até só sobrar o que você conscientemente decidiu manter (explique esses ao editor).
 2. Mostre ao editor um resumo por bloco: que take e trecho entra, o que foi descartado e por quê, e os pontos de "conferir". Ajuste o arquivo com o que ele pedir.
 3. Antes de montar, confirme: a sequência `sequencias.<seq>` do config existe no projeto (pode estar vazia ou com os brutos jogados nela). O kit **duplica a sequência** (backup), tira dela os clipes dos takes usados e monta a decupagem a partir do fim do que sobrar na V1.
 
@@ -55,7 +63,11 @@ Com o "pode montar" do editor: `./stlflix.cmd --projeto <VSL> decupar <seq> --ap
 - marcadores na timeline: o título de cada bloco (azul), `Conferir` (laranja) e `TELA:` (lilás);
 - no bruto (visualizador de origem): a transcrição e um marcador por trecho (verde usa, amarelo alternativa, rosa descarta, azul nota).
 
-Depois: lembre o **Ctrl+S**, peça para o editor revisar e, quando ele aprovar a montagem, rode `checar <seq>` e `transcrever <seq>` (a transcrição da sequência montada é a base do plano de cenas e do encaixe dos motions).
+## 5. Revisar a montagem (sempre)
+
+Logo depois de montar, rode `transcrever <seq>`: além do documento por blocos, ele faz a **revisão da montagem** (o mesmo que `revisar <seq>`): repetições e palavras esticadas na sequência montada, com o tempo na timeline e no bruto, e as frases da copy que não apareceram. Foi essa segunda passada que achou, na VSL 2197, três trechos ditos baixinho que tinham escapado da decupagem. Para cada ponto: ouça (micro-transcreva o trecho no bruto), corrija a decupagem e monte de novo; só então mostre ao editor.
+
+Depois: lembre o **Ctrl+S**, peça para o editor revisar e, quando ele aprovar a montagem, rode `checar <seq>` (a transcrição da sequência montada é a base do plano de cenas e do encaixe dos motions).
 
 ## Refazer um trecho
 

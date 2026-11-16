@@ -56,9 +56,10 @@ powershell -ExecutionPolicy Bypass -File 1-instalacao/instalar.ps1 [-Verificar]
 | `nova [--nome X] [--campanha bf26]` | Cria a pasta `--projeto` (caminho completo, onde o editor quiser) a partir de `projetos/_MODELO-VSL` e anota a VSL | não |
 | `abrir` | Abre o FilmCraft com o controle ligado e o `.fcproj` do config | não |
 | `status` | O que já está preenchido e gerado | não |
-| `transcrever-brutos [--pasta] [--so] [--refazer]` | Cada take da câmera (`takes.prefixo`) → Whisper → `06-transcricoes/brutos.md`; pega os brutos do FilmCraft aberto, de `02-brutos` ou de `--pasta` | não |
-| `decupar <seq> [--aplicar]` | Mostra os cortes da `06-transcricoes/decupagem-<seq>.md`; `--aplicar` duplica a sequência (backup), tira os brutos dela e monta a decupagem no estilo do time | **com --aplicar** |
-| `transcrever <seq>` | Áudio da sequência → Whisper → documento por blocos em `06-transcricoes` | não |
+| `transcrever-brutos [--pasta] [--so] [--refazer] [--rapido]` | Cada take da câmera (`takes.prefixo`) → Whisper → `06-transcricoes/brutos.md`; pega os brutos do FilmCraft aberto, de `02-brutos` ou de `--pasta`. Faz também a **passada detalhada** (literal com tropeços, janelas de 4 s e fala baixa) e põe no `brutos.md` os **pontos para conferir** de cada take (`--rapido` pula) | não |
+| `decupar <seq> [--conferir] [--aplicar]` | Mostra os cortes da `06-transcricoes/decupagem-<seq>.md`; `--conferir` ouve de perto os dois lados de cada emenda e avisa repetição, fala baixa e corte no meio da fala; `--aplicar` duplica a sequência (backup), tira os brutos dela e monta a decupagem no estilo do time | **com --aplicar** |
+| `transcrever <seq>` | Áudio da sequência → Whisper → documento por blocos em `06-transcricoes`, e já roda a revisão abaixo | não |
+| `revisar <seq>` | Na sequência montada (depois de `transcrever`): repetições, palavras esticadas e frases da copy que não apareceram, com o tempo na timeline e no bruto | não |
 | `blocos <seq>` | Refaz só o documento por blocos | não |
 | `plano` | Valida o plano de cenas e lista as cenas sem .mov | não |
 | `gatilhos <seq> [--plano arquivo]` | Confere as frases-gatilho na transcrição (sem FilmCraft nem .mov); serve para rascunho | não |
@@ -92,7 +93,7 @@ Cada etapa tem uma skill em `.claude/skills/`: `instalar-kit`, `nova-vsl`, `camp
 
 1. `nova` → editor preenche `config.json`, `01-roteiro/teleprompter.txt` e as pastas de assets; importa os brutos no projeto do FilmCraft.
 2. `abrir` → `transcrever-brutos`.
-3. **Decupagem com o Claude** (skill `decupar`): Claude escreve `decupagem-<seq>.md` cruzando os brutos com a copy → editor aprova → `decupar <seq> --aplicar` → editor revisa e salva. Depois, `transcrever <seq>` na sequência montada.
+3. **Decupagem com o Claude** (skill `decupar`): Claude escreve `decupagem-<seq>.md` cruzando os brutos com a copy e os pontos para conferir do `brutos.md` → `decupar <seq> --conferir` até não sobrar emenda suspeita → editor aprova → `decupar <seq> --aplicar` → `transcrever <seq>` (já revisa a montagem) → corrige o que a revisão apontar → editor revisa e salva.
 4. Editor escreve `04-plano-de-cenas/plano-de-cenas.md` a partir da transcrição e da copy, ou pede um rascunho (`5-guias/plano-de-cenas.md`).
 5. `motions.mjs render --so …` (teste) → render completo.
 6. `motions <seq>` → aprovação → `--aplicar`; `enquadrar --aplicar`. Editor revisa e salva.
