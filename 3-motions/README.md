@@ -31,7 +31,7 @@ plano-de-cenas.md ──dsl.mjs──▶ cenas ──modelos/<modelo>/motor.mjs�
 - **`motor/dsl.mjs`**: lê o plano (e escreve, na migração). Testado em ida e volta com as 205 cenas aprovadas das VSLs do Shark.
 - **`modelos/<modelo>/motor.mjs`**: o visual. Hoje existem dois:
   - **`shark-vsl`** (padrão): o motor das VSLs do Shark (HTML, CSS, animações GSAP), extraído **sem mudanças**. Gera composições idênticas byte a byte às originais, e o render sai idêntico pixel a pixel.
-  - **`stlflix-cenas`**: o shark-vsl com 10 peças novas adaptadas das cenas do catálogo do HyperFrames (notificação, lista, contador de dinheiro, checklist, preço caindo, trilho, hub, card com reflexo, botão com toque, celular com B-roll da plataforma). As peças do shark-vsl saem iguais. Ver `modelos/stlflix-cenas/README.md`.
+  - **`stlflix-cenas`**: o shark-vsl com 11 peças novas adaptadas das cenas do catálogo do HyperFrames (notificação, lista, contador de dinheiro, checklist, preço caindo, trilho, hub, card com reflexo, botão com toque, celular com B-roll da plataforma, vendas em cascata). As peças do shark-vsl saem iguais. Ver `modelos/stlflix-cenas/README.md`.
 - **Pasta de trabalho** `<projeto>/motions-hf/<plano>/`: projeto HyperFrames criado sozinho, com junções para `2-design-system` (assets STLFLIX, GSAP, efeitos e o kit da campanha). Não edite à mão: é refeita a cada `gerar` ou `render`.
 
 ## Configuração (`config.json` do projeto)

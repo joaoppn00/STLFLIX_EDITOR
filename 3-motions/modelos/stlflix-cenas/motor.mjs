@@ -53,6 +53,10 @@ for (const s of cenas) if (PESO.has(s.id)) for (const ph of s.fases) for (const 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<span class="g">$1</span>');
 let UID = 0;   // ids únicos de gradiente SVG por cena
+const CASCATA_PADRAO = [   // vendas de exemplo da peça "cascata" (o plano pode trocar por "itens")
+  { p: "Vaso de planta", v: "R$ 29,90" }, { p: "Gatinho porta-incenso", v: "R$ 19,90" }, { p: "Kit leão com letreiro", v: "R$ 89,90" },
+  { p: "Chaveiro com nome", v: "R$ 14,90" }, { p: "Luminária 3D", v: "R$ 79,90" }, { p: "Porta-retrato", v: "R$ 34,90" },
+  { p: "Organizador de mesa", v: "R$ 44,90" }, { p: "Suporte de celular", v: "R$ 24,90" }];
 const centavos = (c) => "R$ " + (c / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const CHECK = '<svg class="ck" viewBox="0 0 24 24" width="30" height="30"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#3DDC84" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
@@ -174,6 +178,12 @@ function elHTML(e, at) {
       return `<div class="el hub" data-noanim="1" ${a(at)}><svg class="hl" viewBox="0 0 952 400" width="952" height="400"><defs><linearGradient id="hg${k}" gradientUnits="userSpaceOnUse" x1="${hx + 105}" y1="0" x2="${nx}" y2="0">${DG.map((c, i) => `<stop offset="${(i / Math.max(1, DG.length - 1)).toFixed(2)}" stop-color="${c}"/>`).join("")}</linearGradient></defs>${cs.map((c, i) => `<path class="hp" d="M${c[0]} ${c[1]} C ${c[2]} ${c[3]}, ${c[4]} ${c[5]}, ${c[6]} ${c[7]}" data-c="${c.join(",")}" pathLength="1" stroke="url(#hg${k})" ${a(at + e.items[i].d)}/>`).join("")}</svg><div class="hc" style="left:${hx}px;top:${hy}px"><div class="hico"><img src="${campanha}/${e.centro.ico}.png" alt=""></div><span>${esc(e.centro.t)}</span></div>${e.items.map((it, i) => `<div class="hn" style="left:${nx}px;top:${ys[i]}px" ${a(at + it.d + 0.4)}><div class="hico s"><img src="${campanha}/${it.ico}.png" alt=""></div><span>${rich(it.t)}</span></div><i class="hdot"></i>`).join("")}</div>`;
     }
     case "cartao": return `<div class="el cartao" data-noanim="1" ${a(at)}><div class="cc"><span class="cct">${rich(e.texto)}</span>${e.sub ? `<span class="ccs">${esc(e.sub)}</span>` : ""}<i class="ccg"></i></div></div>`;
+    case "cascata": {   // vendas chegando em cascata (notification-cascade): cada card empurra os anteriores
+      const P = e.itens || CASCATA_PADRAO, n = e.n || Math.min(8, P.length);
+      const de = e.de ?? 0.3, ate = e.ate ?? de + 5, tempos = e.tempos || Array.from({ length: n }, (_, i) => de + (ate - de) * Math.pow(i / Math.max(1, n - 1), 0.62));
+      const bolsa = '<svg viewBox="0 0 24 24" width="40" height="40"><path d="M6 8h12l-1 12H7L6 8z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>';
+      return `<div class="el cascata" data-noanim="1" ${a(at)}>${tempos.map((t, i) => { const it = P[i % P.length]; return `<div class="cv" ${a(at + t)}><div class="cvin"><i class="cvi">${bolsa}</i><div class="cvt"><div class="cvh">${esc(e.titulo || "Nova venda")}<span>agora</span></div><div class="cvb">${esc(it.p)}</div></div><div class="cvv">${esc(it.v)}</div></div></div>`; }).join("")}</div>`;
+    }
     case "celular": {   // celular com o B-roll da plataforma na tela (browser-device-stage + physical-exit)
       const pos = e.pos || "centro", esc_ = e.escurecer ?? (pos === "centro" ? 0.6 : 0);
       const resto = e._vlen ? e._vlen - (e.de || 0) - 0.05 : Infinity;   // não passa do fim do vídeo (tela preta)
@@ -391,6 +401,18 @@ __ROOT__ { position: absolute; inset: 0; overflow: hidden; font-family: var(--fo
 .tap, .rip { position: absolute; left: calc(50% + 250px); top: 57px; display: block; border-radius: 50%; opacity: 0; pointer-events: none; }
 .tap { width: 96px; height: 96px; margin: -48px 0 0 -48px; z-index: 3; background: rgba(255,255,255,.3); border: 4px solid rgba(255,255,255,.92); box-shadow: 0 8px 22px rgba(0,0,0,.45); }
 .rip { width: 130px; height: 130px; margin: -65px 0 0 -65px; z-index: 2; border: 5px solid ${COR2}; box-shadow: 0 0 22px rgba(${rgb(COR2)},.6); }
+/* cascata: cards de venda no visual da notificação; o novo entra no topo e empurra os outros */
+.cascata { position: relative; width: 920px; height: 330px; text-shadow: none; clip-path: inset(0 -80px -90px -80px); }   /* corta só em cima: o card novo nasce de dentro da pilha, sem passar pelo kicker */
+.cv { position: absolute; left: 0; right: 0; top: 0; height: 100px; transform-origin: 50% 0; }
+.cvin { height: 100%; display: flex; align-items: center; gap: 22px; padding: 0 30px 0 18px; border-radius: 30px; opacity: 0; text-align: left;
+  background: linear-gradient(180deg, rgba(30,32,44,.95), rgba(17,18,26,.95)); border: 2px solid rgba(246,250,254,.14); box-shadow: 0 18px 40px rgba(0,0,0,.5); }
+.cvi { width: 66px; height: 66px; border-radius: 18px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(160deg, ${DG[0]}, ${DG[1] || DG[0]}); box-shadow: 0 6px 14px rgba(0,0,0,.35); }
+.cvt { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.cvh { font: 700 34px/1.1 var(--font-title); color: var(--text); letter-spacing: -.01em; white-space: nowrap; }
+.cvh span { font: 600 22px var(--font-body); color: rgba(246,250,254,.45); margin-left: 12px; letter-spacing: 0; }
+.cvb { font: 600 27px/1.2 var(--font-body); color: rgba(246,250,254,.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cvv { flex: 0 0 auto; font: 700 38px/1 var(--font-title); letter-spacing: -.02em; white-space: nowrap; background: ${NUM_BG}; -webkit-background-clip: text; background-clip: text; color: transparent; }
 /* celular: posicionado no quadro inteiro (fora da faixa); "centro" escurece o fundo e vira um corte para a tela */
 .celular { position: absolute; left: 0; top: 0; width: 0; height: 0; text-shadow: none; }
 .cdim { position: absolute; left: -${BAND.side}px; top: -${BAND.top}px; width: ${W}px; height: ${H}px; z-index: -1; display: block; opacity: 0;
@@ -699,6 +721,20 @@ const RUNTIME = `
     tl.to(tap, { scale: 1, duration: 0.2, ease: "power2.out" }, tt + 0.1);
     tl.fromTo(rip, { opacity: 0.85, scale: 0.3 }, { opacity: 0, scale: 2.6, duration: 0.65, ease: "power2.out" }, tt + 0.05);
     tl.to(tap, { opacity: 0, x: 70, y: 80, duration: 0.4, ease: "power2.in" }, tt + 0.55);
+  });
+  // cascata: cada venda cai do alto com a mola da notificação; as anteriores descem 112 px, encolhem e escurecem; a 4ª some
+  q(".cascata").forEach(function (el) {
+    var cards = el.querySelectorAll(".cv"), PASSO = 112, OM = 15, ZE = 0.74, OD = OM * Math.sqrt(1 - ZE * ZE);
+    var env = function (t) { return Math.exp(-ZE * OM * t) * (Math.cos(OD * t) + (ZE * OM / OD) * Math.sin(OD * t)); };
+    cards.forEach(function (cv, i) {
+      var t = at(cv), d = { t: 0 }, inn = cv.querySelector(".cvin");   // dentro: a queda com mola; fora: o deslocamento na pilha
+      tl.fromTo(inn, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "none" }, t);
+      tl.fromTo(d, { t: 0 }, { t: 0.7, duration: 0.7, ease: "none", immediateRender: true, onUpdate: function () { gsap.set(inn, { y: -150 * env(d.t) }); } }, t);
+      for (var j = 0; j < i; j++) {   // os que já estavam descem uma posição
+        var k = i - j, alvo = cards[j];
+        tl.to(alvo, { y: k * PASSO, scale: 1 - 0.04 * k, opacity: k >= 3 ? 0 : 1 - 0.28 * k, duration: 0.38, ease: "power3.out", overwrite: false }, t);
+      }
+    });
   });
   // celular: sobe inclinado e assenta com mola (forma fechada, seek-safe), flutua, um reflexo passa; sai caindo (physical-exit)
   q(".celular").forEach(function (el) {

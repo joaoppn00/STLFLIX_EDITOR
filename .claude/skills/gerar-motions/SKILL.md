@@ -22,7 +22,7 @@ description: Renderiza os motions do plano de cenas no HyperFrames (modelo Shark
 - O render guarda cada quadro em PNG no disco temporário; por isso vai em partes de 30 cenas (`--por-parte`). Falta de espaço em C: derruba o render.
 - Mudanças no visual (motores em `3-motions/modelos/<modelo>/`) valem para todo o time: só com pedido explícito, e teste com `--so` comparando com um render anterior.
 - Peças que o plano não tem sintaxe (linha, barras, pessoas, 3D) entram por `json: {...}`; veja `5-guias/plano-de-cenas.md`.
-- **Cenas novas** (notificação, lista, contador de dinheiro, checklist, preço caindo, trilho, hub, card com reflexo, botão com toque, celular com B-roll da plataforma) só existem no modelo `stlflix-cenas` (`"motions": { "modelo": "stlflix-cenas" }` no `config.json`); o `validar` avisa se faltar. Sintaxe em `3-motions/modelos/stlflix-cenas/README.md`.
+- **Cenas novas** (notificação, lista, contador de dinheiro, checklist, preço caindo, trilho, hub, card com reflexo, botão com toque, celular com B-roll da plataforma, vendas em cascata) só existem no modelo `stlflix-cenas` (`"motions": { "modelo": "stlflix-cenas" }` no `config.json`); o `validar` avisa se faltar. Sintaxe em `3-motions/modelos/stlflix-cenas/README.md`.
 - **Confira quadro a quadro antes de mostrar**: extraia 2 ou 3 quadros de cada cena nova sobre o quadro de referência (entrada, palavra-chave, fim) e veja se nada cobre o número ou o rosto do apresentador.
 
 Próximo passo: skill `encaixar-motions`.

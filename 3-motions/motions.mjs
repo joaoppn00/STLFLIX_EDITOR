@@ -134,7 +134,7 @@ function iconesQueFaltam(proj, todas) {      // ícone com nome errado sai como 
 }
 
 // Peças que só um modelo desenha (entram no plano por `json: {"k": ...}`). O render falharia no meio com "peça desconhecida".
-const PECAS_DO_MODELO = Object.fromEntries(["notif", "lista", "dinheiro", "checklist", "preco", "trilho", "hub", "cartao", "ctatoque", "celular"].map((k) => [k, "stlflix-cenas"]));
+const PECAS_DO_MODELO = Object.fromEntries(["notif", "lista", "dinheiro", "checklist", "preco", "trilho", "hub", "cartao", "ctatoque", "celular", "cascata"].map((k) => [k, "stlflix-cenas"]));
 
 // ───── B-rolls da plataforma (peça "celular") ─────
 // Os vídeos ficam no Drive (não vão para o Git): o kit copia para <pasta de trabalho>/brolls só os que o plano usa.
