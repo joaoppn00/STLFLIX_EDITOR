@@ -1,0 +1,19 @@
+{
+  "duracao": 10,
+  "paletas": {
+    "marca":  { "fundo": "#0D0E14", "cores": ["#3947A1", "#5665F0", "#68ADF7"] },
+    "titulo": { "fundo": "#0D0E14", "cores": ["#22D3EE", "#4F63E8", "#B14CF0"] },
+    "navy":   { "fundo": "#06092B", "cores": ["#3947A1", "#5665F0"] },
+    "bf26":   { "fundo": "#0D0E14", "cores": ["#8DFB5E", "#2EE6A6", "#22C7F0", "#2F7BFF"] }
+  },
+  "variantes": [
+    { "codigo": "H01", "nome": "Onda diagonal · marca",      "campo": "onda",    "paleta": "marca",  "passo": 30 },
+    { "codigo": "H02", "nome": "Pulso do centro · título",   "campo": "pulso",   "paleta": "titulo", "passo": 28 },
+    { "codigo": "H03", "nome": "Fluxo orgânico · Black",     "campo": "fluxo",   "paleta": "bf26",   "passo": 26 },
+    { "codigo": "H04", "nome": "Vinheta (centro livre) · marca", "campo": "vinheta", "paleta": "marca", "passo": 28 },
+    { "codigo": "H05", "nome": "Fluxo orgânico · navy",      "campo": "fluxo",   "paleta": "navy",   "passo": 30 },
+    { "codigo": "H06", "nome": "Onda diagonal · Black",      "campo": "onda",    "paleta": "bf26",   "passo": 30 },
+    { "codigo": "H07", "nome": "Vinheta (centro livre) · Black", "campo": "vinheta", "paleta": "bf26", "passo": 28 },
+    { "codigo": "H08", "nome": "Pulso do centro · navy",     "campo": "pulso",   "paleta": "navy",   "passo": 28 }
+  ]
+}

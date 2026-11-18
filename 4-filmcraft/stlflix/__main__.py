@@ -272,6 +272,48 @@ def cmd_motions(proj, a):
         print("(nada foi alterado; rode de novo com --aplicar para colocar na timeline)")
 
 
+def cmd_recorte(proj, a):
+    """Texto atrás da cabeça: recorte do apresentador por cima dos motions, só nas cenas de número grande."""
+    from . import recorte
+    from .tempo import tc
+    fc = FC()
+    nome = proj.sequencia(a.sequencia)
+    seq = fc.seq(nome)
+    fr = seq["settings"]["frame_rate"]
+    q = fr["num"] / fr["den"]
+    cenas = recorte.cenas_na_timeline(seq, proj["motions"]["trilha"])
+    grandes = recorte.numeros_grandes(_plano_pedido(proj, a) or proj.plano(a.sequencia))
+    pedidas = [c.strip().upper() for c in a.cenas.split(",")] if a.cenas else []      # só o que o editor pedir
+    faltam = [c for c in pedidas if c not in cenas]
+    if faltam:
+        raise ValueError(f"cena sem motion na trilha {proj['motions']['trilha']} de '{nome}': {', '.join(faltam)} (encaixe os motions antes)")
+    trechos = {}
+    for c, clipes in cenas.items():
+        a0, b0 = recorte.extensao(clipes)
+        trechos[c] = recorte.quadros_da_batida(clipes, grandes[c], q) if c in grandes else (a0, b0)
+        marca = "●" if c in pedidas else ("○" if c in grandes else " ")
+        if c in grandes:
+            r0, r1 = trechos[c]
+            tipo = f"número grande · recorte {tc(r0 / q)} → {tc(r1 / q)} ({(r1 - r0) / q:.1f} s)"
+        else:
+            tipo = "sem número grande (a cabeça esconderia o texto)"
+        print(f"  {marca} {c:6s} {tc(a0 / q)} → {tc(b0 / q)}  {tipo}")
+    pequenas = [c for c in pedidas if c not in grandes]
+    if pequenas and not a.forcar:
+        raise ValueError(f"{', '.join(pequenas)} não tem número grande: o texto atrás da cabeça só funciona em número/contador "
+                         "(em título, legenda e chips a cabeça esconde o meio da frase). Use --forcar se quiser assim mesmo")
+    if not pedidas or not a.aplicar:
+        print("(nada foi alterado: o recorte só é feito nas cenas que o editor pedir, com --cenas L3D --aplicar; "
+              "as de número grande são as candidatas)")
+        return
+    versao = proj["motions"].get("hyperframes", "0.8.176")
+    for c in pedidas:
+        arq, clipe, erro = recorte.recortar(FC(), proj, a.sequencia, c, *trechos[c], versao)
+        aviso = "✓ alinhado" if erro < 0.5 else f"⚠ {erro:.1f}% dos pixels não batem com a câmera: confira na timeline"
+        print(f"  {c}: {aviso} · {os.path.relpath(arq, proj.pasta)} na {recorte.TRILHA}")
+    print(f"✓ {len(pedidas)} recortes em '{nome}'. Revise e salve com Ctrl+S. Se mudar a montagem ou reencaixar os motions, refaça o recorte.")
+
+
 def cmd_enquadrar(proj, a):
     if a.auto:
         return _enquadrar_auto(proj, a)
@@ -410,6 +452,12 @@ def main(argv=None):
     p = sub.add_parser("motions", help="encaixa os motions nas frases-gatilho (mostra o plano; --aplicar coloca)")
     p.add_argument("sequencia")
     p.add_argument("--plano", help="outro plano de cenas (padrão: o do config)")
+    p.add_argument("--aplicar", action="store_true")
+    p = sub.add_parser("recorte", help="texto atrás da cabeça, só nas cenas pedidas: recorta o apresentador (IA, na GPU) na batida do número e põe por cima do motion, na V3 (sem --cenas só lista as candidatas)")
+    p.add_argument("sequencia")
+    p.add_argument("--cenas", help="ids das cenas que o editor pediu, ex.: L3D,L1A (obrigatório para --aplicar)")
+    p.add_argument("--plano", help="outro plano de cenas (padrão: o do config)")
+    p.add_argument("--forcar", action="store_true", help="aceita cena sem número grande")
     p.add_argument("--aplicar", action="store_true")
     p = sub.add_parser("enquadrar", help="enquadra os takes da câmera: --auto acha o rosto e calcula escala/posição (com prévia); --aplicar muda")
     p.add_argument("sequencias", nargs="*")

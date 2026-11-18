@@ -31,3 +31,7 @@ control_token
 
 # amostra renderizada de cada campanha (stlflix: motions.mjs amostra)
 2-design-system/campanhas/*/_amostra/
+
+# biblioteca de motions: só o plano/config vão para o Git (os .mov cada um gera)
+3-motions/biblioteca/*/motions-hf/
+3-motions/biblioteca/*/05-motions/

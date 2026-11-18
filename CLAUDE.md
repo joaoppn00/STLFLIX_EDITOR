@@ -65,6 +65,7 @@ powershell -ExecutionPolicy Bypass -File 1-instalacao/instalar.ps1 [-Verificar]
 | `gatilhos <seq> [--plano arquivo]` | Confere as frases-gatilho na transcrição (sem FilmCraft nem .mov); serve para rascunho | não |
 | `rascunho-plano <seq> [--roteiro arq]` | Rascunho do plano a partir das marcações da copy: cada `[MOTION]` e `[TELA: lettering "…"]` do bloco da sequência vira cena no tempo da fala, com gatilho copiado da transcrição e peças sugeridas pelo tipo de fala → `04-plano-de-cenas/rascunho-<seq>.md` | não |
 | `motions <seq> [--aplicar]` | Mostra o encaixe dos motions nas frases-gatilho; `--aplicar` coloca na V2 | **com --aplicar** |
+| `recorte <seq> [--cenas L3D] [--aplicar]` | **Texto atrás da cabeça, só quando o editor pedir e na cena que ele disser**: sem `--cenas`, lista os motions e marca os candidatos (número grande: `número:`, contador de dinheiro ou cartão de preço). Com `--cenas … --aplicar`: exporta só a câmera na batida do número, tira o fundo com IA na GPU (`fundo.py`, modelo do HyperFrames num ambiente próprio `venv-gpu`, criado na 1ª vez; sem GPU usa o HyperFrames no processador), refina a borda e põe o apresentador na **V3** (escala 200) no mesmo quadro; confere o alinhamento. Recusa cena sem número grande (`--forcar` passa). Refazer o mesmo trecho reaproveita o recorte | **com --aplicar** |
 | `enquadrar [seqs] --auto [--so takes] [--aplicar]` | **Enquadramento automático**: acha o rosto em cada take (OpenCV, mediana de 7 quadros; entende câmera gravando girada) e calcula escala, posição e âncora para a cabeça ficar logo abaixo da faixa dos motions (alvo medido no enquadramento aprovado da 2124; muda em `takes.enquadramento_auto`). Gera a prévia de cada take em `06-transcricoes/enquadramento/` (linha azul = faixa dos motions) e atualiza o quadro de referência dos motions. Sem `--auto`: escala e âncora fixas do config | **com --aplicar** |
 | `checar [seqs] [--rapido]` | Checagens antes de exportar | não |
 | `reconectar` | Resolve o "MEDIA UNREADABLE" do Drive (acha a letra do Drive sozinho; G: na maioria das máquinas) | só os links |
@@ -79,6 +80,8 @@ powershell -ExecutionPolicy Bypass -File 1-instalacao/instalar.ps1 [-Verificar]
 | `render --pendentes` | Só as cenas sem .mov ou que mudaram no plano depois do render |
 | `amostra --campanha <código>` | 3 cenas de teste com as cores, ícones e logo da campanha → `campanhas/<código>/_amostra` |
 | `estado` | Situação de cada cena (pronto, falta, mudou, só encaixe), em JSON; o painel usa para a galeria |
+
+**Biblioteca de motions** (`3-motions/biblioteca/`): motions genéricos, sem texto de VSL, para reusar em VSLs e anúncios. Hoje: `celular-plataformas` (26 = 13 B-rolls da plataforma × celular no centro / ao lado). Quando o editor pedir "o celular com o STLSeller", "motion da plataforma" etc., use o `.mov` de lá (importar e pôr acima da câmera, escala 200) em vez de renderizar de novo; se o `.mov` não existe na máquina, `node 3-motions/motions.mjs render --projeto 3-motions/biblioteca/celular-plataformas --so P11C`. Detalhes em `3-motions/biblioteca/README.md`.
 
 Qualquer comando do `motions.mjs` aceita `--arquivo <plano.md>` no lugar do plano do config (ex.: o rascunho).
 

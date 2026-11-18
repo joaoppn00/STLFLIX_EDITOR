@@ -1,0 +1,17 @@
+{
+  "nome": "Biblioteca · Celular com as plataformas",
+  "plano_de_cenas": "04-plano-de-cenas/plano.md",
+  "pastas": {
+    "motions": "05-motions"
+  },
+  "motions": {
+    "modelo": "stlflix-cenas",
+    "campanha": "bf26",
+    "faixa": {
+      "top": 130,
+      "height": 430
+    },
+    "referencia": "04-plano-de-cenas/referencia.png",
+    "hyperframes": "0.8.176"
+  }
+}
