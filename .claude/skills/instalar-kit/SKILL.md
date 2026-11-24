@@ -24,7 +24,7 @@ description: Instala ou confere o ambiente do STLFLIX_EDITOR (Git, Node, Python,
 
 ## Ao terminar
 
-Tudo `[ok]` → mostre o resumo final do script, avise que vai abrir o painel do editor no navegador e abra (`./stlflix.cmd painel`, a partir da pasta do kit).
+Tudo `[ok]` → mostre o resumo final do script, avise que vai abrir o app STLFLIX EDITOR (o painel numa janela própria) e abra com `./stlflix.cmd painel`, a partir da pasta do kit. Conte que o instalador criou o ícone **STLFLIX EDITOR** na área de trabalho e no menu Iniciar, e que o app também abre sozinho a cada conversa nova na pasta do kit.
 
 **Se esta conversa não começou na pasta do kit** (o editor só colou o link numa conversa qualquer), as instruções e as boas-vindas do kit ainda não estão valendo aqui. Termine com o passo a passo, em linguagem simples:
 1. No app do Claude, aba **Code**, clique em **nova conversa**.

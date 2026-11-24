@@ -13,6 +13,12 @@ Cada campanha é uma pasta em `2-design-system/campanhas/<código>/` (ex.: `bf26
 
 A marca STLFLIX (fontes, branco, o verde-limão de resultado e de CTA) não muda com a campanha. Sem `campanha.json`, o motor usa as cores da BF26.
 
+## O jeito mais fácil: a tela Campanhas do app
+
+No app **STLFLIX EDITOR** → **🎨 Campanhas** (link direto: `painel/index.html#ir=campanhas`) o editor faz tudo sozinho: cria a campanha (nome e código), arrasta os PNGs do design (o app avisa na hora o que está sem transparência ou pequeno; o logo é reconhecido pelo nome ou marcado à mão), escolhe as cores (com sugestão tirada do logo e uma prévia ao vivo), gera a **amostra** (3 cenas de verdade, ~45 s) e ajusta até aprovar. Também troca cores, acrescenta ícones e tira ícones (vão para `_removidos`, sem apagar) das campanhas existentes. Por baixo, usa as mesmas funções dos comandos abaixo (`stlflix/servidor.py` → `campanha.py` e `motions.mjs amostra`).
+
+Quando o editor pedir para criar ou mudar uma campanha, ofereça a tela (`./stlflix.cmd app`, ou o link direto); se ele preferir que você faça, siga os passos abaixo. Depois que ele aprovar a amostra, os pedidos que o app sugere são "Sobe a campanha X para o time" (commit e push só dos arquivos da campanha, com o ok dele) e "Troca a campanha da VSL-Y para X".
+
 ## Criar uma campanha
 
 1. Pergunte: o **nome** ("Natal 2026"), um **código** curto (`natal26`), a **pasta** com os arquivos do design (PNGs dos ícones e do logo; `./stlflix.cmd escolher-pasta` se ele não souber o caminho) e as **cores**. Cores: peça os hexadecimais ao design (3 ou 4 cores do degradê, do claro para o escuro, na ordem em que aparecem no key visual). Se ele não tiver, sugira a partir do logo e deixe claro que é sugestão.

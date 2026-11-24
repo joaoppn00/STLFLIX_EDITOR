@@ -37,7 +37,7 @@ O resto (Git, Node.js, Python, ffmpeg, as ferramentas de transcrição e de moti
    - talvez pedir para você **fechar e abrir o app do Claude** no meio do caminho, para o Windows enxergar o que acabou de ser instalado.
 
    Na primeira vez leva de 5 a 15 minutos.
-4. No fim, ele abre o **painel do editor** no navegador, cria o atalho **Painel STLFLIX** na sua área de trabalho e te mostra como começar uma conversa nova **na pasta do kit**, que é onde você vai trabalhar daqui para frente.
+4. No fim, ele abre o **app STLFLIX EDITOR** (o painel do editor, numa janela própria), cria o ícone **STLFLIX EDITOR** na sua área de trabalho e no menu Iniciar e te mostra como começar uma conversa nova **na pasta do kit**, que é onde você vai trabalhar daqui para frente.
 
 A partir daí, **comece sempre a conversa na pasta `C:\STLFLIX_EDITOR`**: no app do Claude, aba **Code** → conversa nova → escolha essa pasta. É ali que ele encontra as instruções do kit e as suas VSLs.
 
@@ -45,13 +45,13 @@ A partir daí, **comece sempre a conversa na pasta `C:\STLFLIX_EDITOR`**: no app
 
 ## O painel do editor
 
-É a sua página de apoio. Abra pelo atalho **Painel STLFLIX** da área de trabalho, ou peça **"Abre o painel"** ao Claude. Se tiver versão nova do kit, ele avisa no topo. Ele mostra:
+É a sua página de apoio, o **app STLFLIX EDITOR**. Ele abre sozinho quando você começa uma conversa na pasta do kit; você também abre pelo ícone **STLFLIX EDITOR** (área de trabalho ou menu Iniciar), ou pedindo **"Abre o painel"** ao Claude. O botão **↻ Atualizar** lê as pastas de novo. Se tiver versão nova do kit, ele avisa no topo. Ele mostra:
 
-- no topo, o **menu da VSL**: escolha em qual VSL vai trabalhar ou **crie uma nova**. O painel lembra a escolha neste computador;
-- se o computador está pronto, e o botão **⬇ ArtCraft** para baixar o ArtCraft Launcher (que instala e atualiza o FilmCraft);
-- o que já está feito na VSL escolhida e **o próximo passo**, com a frase pronta para copiar e mandar ao Claude;
-- a **galeria dos motions**: uma imagem de cada motion com o texto do plano ao lado, e o que ainda falta criar ou mudou no plano depois de criado;
-- o passo a passo completo, o plano de cenas explicado com exemplo, as palavras novas e as dúvidas comuns.
+- no início, suas **VSLs** e seus **anúncios** em duas listas (os mais recentes primeiro), com o botão de **criar um novo**;
+- ao escolher um, **o próximo passo** com a frase pronta para copiar e mandar ao Claude, e as **6 etapas** (Preparar, Transcrever os brutos, Decupar, Plano de cenas, Motions, Entregar);
+- a **galeria dos motions**: uma imagem de cada motion (clique para abrir o vídeo), e o que ainda falta criar ou mudou no plano depois de criado;
+- os **ícones da campanha**, para copiar e colar no plano;
+- no link **Como funciona?**, o passo a passo completo, o plano de cenas explicado, as palavras novas e as dúvidas comuns.
 
 Se ficar perdido, abra o painel.
 

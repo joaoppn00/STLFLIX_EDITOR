@@ -1,6 +1,8 @@
-# STLFLIX_EDITOR
+# STLFLIX EDITOR
 
-O kit do time de edição da STLFLIX para as VSLs verticais (9:16).
+O kit do time de edição da STLFLIX para as VSLs e os anúncios verticais (9:16).
+
+**Recebeu o link? Comece pela página de instalação: https://sherecks.github.io/STLFLIX_EDITOR/**
 
 Você continua editando no **FilmCraft**, como sempre. O kit coloca o **Claude** ao seu lado para as partes repetitivas:
 
@@ -28,12 +30,12 @@ O resto (Git, Node.js, Python, ffmpeg, transcrição e motions) o Claude instala
    > Instale o kit STLFLIX_EDITOR deste repositório: `https://github.com/sherecks/STLFLIX_EDITOR`. Clone em `C:\STLFLIX_EDITOR` e siga as instruções de instalação do próprio kit.
 
 3. Acompanhe e aprove os pedidos de permissão (é normal). Pode abrir uma janela de login do GitHub: entre com a conta que recebeu o convite.
-4. No fim, o Claude abre o **painel do editor** no seu navegador e te mostra como abrir a conversa na pasta do kit.
+4. No fim, aparece o ícone **STLFLIX EDITOR** na área de trabalho e no menu Iniciar, o app abre, e o Claude te mostra como abrir a conversa na pasta do kit.
 
 ## Depois de instalado
 
 Sempre: **app do Claude → aba Code → conversa nova → pasta `C:\STLFLIX_EDITOR`**.
 
-Ao abrir, o Claude se apresenta, abre o **painel** no navegador (a sua página de apoio: VSL escolhida, próximo passo e galeria dos motions) e pergunta em qual VSL vamos trabalhar.
+Ao abrir, o **app STLFLIX EDITOR** abre sozinho (suas VSLs e anúncios, o próximo passo de cada um e a galeria dos motions) e o Claude pergunta em qual vamos trabalhar.
 
 O passo a passo completo, do roteiro à entrega, está no [COMECE-AQUI.md](COMECE-AQUI.md).

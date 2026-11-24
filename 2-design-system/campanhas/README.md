@@ -28,6 +28,10 @@ A marca STLFLIX (fontes, branco e o verde-limão de resultado e de CTA) é a mes
 
 Não precisa recortar nem redimensionar: o kit faz isso.
 
+## Criar pelo app (o jeito mais fácil)
+
+No app **STLFLIX EDITOR** → **🎨 Campanhas** → **Criar uma campanha nova**: nome, arraste os PNGs, escolha as cores (ou "Sugerir pelo logo") e crie. A amostra é renderizada sozinha (~45 s) e aparece ao lado; ajuste e gere de novo até aprovar. Na mesma tela dá para mudar as cores, acrescentar ou tirar ícones de uma campanha que já existe.
+
 ## Criar e conferir (com o Claude: "Cria a campanha de Natal com os arquivos desta pasta")
 
 ```

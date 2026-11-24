@@ -7,10 +7,12 @@ Kit do time de edição da STLFLIX para VSLs 9:16. Junta a edição no **FilmCra
 Os editores abrem o kit pelo **app do Claude para computador (aba Code)**, numa conversa na pasta do kit. Toda conversa nova roda `1-instalacao/boas-vindas.ps1` (hook `SessionStart` em `.claude/settings.json`), que entrega a situação do computador e o roteiro da primeira resposta:
 
 - **INSTALAR**: explique o kit em poucas linhas, diga o que falta preparar e o tempo, e peça o ok para instalar (skill `instalar-kit`).
-- **PRIMEIRA-VEZ**: explique o kit em poucas linhas, avise "vou abrir o painel no seu navegador", abra (`./stlflix.cmd painel`) e pergunte a VSL.
-- **DIA-A-DIA**: uma linha de saudação, avise e abra o painel, pergunte a VSL.
+- **PRIMEIRA-VEZ**: explique o kit em poucas linhas, conte que o app STLFLIX EDITOR abriu sozinho e pergunte a VSL ou o anúncio.
+- **DIA-A-DIA**: uma linha de saudação, pergunte a VSL ou o anúncio.
 
-Faça isso só uma vez por conversa, mesmo que o editor já tenha pedido outra coisa (então atenda o pedido em seguida). Se ele não quiser o painel agora, não abra. A explicação longa aparece só uma vez por computador (marca em `%LOCALAPPDATA%\STLFLIX_EDITOR\boas-vindas.json`).
+O próprio hook abre o **app STLFLIX EDITOR** (o painel numa janela própria) ao começar a conversa; se já houver uma janela aberta, só atualiza. Não rode o painel de novo só para abrir.
+
+Faça isso só uma vez por conversa, mesmo que o editor já tenha pedido outra coisa (então atenda o pedido em seguida). A explicação longa aparece só uma vez por computador (marca em `%LOCALAPPDATA%\STLFLIX_EDITOR\boas-vindas.json`).
 
 ## Qual VSL
 
@@ -21,6 +23,8 @@ O kit serve para qualquer VSL de qualquer editor do time. Nenhuma VSL é a "padr
 - "Vamos trabalhar na VSL-X" (o pedido que o painel copia) fixa a VSL da conversa: use `--projeto VSL-X` até ele trocar.
 - Pasta de VSL que veio de outro lugar (copiada de outro editor, movida de disco): `./stlflix.cmd vsls --anotar "<pasta>"`. Se ele não souber o caminho, `./stlflix.cmd escolher-pasta` abre a janela do Windows para ele escolher.
 - O painel tem o mesmo menu (escolher VSL ou criar nova) e o botão para baixar o ArtCraft Launcher (https://getartcraft.com).
+- **Anúncios** usam o mesmo kit e o mesmo fluxo: cada criativo é uma sequência em `sequencias` (`"c33": "Criativo 3.3 – Três peças"`), e uma sequência chamada `brutos` só guarda os takes (o painel não cobra transcrição nem motions dela). É anúncio quem tem `"tipo": "anuncio"` no `config.json` ou pasta que começa com `ADS`; o roteiro não precisa de marcações de bloco. "Cria um anúncio novo chamado ADS-X" → skill `nova-vsl` com `--tipo anuncio`.
+- Caminho do `.fcproj` que está dentro da pasta do projeto: grave só o nome do arquivo (relativo), para não quebrar quando a pasta mudar de disco.
 
 ## Regras (sempre)
 
@@ -49,11 +53,11 @@ powershell -ExecutionPolicy Bypass -File 1-instalacao/instalar.ps1 [-Verificar]
 
 | `stlflix` | O que faz | Muda o projeto? |
 |---|---|---|
-| `painel` (sem `--projeto`) | Gera e abre `painel/index.html`: menu para escolher ou criar a VSL, ferramentas instaladas (com o botão do ArtCraft), o que falta na VSL escolhida, o próximo passo e a galeria dos motions (miniaturas em `05-motions/_miniaturas`) | não |
-| `vsls [--anotar PASTA] [--tirar VSL]` (sem `--projeto`) | Lista as VSLs deste computador e onde estão; anota uma pasta que já existe ou tira da lista (sem apagar) | não |
+| `painel` (sem `--projeto`) | Gera e abre `painel/index.html`: início com **VSLs e Anúncios** separados (mais recentes primeiro) e o botão de criar; na tela do projeto, o próximo passo (pedido para copiar), as 6 etapas (Preparar, Transcrever os brutos, Decupar, Plano de cenas, Motions, Entregar), a galeria dos motions (miniaturas em `05-motions/_miniaturas`) e os ícones da campanha. O tutorial fica em `painel/ajuda.html` ("Como funciona") | não |
+| `vsls [--anotar PASTA] [--tirar VSL] [--limpar]` (sem `--projeto`) | Lista as VSLs e anúncios deste computador e onde estão; anota uma pasta que já existe, tira da lista ou tira os endereços que não existem mais (sem apagar nada) | não |
 | `escolher-pasta` | Abre a janela "Escolher pasta" do Windows e mostra o caminho escolhido | não |
 | `campanha listar\|nova\|importar\|conferir [código]` (sem `--projeto`) | Campanhas visuais dos motions em `2-design-system/campanhas`: cria a partir dos PNGs do design (recorta, padroniza 520 px, corrige nomes), confere cores, logo e ícones | não (muda o kit) |
-| `nova [--nome X] [--campanha bf26]` | Cria a pasta `--projeto` (caminho completo, onde o editor quiser) a partir de `projetos/_MODELO-VSL` e anota a VSL | não |
+| `nova [--nome X] [--campanha bf26] [--tipo anuncio]` | Cria a pasta `--projeto` (caminho completo, onde o editor quiser) a partir de `projetos/_MODELO-VSL` e anota a VSL; `--tipo anuncio` grava `"tipo": "anuncio"` e começa com um criativo `c1` | não |
 | `abrir` | Abre o FilmCraft com o controle ligado e o `.fcproj` do config | não |
 | `status` | O que já está preenchido e gerado | não |
 | `transcrever-brutos [--pasta] [--so] [--refazer] [--rapido]` | Cada take da câmera (`takes.prefixo`) → Whisper → `06-transcricoes/brutos.md`; pega os brutos do FilmCraft aberto, de `02-brutos` ou de `--pasta`. Faz também a **passada detalhada** (literal com tropeços, janelas de 4 s e fala baixa) e põe no `brutos.md` os **pontos para conferir** de cada take (`--rapido` pula) | não |
@@ -89,7 +93,11 @@ Qualquer comando do `motions.mjs` aceita `--arquivo <plano.md>` no lugar do plan
 
 `<seq>` é a chave em `config.json → sequencias` (`corpo`, `lead-a`…) ou o nome da sequência no FilmCraft.
 
-Quando o editor pedir "abre o painel" (ou quiser saber o que falta), rode `./stlflix.cmd painel`. Ele lê as pastas e o instalador em modo de conferência; não abre o FilmCraft.
+Quando o editor pedir "abre o painel" (ou quiser saber o que falta), ou depois de uma etapa que mudou as pastas, rode `./stlflix.cmd painel`: lê as pastas e o instalador em modo de conferência (não abre o FilmCraft) e o app aberto recarrega sozinho; se não houver janela aberta, abre uma.
+
+**App STLFLIX EDITOR**: o painel servido em `http://127.0.0.1:47615` (`4-filmcraft/stlflix/servidor.py`, só atende este computador) e aberto numa janela de app do Edge/Chrome. `./stlflix.cmd app` abre (`--se-fechado`: não abre outra janela se já houver uma); `./stlflix.cmd atalhos` (re)cria o ícone STLFLIX EDITOR na área de trabalho e no menu Iniciar (o instalador já faz). Pela janela do app, as pastas e os motions abrem direto no Windows e o botão ↻ Atualizar lê as pastas de novo. A tela **🎨 Campanhas** do app cria e edita campanhas dos motions (PNGs, cores com prévia, amostra renderizada) sem comando: ofereça ela quando o editor falar em campanha nova (skill `campanha`). Link direto para uma tela: `painel/index.html#ir=campanhas` (ou `#ir=campanha:bf26`, `#ir=VSL-X`). Ícones em `painel/icone*`; manifesto do app em `painel/manifest.webmanifest`.
+
+**Página pública** (`docs/index.html`, GitHub Pages): apresentação e passo a passo de instalação para quem recebe o link. Não ponha nela nomes de VSLs, campanhas ou dados internos.
 
 ## Fluxo de uma VSL
 
