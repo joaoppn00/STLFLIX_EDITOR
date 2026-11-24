@@ -1,6 +1,6 @@
 # Componentes STLFLIX
 
-Sub-composições HyperFrames prontas, do projeto STLFLIX × Thales Brandão (github.com/sherecks/stlflix-design-system).
+Sub-composições HyperFrames prontas, do projeto STLFLIX × Thales Brandão (github.com/joaoppn00/stlflix-design-system).
 
 - Idênticas às do repositório: usam `assets/tokens.css` (relativo) e esperam a biblioteca ligada em `<projeto>/assets`. Copie para o `compositions/` do projeto; ver `../frame.md`.
 - Para ver todas em sequência: abra `testes/stlflix-vitrine` com `npx hyperframes preview`.

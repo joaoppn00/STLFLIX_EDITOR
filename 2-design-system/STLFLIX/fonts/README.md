@@ -7,7 +7,7 @@
 | Sora | Títulos, números, frases de impacto (400, 700) | `sora-latin-{400,700}-normal.woff2` | OFL |
 | Inter | Texto, chips, legendas (400, 600, 700) | `inter-latin-{400,600,700}-normal.woff2` | OFL |
 
-Vieram do design system github.com/sherecks/stlflix-design-system. Os arquivos cobrem só o subconjunto latino, que inclui os acentos do português. Elas são declaradas em `../tokens.css` (o que as composições usam) e em `fonts.css`.
+Vieram do design system github.com/joaoppn00/stlflix-design-system. Os arquivos cobrem só o subconjunto latino, que inclui os acentos do português. Elas são declaradas em `../tokens.css` (o que as composições usam) e em `fonts.css`.
 
 O próprio `design.md` marca Sora + Inter como proposta provisória, porque as fontes da plataforma não foram confirmadas. Para fechar: abra a plataforma → F12 → selecione um título → aba *Computed* → `font-family`.
 

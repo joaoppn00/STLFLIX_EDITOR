@@ -2,7 +2,7 @@
 
 Biblioteca de assets compartilhada por todos os projetos HyperFrames da STLFLIX.
 
-Design system oficial desde 2026-10-14: o do repositório github.com/sherecks/stlflix-design-system (projeto STLFLIX × Thales Brandão). Ele usa Sora + Inter, fundo `#0D0E14`, destaque `#5665F0`, painéis arredondados e gradiente em 1 palavra-chave.
+Design system oficial desde 2026-10-14: o do repositório github.com/joaoppn00/stlflix-design-system (projeto STLFLIX × Thales Brandão). Ele usa Sora + Inter, fundo `#0D0E14`, destaque `#5665F0`, painéis arredondados e gradiente em 1 palavra-chave.
 
 | Arquivo / pasta | O que é |
 | --- | --- |

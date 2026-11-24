@@ -7,7 +7,7 @@ description: Instala ou confere o ambiente do STLFLIX_EDITOR (Git, Node, Python,
 
 1. Confirme que está na raiz do kit (tem `CLAUDE.md` e `1-instalacao/`). Se o editor só colou o link do repositório, clone numa pasta **fora do OneDrive**, por exemplo `C:\STLFLIX_EDITOR`:
    `git clone <link> C:/STLFLIX_EDITOR` e continue a partir dela.
-   O repositório é **público**: o clone não pede login nem convite. Se falhar, confira a internet e o endereço (https://github.com/sherecks/STLFLIX_EDITOR).
+   O repositório é **público**: o clone não pede login nem convite. Se falhar, confira a internet e o endereço (https://github.com/joaoppn00/STLFLIX_EDITOR).
 2. Rode primeiro só a conferência e mostre o resultado:
    `powershell -ExecutionPolicy Bypass -File 1-instalacao/instalar.ps1 -Verificar`
 3. Explique o que falta e, com o ok do editor, rode a instalação (pode levar 5–15 min: baixa o faster-whisper e, com placa NVIDIA, as bibliotecas CUDA):

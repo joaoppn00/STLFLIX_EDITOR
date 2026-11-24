@@ -3,7 +3,7 @@ version: 2
 name: STLFLIX — Frame (camada de vídeo)
 description: >
   Design system oficial da STLFLIX para motions e overlays HyperFrames, adotado em 2026-10-14 a partir de
-  github.com/sherecks/stlflix-design-system (projeto STLFLIX × Thales Brandão). Fundo escuro, painéis
+  github.com/joaoppn00/stlflix-design-system (projeto STLFLIX × Thales Brandão). Fundo escuro, painéis
   arredondados, barra de destaque azul-índigo, Sora nos títulos e Inter no texto, gradiente ciano→azul→violeta
   em no máximo uma palavra-chave por cena, verde-lima só em CTA.
   Detalhe e origem de cada token: design.md. Valores prontos para uso: tokens.css.
