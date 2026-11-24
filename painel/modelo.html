@@ -3,679 +3,610 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Painel do editor</title>
+<title>STLFLIX EDITOR</title>
+<link rel="icon" href="icone.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d0e14">
 <style>
 @font-face { font-family: "Sora"; src: url("../2-design-system/STLFLIX/fonts/sora-latin-700-normal.woff2") format("woff2"); font-weight: 700; }
 @font-face { font-family: "Inter"; src: url("../2-design-system/STLFLIX/fonts/inter-latin-400-normal.woff2") format("woff2"); font-weight: 400; }
 @font-face { font-family: "Inter"; src: url("../2-design-system/STLFLIX/fonts/inter-latin-600-normal.woff2") format("woff2"); font-weight: 600; }
 
 :root {
-  --bg: #0d0e14;
-  --surface: #15161e;
-  --surface-2: #1c1d28;
-  --line: #262838;
-  --text: #f6fafe;
-  --text-dim: #9a9cab;
-  --accent: #5665f0;
-  --accent-soft: rgba(86, 101, 240, .14);
-  --accent-text: #aab3ff;
-  --cta: #b8f23c;
-  --ok: #3ddc84;
-  --aviso: #f5b942;
-  --falta: #ff5c5c;
-  --info: #6b6e80;
-  --radius: 14px;
+  --bg: #0d0e14; --surface: #15161e; --surface-2: #1c1d28; --line: #262838;
+  --text: #f6fafe; --text-dim: #9a9cab;
+  --accent: #5665f0; --accent-soft: rgba(86,101,240,.14); --accent-text: #aab3ff;
+  --cta: #b8f23c; --ok: #3ddc84; --aviso: #f5b942; --falta: #ff5c5c; --info: #6b6e80;
   --grad: linear-gradient(90deg, #22d3ee 0%, #4f63e8 50%, #b14cf0 100%);
-  --margem: clamp(16px, 4vw, 64px);
+  --margem: clamp(16px, 4vw, 48px);
 }
 * { box-sizing: border-box; }
-html { background: var(--bg); scroll-behavior: smooth; }
-body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 "Inter", system-ui, sans-serif; }
-main { max-width: 1680px; margin: 0 auto; padding: 0 var(--margem) 80px; }
+html { background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 "Inter", system-ui, sans-serif; }
+main { max-width: 1200px; margin: 0 auto; padding: 0 var(--margem) 64px; }
 h1, h2, h3 { font-family: "Sora", "Inter", sans-serif; font-weight: 700; margin: 0; letter-spacing: -.01em; line-height: 1.25; }
-h2 { font-size: 26px; }
-h3 { font-size: 17px; }
-p { margin: 0 0 12px; }
+h1 { font-size: clamp(26px, 4vw, 36px); }
+h2 { font-size: 21px; margin-bottom: 14px; }
+p { margin: 0 0 10px; }
 a { color: var(--accent-text); }
-code { font: 13.5px/1.4 ui-monospace, Consolas, monospace; background: var(--surface-2); padding: 1px 6px; border-radius: 6px; }
+code { font: 13px ui-monospace, Consolas, monospace; background: var(--surface-2); padding: 1px 6px; border-radius: 6px; }
 .dim { color: var(--text-dim); }
-section.bloco { padding-top: 64px; }
-section.bloco > .intro { color: var(--text-dim); max-width: 680px; margin: 8px 0 24px; font-size: 16.5px; }
+[hidden] { display: none !important; }
+section { margin-top: 40px; }
 
 /* topo */
 .topo { position: sticky; top: 0; z-index: 5; background: rgba(13,14,20,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-.topo-in { max-width: 1680px; margin: 0 auto; padding: 12px var(--margem); display: flex; align-items: center; gap: 16px; }
-.topo img { height: 24px; }
-.topo b { font-family: "Sora", sans-serif; white-space: nowrap; }
-.topo nav { margin-left: auto; display: flex; gap: 18px; font-size: 14px; overflow-x: auto; min-width: 0; scrollbar-width: none; }
-.topo nav::-webkit-scrollbar { display: none; }
-.topo nav a { color: var(--text-dim); text-decoration: none; white-space: nowrap; }
-.topo nav a:hover { color: var(--text); }
-.escolha { flex: none; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-dim); min-width: 0; }
-.escolha select { background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px;
-  font: 600 14px "Inter", sans-serif; max-width: 230px; min-width: 0; cursor: pointer; }
+.topo-in { max-width: 1200px; margin: 0 auto; padding: 12px var(--margem); display: flex; align-items: center; gap: 14px; }
+.marca { display: flex; align-items: center; gap: 10px; cursor: pointer; flex: none; }
+.marca img { height: 30px; width: 30px; }
+.marca b { font: 700 15px "Sora", sans-serif; letter-spacing: .02em; white-space: nowrap; }
+.topo .atualizar { flex: none; }
+.topo .atualizar[disabled] { opacity: .6; cursor: default; }
+@media (max-width: 620px) { .marca b { display: none; } }
+.topo select { background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px;
+  font: 600 14px "Inter", sans-serif; max-width: 260px; min-width: 0; cursor: pointer; }
+.topo .ajuda { margin-left: auto; color: var(--text-dim); font-size: 14px; text-decoration: none; white-space: nowrap; }
+.topo .ajuda:hover { color: var(--text); }
+
+/* botões e pedidos */
 .btn { display: inline-flex; align-items: center; gap: 6px; background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: 9px;
   padding: 7px 12px; font: 600 13.5px "Inter", sans-serif; text-decoration: none; cursor: pointer; white-space: nowrap; }
 .btn:hover { border-color: var(--accent); }
-.btn.cta { background: var(--cta); color: #10140a; border-color: transparent; }
 .linkbtn { background: none; border: 0; padding: 0; color: var(--accent-text); text-decoration: underline; cursor: pointer; font: inherit; }
-
-/* boas-vindas */
-.hero { padding: 56px 0 8px; }
-.hero h1 { font-size: clamp(30px, 5vw, 44px); max-width: 760px; }
-.hero h1 em { font-style: normal; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.hero .lead { font-size: 18.5px; color: #c9cbd6; max-width: 720px; margin: 18px 0 32px; }
-.promessas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.promessa { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
-.promessa .ico { font-size: 22px; line-height: 1; margin-bottom: 10px; }
-.promessa p { margin: 6px 0 0; color: var(--text-dim); font-size: 15px; }
-
-/* pedido copiável */
-.pedido { display: inline-flex; align-items: center; gap: 10px; background: var(--accent-soft); border: 1px solid rgba(86,101,240,.4);
-  border-radius: 10px; padding: 7px 7px 7px 14px; font-size: 15px; max-width: 100%; }
-.pedido span { overflow-wrap: anywhere; }
+.pedido { display: flex; align-items: center; gap: 10px; background: var(--accent-soft); border: 1px solid rgba(86,101,240,.4);
+  border-radius: 10px; padding: 8px 8px 8px 14px; font-size: 15.5px; max-width: 100%; }
+.pedido span { flex: 1; overflow-wrap: anywhere; }
 .pedido span::before { content: "“"; color: var(--text-dim); }
 .pedido span::after { content: "”"; color: var(--text-dim); }
-.pedido button { flex: none; background: var(--accent); color: #fff; border: 0; border-radius: 7px; padding: 5px 11px; font: 600 12.5px "Inter", sans-serif; cursor: pointer; }
+.pedido button { flex: none; background: var(--accent); color: #fff; border: 0; border-radius: 7px; padding: 6px 14px; font: 600 13px "Inter", sans-serif; cursor: pointer; }
 .pedido button.copiado { background: var(--ok); color: #06210f; }
+.passo-a-passo { color: var(--text-dim); font-size: 13.5px; margin: 8px 0 0; }
 
-/* começar */
-.comecar { margin-top: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
-.cartao { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
-.cartao.destaque { border-color: rgba(184,242,60,.35); background: linear-gradient(180deg, rgba(184,242,60,.06), transparent 60%), var(--surface); }
-.rotulo { font: 600 11.5px "Inter", sans-serif; letter-spacing: .09em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
-.destaque .rotulo { color: var(--cta); }
-.cartao h3 { margin-bottom: 8px; }
-.lista-vsl { display: grid; gap: 8px; margin: 14px 0 0; }
-.opcao-vsl { text-align: left; width: 100%; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
-  color: var(--text); font: 15px/1.45 "Inter", sans-serif; cursor: pointer; }
-.opcao-vsl:hover { border-color: var(--accent); }
-.opcao-vsl b { display: block; font-weight: 600; }
-.opcao-vsl small { color: var(--text-dim); font-size: 13px; }
-.opcao-vsl.nova { border-style: dashed; }
-.opcao-vsl.nova b { color: var(--cta); }
+/* avisos */
+.faixa { margin-top: 18px; border-radius: 12px; padding: 12px 16px; display: flex; gap: 8px 16px; align-items: center; flex-wrap: wrap;
+  background: var(--surface-2); border-left: 3px solid var(--cta); }
+.faixa.ruim { border-left-color: var(--falta); background: rgba(255,92,92,.07); }
+.faixa > div { flex: 1 1 280px; }
+.faixa .pedido { flex: 1 1 320px; }
+
+/* início: escolher o projeto */
+.inicio-topo { padding: 40px 0 6px; }
+.colunas { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px; align-items: start; }
+.coluna h2 { display: flex; align-items: baseline; gap: 8px; }
+.coluna h2 small { font: 600 13px "Inter", sans-serif; color: var(--text-dim); }
+.lista { display: grid; gap: 8px; }
+.opcao { text-align: left; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+  color: var(--text); font: 15px/1.4 "Inter", sans-serif; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; }
+.opcao:hover { border-color: var(--accent); }
+.opcao b { font-weight: 600; }
+.opcao small { grid-column: 1 / -1; color: var(--text-dim); font-size: 13px; }
+.opcao .mini-barra { width: 70px; }
+.opcao.nova { border-style: dashed; background: none; grid-template-columns: 1fr; }
+.opcao.nova b { color: var(--cta); }
+.mais { margin-top: 4px; }
+.vazio-lista { color: var(--text-dim); font-size: 14.5px; padding: 6px 2px; }
+
+/* criar novo */
+.cartao { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
 .campo { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; color: var(--text);
-  font: 16px "Inter", sans-serif; margin: 2px 0 12px; }
+  font: 16px "Inter", sans-serif; margin: 4px 0 12px; }
 .campo:focus { outline: 2px solid var(--accent); border-color: transparent; }
-.cartao ol, .cartao ul { margin: 8px 0 14px; padding-left: 20px; }
-.cartao li { margin: 4px 0; }
-.estado-pc { display: flex; gap: 10px; align-items: flex-start; }
-.estado-pc .grande { font-size: 22px; line-height: 1.2; }
-details.ferr-det summary { cursor: pointer; color: var(--accent-text); font-size: 14px; margin-top: 8px; }
-.ferramentas { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); gap: 8px; margin-top: 12px; }
-.ferr { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; display: flex; gap: 10px; font-size: 14px; }
-.ferr b { display: block; font-weight: 600; }
-.ferr small { color: var(--text-dim); font-size: 12.5px; overflow-wrap: anywhere; }
-.dot { flex: none; width: 10px; height: 10px; border-radius: 50%; margin-top: 7px; background: var(--info); }
-.ok > .dot { background: var(--ok); }
-.aviso > .dot { background: var(--aviso); }
-.falta > .dot { background: var(--falta); }
 
-/* conversa */
-.conversa-grade { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: start; }
-.chat { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-.chat .cab { font-size: 12.5px; color: var(--text-dim); border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: 2px; }
-.msg { max-width: 88%; padding: 10px 14px; border-radius: 14px; font-size: 15px; }
-.msg.voce { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
-.msg.claude { align-self: flex-start; background: var(--surface-2); border-bottom-left-radius: 4px; }
-.msg.claude b { color: var(--cta); font-weight: 600; }
-.msg .quem { display: block; font-size: 11.5px; font-weight: 600; opacity: .7; margin-bottom: 2px; }
-.dicas { display: grid; gap: 14px; }
-.dica { display: grid; grid-template-columns: 32px 1fr; gap: 0 12px; }
-.dica .ico { font-size: 20px; line-height: 1.4; }
-.dica > div > b { display: block; }
-.dica span { color: var(--text-dim); font-size: 15px; }
-
-/* caminho */
-.trilha { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 18px; }
-.trilha a { text-decoration: none; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 10px; font-size: 13.5px; font-weight: 600; line-height: 1.3; }
-.trilha a small { display: block; font-weight: 400; color: var(--text-dim); font-size: 12px; margin-top: 4px; }
-.trilha a .n { display: block; font: 700 13px "Sora", sans-serif; color: var(--accent-text); margin-bottom: 4px; }
-.passos { display: grid; gap: 12px; }
-.passo { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; display: grid; grid-template-columns: 52px 1fr; gap: 0 16px; scroll-margin-top: 70px; }
-.passo .num { font: 700 28px "Sora", sans-serif; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; line-height: 1.1; }
-.passo h3 { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 19px; margin-bottom: 8px; }
-.quem-faz { font: 600 12px "Inter", sans-serif; padding: 3px 10px; border-radius: 99px; }
-.quem-faz.voce { background: rgba(184,242,60,.14); color: var(--cta); }
-.quem-faz.claude { background: var(--accent-soft); color: var(--accent-text); }
-.quem-faz.juntos { background: rgba(245,185,66,.14); color: var(--aviso); }
-.passo .colunas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; }
-.passo .colunas > div { background: var(--surface-2); border-radius: 12px; padding: 12px 14px; font-size: 14.5px; }
-.passo .colunas .rotulo { margin-bottom: 4px; }
-.passo .colunas p:last-child { margin: 0; }
-
-/* plano de cenas */
-.plano-grade { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 32px; align-items: stretch; }
-/* a foto acompanha a altura do texto ao lado (mostra o alto do quadro, onde fica o motion) */
-.resultado { position: relative; }
-.resultado figure { position: absolute; inset: 0; display: flex; flex-direction: column; }
-.resultado figure img { flex: 1; min-height: 0; object-fit: cover; object-position: center top; }
-.codigo { background: #0a0b10; border: 1px solid var(--line); border-radius: 14px; padding: 18px; font: 14px/1.7 ui-monospace, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
-.codigo .c1 { color: #6b6e80; }
-.codigo .id { color: var(--cta); font-weight: 700; }
-.codigo .gat { background: rgba(86,101,240,.25); color: #dfe3ff; border-radius: 4px; padding: 0 3px; }
-.codigo .desc { color: #9fd7ff; }
-.legenda-plano { display: grid; gap: 10px; margin-top: 14px; }
-.legenda-plano div { display: grid; grid-template-columns: 26px 1fr; gap: 10px; font-size: 15px; }
-.legenda-plano .m { font: 700 12px "Inter", sans-serif; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); color: var(--text); margin-top: 2px; }
-.resultado figure { margin: 0; }
-.resultado img { width: 100%; border-radius: 14px; border: 1px solid var(--line); display: block; }
-.resultado figcaption { font-size: 13.5px; color: var(--text-dim); margin-top: 8px; }
-.encaixe { margin-top: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
-.encaixe-fluxo { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 12px; align-items: center; margin-top: 14px; }
-.encaixe-fluxo > div { background: var(--surface-2); border-radius: 12px; padding: 12px 14px; font-size: 14px; min-height: 92px; }
-.encaixe-fluxo .seta { color: var(--text-dim); font-size: 20px; background: none; min-height: 0; padding: 0; }
-.encaixe-fluxo mark { background: rgba(86,101,240,.3); color: #fff; border-radius: 4px; padding: 0 3px; }
-.tl { position: relative; height: 46px; margin-top: 8px; }
-.tl .v { position: absolute; left: 0; right: 0; height: 18px; border-radius: 4px; background: #262838; font-size: 10px; color: var(--text-dim); padding-left: 4px; line-height: 18px; }
-.tl .v2 { top: 0; } .tl .v1 { top: 24px; }
-.tl .clip { position: absolute; top: 0; left: 46%; width: 30%; height: 18px; border-radius: 4px; background: var(--accent); font: 600 10px/18px "Inter", sans-serif; color: #fff; padding-left: 5px; }
-.tl .cab { position: absolute; top: -4px; bottom: 0; left: 46%; width: 2px; background: var(--cta); }
-
-/* pasta */
-.pasta { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 8px 0; }
-.pasta-linha { display: grid; grid-template-columns: minmax(170px, 230px) 120px 1fr; gap: 12px; padding: 12px 22px; border-top: 1px solid var(--line); align-items: baseline; font-size: 15px; }
-.pasta-linha:first-child { border-top: 0; }
-.pasta-linha .nome { font: 14px ui-monospace, Consolas, monospace; }
-.pasta-linha .nome::before { content: "📁 "; }
-.pasta-linha .nome.arq::before { content: "📄 "; }
-.tag { font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 99px; justify-self: start; }
-.tag.voce { background: rgba(184,242,60,.14); color: var(--cta); }
-.tag.kit { background: var(--surface-2); color: var(--text-dim); }
-.tag.juntos { background: rgba(245,185,66,.14); color: var(--aviso); }
-
-/* glossário e dúvidas */
-.glossario { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 10px; }
-.termo { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
-.termo b { display: block; margin-bottom: 2px; }
-.termo span { color: var(--text-dim); font-size: 14.5px; }
-.duvidas details { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 0 18px; margin-bottom: 8px; }
-.duvidas summary { cursor: pointer; padding: 15px 0; font-weight: 600; }
-.duvidas details p { color: #c9cbd6; }
-
-/* VSLs */
-.vsl { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; margin-top: 14px; }
-.vsl-topo { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.vsl-topo h3 { font-size: 20px; }
-.vsl-topo a { color: var(--text-dim); font-size: 13px; }
-.barra { height: 6px; background: var(--surface-2); border-radius: 99px; margin: 14px 0 18px; overflow: hidden; }
+/* projeto */
+.proj-topo { padding: 32px 0 0; display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; }
+.tipo { font: 600 11.5px "Inter", sans-serif; letter-spacing: .08em; text-transform: uppercase; padding: 3px 10px; border-radius: 99px;
+  background: var(--accent-soft); color: var(--accent-text); }
+.tipo.anuncio { background: rgba(184,242,60,.12); color: var(--cta); }
+.proj-topo .acoes { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+.proj-nome { color: var(--text-dim); font-size: 14px; margin-top: 4px; }
+.barra { height: 6px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
 .barra i { display: block; height: 100%; background: var(--grad); border-radius: 99px; }
-.proximo { background: var(--surface-2); border-left: 3px solid var(--cta); border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; }
-.proximo .rotulo { color: var(--cta); }
-.itens { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr)); gap: 2px 24px; }
-.item { display: flex; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); }
-.item b { font-weight: 600; font-size: 15px; }
-.item small { display: block; color: var(--text-dim); font-size: 13px; overflow-wrap: anywhere; }
-.item a { font-size: 12.5px; color: var(--text-dim); }
-.legenda-estados { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--text-dim); margin-top: 10px; }
-.legenda-estados span { display: inline-flex; gap: 6px; align-items: center; }
-.legenda-estados .dot { margin: 0; }
-#aviso-kit { margin-top: 20px; background: var(--surface-2); border-left: 3px solid var(--cta); border-radius: 10px; padding: 14px 16px;
-  display: flex; gap: 6px 16px; align-items: center; flex-wrap: wrap; }
-#aviso-kit[hidden] { display: none; }
-.vsl-pasta { color: var(--text-dim); font: 12.5px ui-monospace, Consolas, monospace; overflow-wrap: anywhere; margin: -2px 0 10px; }
-.alerta { margin-top: 14px; background: rgba(255,92,92,.08); border: 1px solid rgba(255,92,92,.3); border-radius: var(--radius); padding: 14px 16px; }
+.agora { margin-top: 20px; background: linear-gradient(180deg, rgba(184,242,60,.07), transparent 70%), var(--surface);
+  border: 1px solid rgba(184,242,60,.35); border-radius: 16px; padding: 20px 22px; }
+.rotulo { font: 600 11.5px "Inter", sans-serif; letter-spacing: .09em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
+.agora .rotulo { color: var(--cta); }
+.agora h3 { font-size: 20px; margin-bottom: 4px; }
+.agora p { color: #c9cbd6; }
+
+/* etapas */
+.etapas { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.etapa { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+.etapa.atual { border-color: rgba(184,242,60,.5); }
+.etapa .cab { display: flex; align-items: center; gap: 8px; }
+.etapa .n { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font: 700 12px "Sora", sans-serif;
+  background: var(--surface-2); color: var(--text-dim); }
+.etapa.ok .n { background: var(--ok); color: #06210f; }
+.etapa.aviso .n { background: var(--aviso); color: #2a1d00; }
+.etapa.falta .n { background: var(--falta); color: #2a0000; }
+.etapa b { font-size: 14.5px; line-height: 1.3; }
+.etapa small { color: var(--text-dim); font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
+.etapa .pe { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 12.5px; }
+.etapa .estado { font-weight: 600; }
+.etapa.ok .estado { color: var(--ok); } .etapa.aviso .estado { color: var(--aviso); } .etapa.falta .estado { color: var(--falta); } .etapa.info .estado { color: var(--text-dim); }
+.etapa .pe a { color: var(--text-dim); }
 
 /* galeria de motions */
-.gal-barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
+.gal-barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
 .filtro { background: var(--surface); border: 1px solid var(--line); color: var(--text-dim); border-radius: 99px; padding: 6px 14px;
   font: 600 13px "Inter", sans-serif; cursor: pointer; }
 .filtro[aria-pressed="true"] { background: var(--accent-soft); border-color: rgba(86,101,240,.5); color: var(--text); }
 .filtro b { color: var(--text); margin-left: 6px; }
-.gal-grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr)); gap: 12px; align-items: start; }
+.gal-grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr)); gap: 10px; align-items: start; }
 .gal-bloco { grid-column: 1 / -1; font: 600 12px "Inter", sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim);
-  margin-top: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
-.motion { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  margin-top: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.motion { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
 .motion .mini { display: block; aspect-ratio: 1; background: var(--surface-2); }
 .motion .mini img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.motion .vazio { display: grid; place-items: center; aspect-ratio: 1; padding: 16px; text-align: center; font-size: 13px; color: var(--text-dim);
+.motion .vazio { display: grid; place-items: center; aspect-ratio: 1; padding: 14px; text-align: center; font-size: 13px; color: var(--text-dim);
   background: repeating-linear-gradient(135deg, var(--surface-2) 0 10px, #181924 10px 20px); }
-.motion .corpo { padding: 12px 14px 14px; display: grid; gap: 6px; }
+.motion .corpo { padding: 10px 12px 12px; display: grid; gap: 4px; }
 .motion .cab { display: flex; align-items: center; gap: 8px; }
 .motion .cod { font: 700 13px ui-monospace, Consolas, monospace; color: var(--cta); }
-.selo { margin-left: auto; font: 600 11.5px "Inter", sans-serif; padding: 2px 9px; border-radius: 99px; white-space: nowrap; }
+.selo { margin-left: auto; font: 600 11px "Inter", sans-serif; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
 .selo.pronto { background: rgba(61,220,132,.14); color: var(--ok); }
 .selo.mudou { background: rgba(245,185,66,.16); color: var(--aviso); }
 .selo.falta { background: rgba(255,92,92,.14); color: var(--falta); }
 .selo.so-encaixe { background: var(--surface-2); color: var(--text-dim); }
-.motion .nome { font-weight: 600; font-size: 14.5px; line-height: 1.35; }
-.motion .gat { color: var(--text-dim); font-size: 13px; font-style: italic; line-height: 1.4; }
-.motion .desc { font: 12px/1.5 ui-monospace, Consolas, monospace; color: #9fd7ff; background: #0a0b10; border-radius: 8px; padding: 8px 10px;
-  white-space: pre-wrap; overflow-wrap: anywhere; max-height: 10.5em; overflow: auto; }
+.motion .nome { font-weight: 600; font-size: 14px; line-height: 1.35; }
+.motion .gat { color: var(--text-dim); font-size: 12.5px; font-style: italic; line-height: 1.4; }
+.motion details summary { cursor: pointer; color: var(--text-dim); font-size: 12px; }
+.motion .desc { font: 11.5px/1.5 ui-monospace, Consolas, monospace; color: #9fd7ff; background: #0a0b10; border-radius: 8px; padding: 8px 10px;
+  margin-top: 6px; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 10.5em; overflow: auto; }
 
-/* campanha da VSL */
-.camp-topo { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
-.camp-topo h3 { font-size: 19px; }
-.camp-degrade { width: 180px; height: 14px; border-radius: 99px; border: 1px solid var(--line); }
-.icones { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr)); gap: 10px; }
-.icone { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 10px 10px; display: grid; justify-items: center;
-  gap: 10px; cursor: pointer; color: var(--text); font: 13px ui-monospace, Consolas, monospace; }
+/* campanha */
+details.secao { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 0 18px; }
+details.secao > summary { cursor: pointer; padding: 15px 0; font: 700 17px "Sora", sans-serif; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+details.secao > summary small { font: 400 14px "Inter", sans-serif; color: var(--text-dim); }
+details.secao[open] { padding-bottom: 18px; }
+.camp-degrade { width: 120px; height: 12px; border-radius: 99px; border: 1px solid var(--line); }
+.icones { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(130px, 100%), 1fr)); gap: 8px; }
+.icone { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 8px 8px; display: grid; justify-items: center;
+  gap: 8px; cursor: pointer; color: var(--text); font: 12.5px ui-monospace, Consolas, monospace; }
 .icone:hover { border-color: var(--accent); }
-.icone img { height: 76px; width: auto; max-width: 100%; object-fit: contain; }
-.icone small { color: var(--text-dim); font: 600 11.5px "Inter", sans-serif; }
+.icone img { height: 64px; width: auto; max-width: 100%; object-fit: contain; }
+.icone small { color: var(--text-dim); font: 600 11px "Inter", sans-serif; }
 .icone.copiado { border-color: var(--ok); }
 .icone.copiado small { color: var(--ok); }
-.camp-logo { max-width: min(420px, 100%); height: auto; display: block; margin-top: 14px; }
+.camp-logo { max-width: min(380px, 100%); height: auto; display: block; margin-top: 12px; }
 
-footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--text-dim); font-size: 13.5px; }
+footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--text-dim); font-size: 13.5px;
+  display: flex; gap: 6px 18px; flex-wrap: wrap; }
+footer .ferr { cursor: pointer; }
+.ferramentas { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); gap: 6px; margin-top: 10px; width: 100%; }
+.ferramentas div { background: var(--surface); border-radius: 8px; padding: 8px 10px; font-size: 13px; }
+.ferramentas div b { display: block; color: var(--text); font-weight: 600; }
 
-@media (max-width: 1400px) {
-  .topo nav { display: none; }
-  .topo .btn { margin-left: auto; }
+/* campanhas */
+.camp-lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; margin-top: 24px; }
+.camp-card { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; color: var(--text);
+  font: inherit; cursor: pointer; padding: 0; display: flex; flex-direction: column; }
+.camp-card:hover { border-color: var(--accent); }
+.camp-card .capa { aspect-ratio: 16 / 9; background: #0a0b10; display: grid; place-items: center; overflow: hidden; position: relative; }
+.camp-card .capa img.foto { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.camp-card .capa img.logo { max-width: 80%; max-height: 60%; object-fit: contain; }
+.camp-card .faixa-cor { height: 6px; }
+.camp-card .corpo { padding: 14px 16px 16px; display: grid; gap: 4px; }
+.camp-card .corpo small { color: var(--text-dim); font-size: 13px; }
+.camp-card.nova { border-style: dashed; background: none; justify-content: center; align-items: center; min-height: 200px; color: var(--cta); font-weight: 600; }
+.editor { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 24px; margin-top: 24px; align-items: start; }
+.editor .lado { position: sticky; top: 76px; display: grid; gap: 14px; }
+.bloco-ed { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-bottom: 14px; }
+.bloco-ed h3 { font-size: 17px; margin-bottom: 4px; }
+.bloco-ed .ajuda-ed { color: var(--text-dim); font-size: 14px; margin-bottom: 14px; }
+.linha-campos { display: grid; grid-template-columns: 1fr 180px; gap: 12px; }
+.linha-campos label, .cor-campo label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 2px; }
+.cores { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+.cor-campo { display: grid; gap: 4px; }
+.cor-campo .par { display: flex; align-items: center; gap: 6px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 4px 6px; }
+.cor-campo input[type=color] { width: 34px; height: 30px; border: 0; padding: 0; background: none; cursor: pointer; }
+.cor-campo input[type=text] { width: 84px; background: none; border: 0; color: var(--text); font: 13.5px ui-monospace, Consolas, monospace; }
+.cor-campo input[type=text]:focus { outline: none; }
+.cor-campo .tirar { background: none; border: 0; color: var(--text-dim); cursor: pointer; font-size: 15px; padding: 0 2px; }
+.degrade-amostra { height: 14px; border-radius: 99px; margin: 14px 0 4px; border: 1px solid var(--line); }
+.solta { border: 2px dashed var(--line); border-radius: 14px; padding: 22px; text-align: center; color: var(--text-dim); cursor: pointer; font-size: 15px; }
+.solta.sobre { border-color: var(--accent); background: var(--accent-soft); color: var(--text); }
+.solta b { color: var(--text); }
+.grade-ico { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(140px, 100%), 1fr)); gap: 8px; margin-top: 12px; }
+.ico-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px; display: grid; gap: 6px; justify-items: center; position: relative; }
+.ico-card img { height: 72px; max-width: 100%; object-fit: contain; }
+.ico-card .nm { font: 12px ui-monospace, Consolas, monospace; overflow-wrap: anywhere; text-align: center; }
+.ico-card input { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 7px; color: var(--text); font: 12px ui-monospace, Consolas, monospace; padding: 4px 6px; text-align: center; }
+.ico-card .x { position: absolute; top: 4px; right: 6px; background: none; border: 0; color: var(--text-dim); cursor: pointer; font-size: 16px; }
+.ico-card .x:hover { color: var(--falta); }
+.ico-card.novo { border-color: rgba(86,101,240,.5); }
+.ico-card.ruim { border-color: rgba(255,92,92,.5); }
+.ico-card small { font-size: 11.5px; text-align: center; line-height: 1.3; }
+.ico-card small.av { color: var(--aviso); } .ico-card small.er { color: var(--falta); }
+.ico-card label { font-size: 12px; color: var(--text-dim); display: flex; gap: 4px; align-items: center; }
+.logo-atual { max-width: 100%; max-height: 120px; object-fit: contain; display: block; margin: 4px auto 12px; }
+/* prévia ao vivo: só uma ideia das cores; a amostra é o motion de verdade */
+.mock { aspect-ratio: 9 / 12; border-radius: 16px; overflow: hidden; position: relative; border: 1px solid var(--line);
+  background: radial-gradient(ellipse at 50% 120%, #2a2c3a 0%, #12131a 55%, #0b0c11 100%); display: flex; flex-direction: column; align-items: center; padding: 26px 18px; gap: 10px; text-align: center; }
+.mock .k { font: 600 10.5px "Inter", sans-serif; letter-spacing: .16em; color: #fff; opacity: .9; }
+.mock .bar { width: 46px; height: 5px; border-radius: 99px; }
+.mock .t { font: 700 24px/1.15 "Sora", sans-serif; color: #fff; }
+.mock .t em { font-style: normal; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.mock .n { font: 700 34px "Sora", sans-serif; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.mock .ic { position: relative; height: 70px; display: grid; place-items: center; }
+.mock .ic img { height: 64px; position: relative; }
+.mock .ic i { position: absolute; bottom: -6px; left: 50%; width: 90px; height: 22px; transform: translateX(-50%); border-radius: 50%; filter: blur(6px); opacity: .7; }
+.mock .cta { margin-top: auto; padding: 9px 22px; border-radius: 99px; font: 800 13px "Inter", sans-serif; color: #0b0c11; letter-spacing: .04em; }
+.amostra-quadros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.amostra-quadros img { width: 100%; aspect-ratio: 1; object-fit: cover; object-position: center top; border-radius: 8px; border: 1px solid var(--line); cursor: zoom-in; }
+.amostra video { width: 100%; border-radius: 12px; border: 1px solid var(--line); background: #000; max-height: 520px; }
+.giro { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--cta); border-radius: 50%; animation: giro 1s linear infinite; vertical-align: -2px; }
+@keyframes giro { to { transform: rotate(360deg); } }
+.btn.cta { background: var(--cta); color: #10140a; border-color: transparent; }
+.btn.cta[disabled] { opacity: .5; cursor: default; }
+.msg-ok { color: var(--ok); font-size: 14px; } .msg-erro { color: var(--falta); font-size: 14px; }
+.zoom { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: grid; place-items: center; z-index: 20; cursor: zoom-out; }
+.zoom img { max-height: 94vh; max-width: 94vw; border-radius: 10px; }
+@media (max-width: 900px) { .editor { grid-template-columns: 1fr; } .editor .lado { position: static; } .linha-campos { grid-template-columns: 1fr; } }
+
+@media (max-width: 1000px) { .etapas { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 760px) {
+  .colunas { grid-template-columns: 1fr; }
+  .etapas { grid-template-columns: 1fr 1fr; }
+  .topo select { max-width: 170px; }
 }
-@media (max-width: 860px) {
-  .promessas, .comecar, .conversa-grade, .plano-grade, .passo .colunas { grid-template-columns: 1fr; }
-  .trilha { grid-template-columns: repeat(4, 1fr); }
-  .encaixe-fluxo { grid-template-columns: 1fr; }
-  .encaixe-fluxo .seta { transform: rotate(90deg); justify-self: center; }
-  .resultado { max-width: 360px; }
-  .resultado figure { position: static; }
-}
-@media (max-width: 560px) {
-  .topo nav, .topo-in > b, .escolha > span { display: none; }
-  .topo-in { gap: 10px; }
-  .escolha { flex: 1; }
-  .escolha select { max-width: none; width: 100%; }
-  .trilha { grid-template-columns: repeat(2, 1fr); }
-  .passo { grid-template-columns: 1fr; }
-  .passo .num { margin-bottom: 6px; }
-  .pasta-linha { grid-template-columns: 1fr; gap: 4px; padding: 12px 16px; }
-}
+@media (max-width: 460px) { .etapas { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 <div class="topo"><div class="topo-in">
-  <img src="../2-design-system/STLFLIX/stlflix.svg" alt="STLFLIX"><b>Painel do editor</b>
-  <label class="escolha"><span>VSL</span><select id="escolha" aria-label="Escolher a VSL"></select></label>
-  <nav>
-    <a href="#comecar">Começar</a><a href="#conversar">Conversar com o Claude</a><a href="#caminho">Passo a passo</a>
-    <a href="#plano">Plano de cenas</a><a href="#pasta">A pasta</a><a href="#palavras">Palavras</a><a href="#duvidas">Dúvidas</a>
-  </nav>
-  <a class="btn" href="https://getartcraft.com" target="_blank" rel="noopener" title="Baixar o ArtCraft Launcher, que instala e atualiza o FilmCraft">⬇ ArtCraft</a>
+  <span class="marca" data-ir="inicio" title="Voltar ao início"><img src="icone.svg" alt=""><b>STLFLIX EDITOR</b></span>
+  <select id="menu" aria-label="Escolher o projeto"></select>
+  <a class="ajuda" href="#" data-ir="campanhas">🎨 Campanhas</a>
+  <a class="ajuda" href="ajuda.html" style="margin-left:0">Como funciona?</a>
+  <button class="btn atualizar" id="atualizar" hidden title="Ler as pastas de novo">↻ Atualizar</button>
 </div></div>
 
 <main>
-  <div id="aviso-kit" hidden></div>
-  <section class="hero" id="comecar">
-    <h1>Edite a VSL. <em>O Claude cuida do repetitivo.</em></h1>
-    <p class="lead">Este kit junta você, o <b>FilmCraft</b> e um assistente, o <b>Claude</b>. Você continua no comando da edição. O Claude transcreve os brutos, monta a decupagem a partir da copy para você revisar, cria os letterings animados da STLFLIX (os <b>motions</b>) a partir do que você planejar e coloca cada um no segundo certo da timeline.</p>
-    <div class="promessas">
-      <div class="promessa"><div class="ico">🎬</div><h3>Você edita</h3><p>Aprova a decupagem, decide ritmo e acabamento e dá a palavra final na timeline do FilmCraft.</p></div>
-      <div class="promessa"><div class="ico">⚡</div><h3>O Claude faz o repetitivo</h3><p>Transcrever os brutos, montar a decupagem, desenhar dezenas de motions e encaixar cada um no tempo da fala.</p></div>
-      <div class="promessa"><div class="ico">✋</div><h3>Nada muda sem você aprovar</h3><p>Antes de mexer na timeline, ele mostra o que vai fazer e espera o seu “pode”.</p></div>
+  <div id="avisos"></div>
+
+  <!-- início: escolher ou criar -->
+  <div id="tela-inicio" hidden>
+    <div class="inicio-topo">
+      <h1>O que vamos editar hoje?</h1>
+      <p class="dim" style="margin-top:8px">Escolha uma VSL ou um anúncio para ver o que falta e o que pedir ao Claude.</p>
+    </div>
+    <div class="colunas">
+      <div class="coluna"><h2>VSLs <small id="n-vsl"></small></h2><div class="lista" id="lista-vsl"></div></div>
+      <div class="coluna"><h2>Anúncios <small id="n-anuncio"></small></h2><div class="lista" id="lista-anuncio"></div></div>
+    </div>
+  </div>
+
+  <!-- criar novo -->
+  <div id="tela-nova" hidden>
+    <div class="inicio-topo"><h1 id="nova-titulo"></h1></div>
+    <div class="cartao" style="margin-top:20px;max-width:640px">
+      <p class="dim">Dê um nome curto, sem espaços:</p>
+      <input class="campo" id="nova-nome" autocomplete="off" spellcheck="false">
+      <p id="nova-aviso" style="color:var(--aviso);font-size:14px" hidden>Já existe um projeto com esse nome. Escolha outro, ou abra o que já existe.</p>
+      <p style="margin-top:6px">Copie e mande na conversa com o Claude:</p>
+      <div class="pedido"><span id="nova-pedido"></span><button>copiar</button></div>
+      <p class="passo-a-passo">Ele pergunta onde salvar a pasta, a campanha e o projeto do FilmCraft. Tenha em mãos o roteiro (.txt). Depois, peça “Abre o painel”.</p>
+      <p style="margin:16px 0 0;font-size:14px"><button class="linkbtn" data-ir="inicio">voltar</button></p>
+    </div>
+  </div>
+
+  <!-- um projeto -->
+  <div id="tela-projeto" hidden>
+    <div class="proj-topo">
+      <span class="tipo" id="p-tipo"></span>
+      <h1 id="p-id"></h1>
+      <div class="acoes"><a class="btn" id="p-pasta">📁 Abrir a pasta</a><button class="btn" data-ir="inicio">Trocar</button></div>
+    </div>
+    <div class="proj-nome" id="p-nome"></div>
+
+    <div class="agora">
+      <div class="rotulo">Próximo passo</div>
+      <h3 id="p-prox-titulo"></h3>
+      <p id="p-prox-detalhe"></p>
+      <div id="p-prox-pedido"></div>
+      <p class="passo-a-passo">Copie e mande na conversa com o Claude (aberta na pasta do kit).</p>
     </div>
 
-    <div class="comecar">
-      <div class="cartao destaque" id="cartao-vsl"></div>
-      <div class="cartao" id="cartao-pc"></div>
+    <section>
+      <h2>Etapas <small class="dim" id="p-conta" style="font:400 14px Inter,sans-serif;margin-left:6px"></small></h2>
+      <div class="etapas" id="p-etapas"></div>
+    </section>
+
+    <section id="sec-motions" hidden>
+      <h2>Motions</h2>
+      <div id="galeria"></div>
+    </section>
+
+    <section id="sec-campanha" hidden>
+      <details class="secao" id="campanha"></details>
+    </section>
+  </div>
+
+  <!-- campanhas dos motions -->
+  <div id="tela-campanhas" hidden>
+    <div class="inicio-topo">
+      <h1>Campanhas dos motions</h1>
+      <p class="dim" style="margin-top:8px;max-width:720px">Cada campanha é um visual dos motions: as cores do degradê, a barrinha, o brilho, os ícones e o logo. A marca STLFLIX (fontes, branco e o verde de resultado) é a mesma em todas. Cada VSL ou anúncio escolhe a sua.</p>
     </div>
-    <div id="erros"></div>
-  </section>
+    <div class="camp-lista" id="camp-lista"></div>
+  </div>
 
-  <section class="bloco" id="suas-vsls" hidden>
-    <h2>Andamento da VSL</h2>
-    <p class="intro">O que já está pronto na VSL escolhida e o que fazer agora. Para trocar de VSL, use o menu no topo. Para atualizar esta página, peça ao Claude: “Abre o painel”.</p>
-    <div id="projetos"></div>
-    <div class="legenda-estados">
-      <span><i class="dot" style="background:var(--ok)"></i>pronto</span>
-      <span><i class="dot" style="background:var(--aviso)"></i>conferir</span>
-      <span><i class="dot" style="background:var(--falta)"></i>falta</span>
-      <span><i class="dot"></i>ainda não é a hora</span>
+  <div id="tela-campanha" hidden>
+    <div class="proj-topo">
+      <span class="tipo">Campanha</span>
+      <h1 id="ed-titulo"></h1>
+      <div class="acoes"><button class="btn" data-ir="campanhas">← Campanhas</button></div>
     </div>
-  </section>
-
-  <section class="bloco" id="motions" hidden>
-    <h2>Motions da VSL</h2>
-    <p class="intro">Cada cena do plano de cenas, com o motion ao lado. Clique na imagem para abrir o vídeo. “Mudou” quer dizer que a descrição da cena foi alterada no plano depois que o motion foi criado: ele precisa ser refeito.</p>
-    <div id="galeria"></div>
-  </section>
-
-  <section class="bloco" id="campanha" hidden>
-    <h2>Ícones da campanha</h2>
-    <p class="intro">Os ícones que você pode usar no plano de cenas desta VSL. Clique em um para copiar a peça pronta e colar no plano. A campanha muda as cores dos títulos e do botão; o verde de resultado é da marca e não muda.</p>
-    <div id="campanha-conteudo"></div>
-  </section>
-
-  <section class="bloco" id="conversar">
-    <h2>Como conversar com o Claude</h2>
-    <p class="intro">O <b>app do Claude</b> (aba <b>Code</b>) é uma janela de conversa, como um chat. Você escreve o que precisa em português, do seu jeito, e ele faz no seu computador: abre o FilmCraft, lê as pastas, coloca os motions. Não precisa saber programar nem decorar comandos.</p>
-    <div class="conversa-grade">
-      <div class="chat">
-        <div class="cab">Exemplo de conversa</div>
-        <div class="msg voce"><span class="quem">Você</span>Coloca os motions no corpo</div>
-        <div class="msg claude"><span class="quem">Claude</span>Achei o lugar de 43 dos 45 motions. Dois ficaram de fora: o <b>B12C</b>, porque a frase não aparece no vídeo, e o <b>B20A</b>, que ainda não foi renderizado. O primeiro entra em 00:12. Posso colocar?</div>
-        <div class="msg voce"><span class="quem">Você</span>Pode colocar</div>
-        <div class="msg claude"><span class="quem">Claude</span>Pronto: 43 motions na trilha V2. Dá uma olhada na timeline e salve com <b>Ctrl+S</b>.</div>
-      </div>
-      <div class="dicas">
-        <div class="dica"><div class="ico">📂</div><div><b>Abra sempre na pasta do kit</b><span>Ao começar uma conversa nova no app do Claude (aba Code), escolha a pasta do kit, <code class="kit-pasta">C:\STLFLIX_EDITOR</code>. É ali que ele encontra as instruções e a lista das suas VSLs.</span></div></div>
-        <div class="dica"><div class="ico">💬</div><div><b>Fale normal</b><span>“Transcreve o lead B”, “o motion do bloco 5 entrou atrasado”, “o áudio está estranho”. Se ele não entender, ele pergunta.</span></div></div>
-        <div class="dica"><div class="ico">✅</div><div><b>Ele pede antes de mexer</b><span>Para mudar a timeline, ele mostra o plano e espera você responder “pode colocar”. Se não gostar, diga o que mudar.</span></div></div>
-        <div class="dica"><div class="ico">🔐</div><div><b>Pedidos de permissão</b><span>O Claude pergunta antes de usar o computador (abrir programa, rodar ferramenta). Na dúvida, pergunte a ele o que aquilo faz antes de permitir.</span></div></div>
-        <div class="dica"><div class="ico">🛑</div><div><b>Para parar</b><span>Aperte <b>Esc</b> ou escreva “para”. Se estiver mexendo em outro projeto no FilmCraft, avise: “calma, estou em outro projeto”.</span></div></div>
-        <div class="dica"><div class="ico">💾</div><div><b>Salvar é com você</b><span>Ele não salva o projeto do FilmCraft. Depois de revisar, aperte <b>Ctrl+S</b>.</span></div></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="bloco" id="caminho">
-    <h2>Do roteiro à entrega, passo a passo</h2>
-    <p class="intro">Uma VSL passa por 7 etapas. Em cada uma, veja quem faz, o que acontece e o que pedir ao Claude.</p>
-    <div class="trilha">
-      <a href="#p1"><span class="n">1</span>Criar a VSL<small>juntos</small></a>
-      <a href="#p2"><span class="n">2</span>Transcrever os brutos<small>Claude</small></a>
-      <a href="#p3"><span class="n">3</span>Decupar<small>Claude monta, você revisa</small></a>
-      <a href="#p4"><span class="n">4</span>Plano de cenas<small>você</small></a>
-      <a href="#p5"><span class="n">5</span>Criar os motions<small>Claude</small></a>
-      <a href="#p6"><span class="n">6</span>Pôr na timeline<small>Claude + você revisa</small></a>
-      <a href="#p7"><span class="n">7</span>Conferir e entregar<small>juntos</small></a>
-    </div>
-    <div class="passos">
-      <div class="passo" id="p1"><div class="num">1</div><div>
-        <h3>Criar a VSL <span class="quem-faz juntos">juntos</span></h3>
-        <p>Cada VSL ganha uma pasta própria, onde ficam o roteiro, o plano e tudo o que for gerado. O Claude cria a pasta e pergunta o que precisa: onde está o projeto do FilmCraft e como se chamam as sequências (por exemplo, “Corpo decupado” e “Lead A”).</p>
-        <div class="colunas">
-          <div><div class="rotulo">Você precisa ter</div><p>O roteiro do teleprompter em .txt e o projeto já salvo no FilmCraft.</p></div>
-          <div><div class="rotulo">Peça</div><div class="pedido"><span>Cria uma VSL nova chamada VSL-Nome</span><button>copiar</button></div></div>
-        </div>
-      </div></div>
-      <div class="passo" id="p2"><div class="num">2</div><div>
-        <h3>Transcrever os brutos <span class="quem-faz claude">Claude</span></h3>
-        <p>Importe os takes da câmera no projeto do FilmCraft (ou deixe na pasta <code>02-brutos</code>). O Claude “ouve” cada take e escreve tudo o que foi falado, com o tempo de cada frase no bruto, e marca onde parece ter tropeço ou frase repetida. Com placa NVIDIA, leva cerca de 1 minuto para cada 10 minutos de bruto; sem ela, bem mais.</p>
-        <div class="colunas">
-          <div><div class="rotulo">Resultado</div><p>Um documento com a fala de todos os takes (<code>brutos.md</code>), que é a base da decupagem.</p></div>
-          <div><div class="rotulo">Peça</div><div class="pedido"><span>Abre o FilmCraft e transcreve os brutos</span><button>copiar</button></div></div>
-        </div>
-      </div></div>
-      <div class="passo" id="p3"><div class="num">3</div><div>
-        <h3>Decupar <span class="quem-faz juntos">Claude monta, você revisa</span></h3>
-        <p>O Claude cruza a transcrição dos brutos com a copy, bloco a bloco: fica com a melhor versão de cada frase (a última repetição limpa, mais perto da copy), descarta tropeços e conversa de set, e anota onde a fala fugiu da copy. Ele te mostra a decupagem; você aprova ou muda. Aí ele monta a sequência no FilmCraft no padrão do time (<code>5-guias/estilo-de-edicao.md</code>): pontas pela energia do áudio, pausas cortadas, crossfades de 3 e 10 quadros e marcadores “Conferir” e “TELA”. Antes de montar, ele duplica a sequência como backup.</p>
-        <div class="colunas">
-          <div><div class="rotulo">Você faz</div><p>Revisa a timeline, ajusta o que quiser e salva com <b>Ctrl+S</b>. Depois peça para ele transcrever a sequência montada: é dela que saem as frases-gatilho do plano de cenas.</p></div>
-          <div><div class="rotulo">Peça</div><div class="pedido"><span>Faz a decupagem do corpo</span><button>copiar</button></div>
-            <div class="pedido" style="margin-top:8px"><span>Transcreve o corpo decupado</span><button>copiar</button></div></div>
-        </div>
-      </div></div>
-      <div class="passo" id="p4"><div class="num">4</div><div>
-        <h3>Escrever o plano de cenas <span class="quem-faz voce">você</span></h3>
-        <p>Aqui entra o olhar de editor: com a transcrição e a copy na mão, você decide onde cada motion aparece e o que ele mostra. É um arquivo de texto simples, explicado logo abaixo, em <a href="#plano">O plano de cenas</a>. Para não começar do zero, peça um <b>rascunho</b>: o Claude lê a transcrição e a copy e propõe as cenas de um bloco (ou de todos) num arquivo separado. Você corta, troca e aprova; só o que você aprovar vai para o plano.</p>
-        <div class="colunas">
-          <div><div class="rotulo">Resultado</div><p>O <code>plano-de-cenas.md</code> da VSL, com todos os motions.</p></div>
-          <div><div class="rotulo">Peça</div><div class="pedido"><span>Faz um rascunho do plano do bloco 5</span><button>copiar</button></div>
-            <div class="pedido" style="margin-top:8px"><span>Confere meu plano de cenas</span><button>copiar</button></div></div>
-        </div>
-      </div></div>
-      <div class="passo" id="p5"><div class="num">5</div><div>
-        <h3>Criar os motions <span class="quem-faz claude">Claude</span></h3>
-        <p>O Claude transforma cada cena do plano num vídeo com fundo transparente, já no visual da STLFLIX e na posição certa do quadro (acima da cabeça do apresentador). Primeiro ele faz 2 ou 3 para você ver como ficou; só depois faz todos. Cada motion leva uns 30 segundos.</p>
-        <div class="colunas">
-          <div><div class="rotulo">Resultado</div><p>Um arquivo .mov por cena (B05A, B05B…) e um vídeo de prévia com os motions sobre o apresentador.</p></div>
-          <div><div class="rotulo">Peça</div><div class="pedido"><span>Cria os motions B05A e B05B para eu ver</span><button>copiar</button></div></div>
-        </div>
-      </div></div>
-      <div class="passo" id="p6"><div class="num">6</div><div>
-        <h3>Pôr na timeline <span class="quem-faz claude">Claude + você revisa</span></h3>
-        <p>O Claude procura na transcrição o momento em que cada frase-gatilho é falada e coloca o motion ali, na trilha V2. Antes, ele mostra a lista com o tempo de cada um e o que ficou de fora. Ele também pode acertar o enquadramento dos takes da câmera (escala e posição) de uma vez.</p>
-        <div class="colunas">
-          <div><div class="rotulo">Você faz</div><p>Aprova, assiste na timeline, ajusta o que quiser e salva com <b>Ctrl+S</b>.</p></div>
-          <div><div class="rotulo">Peça</div><div class="pedido"><span>Coloca os motions no corpo</span><button>copiar</button></div></div>
-        </div>
-      </div></div>
-      <div class="passo" id="p7"><div class="num">7</div><div>
-        <h3>Conferir e entregar <span class="quem-faz juntos">juntos</span></h3>
-        <p>Antes de exportar, o Claude confere o que já deu problema em outras VSLs: vídeo do Drive que sai preto, trilha desligada, áudio só de um lado ou faltando. Depois que você exporta, ele manda os arquivos XML das sequências para a pasta do Drive.</p>
-        <div class="colunas">
-          <div><div class="rotulo">Você faz</div><p>Exporta o vídeo no FilmCraft, depois que a conferência não achar nenhum erro.</p></div>
-          <div><div class="rotulo">Peça</div><div class="pedido"><span>Confere tudo antes de exportar</span><button>copiar</button></div></div>
-        </div>
-      </div></div>
-    </div>
-  </section>
-
-  <section class="bloco" id="plano">
-    <h2>O plano de cenas, explicado</h2>
-    <p class="intro">É a parte mais importante do seu trabalho no kit. Para cada motion, você escreve três coisas: um código, a frase em que ele deve aparecer e o que aparece na tela. O Claude faz o resto.</p>
-    <div class="plano-grade">
+    <div class="editor">
       <div>
-        <div class="codigo"><span class="c1">## Bloco 05 · Luan</span>
-
-- **<span class="id">B05H</span>** · Quase R$ 5 mil — "<span class="gat">Luan achou um produto com potencial de</span>"
-  <span class="desc">duração: 7</span>
-  <span class="desc">&gt; 0.3 | kicker: O PRODUTO QUE O LUAN ACHOU | número: R$ 5 mil [verde, conta] | legenda: quase isso de lucro, com 1 impressora</span></div>
-        <div class="legenda-plano">
-          <div><span class="m">1</span><span><b>O código</b> (<code>B05H</code>): bloco 5, cena H. Vira o nome do arquivo do motion. Cada cena tem um código diferente.</span></div>
-          <div><span class="m">2</span><span><b>A frase-gatilho</b>, entre aspas: 4 a 8 palavras que o apresentador fala no momento em que o motion deve aparecer. <b>Copie da transcrição</b>, do jeito que foi dito.</span></div>
-          <div><span class="m">3</span><span><b>O que aparece</b>: quanto tempo fica na tela (<code>duração: 7</code> segundos) e, na linha que começa com <code>&gt;</code>, as peças separadas por <code>|</code>, de cima para baixo. Aqui: uma linha pequena em cima (kicker), um número grande verde que conta até R$ 5 mil, e uma legenda. O <code>0.3</code> quer dizer que tudo isso entra 0,3 s depois do início.</span></div>
-          <div><span class="m">+</span><span>Quer que a tela mude no meio da cena? Escreva outra linha com <code>&gt;</code> (por exemplo <code>&gt; 3.5 | frase: …</code>): cada linha substitui a anterior naquele segundo.</span></div>
+        <div class="bloco-ed">
+          <h3>1. Nome</h3>
+          <p class="ajuda-ed">O nome aparece no painel; o código é como a VSL escolhe a campanha (curto, sem espaço: <code>natal26</code>).</p>
+          <div class="linha-campos">
+            <div><label for="ed-nome">Nome</label><input class="campo" id="ed-nome" placeholder="Natal 2026" autocomplete="off"></div>
+            <div><label for="ed-id">Código</label><input class="campo" id="ed-id" placeholder="natal26" autocomplete="off" spellcheck="false"></div>
+          </div>
         </div>
-      </div>
-      <div class="resultado">
-        <figure>
-          <img src="img/exemplo-motion.jpg" alt="Motion B05H sobre o apresentador: O PRODUTO QUE O LUAN ACHOU, R$ 5 mil, quase isso de lucro, com 1 impressora">
-          <figcaption>O resultado: o motion B05H na VSL do Shark, acima da cabeça do apresentador.</figcaption>
-        </figure>
-      </div>
-    </div>
-    <div class="encaixe">
-      <h3>Como o Claude sabe onde colocar cada motion?</h3>
-      <p class="dim" style="margin-top:6px">Pela frase-gatilho. É por isso que ela precisa vir da transcrição, e não do roteiro: o que vale é o que o apresentador realmente falou.</p>
-      <div class="encaixe-fluxo">
-        <div><div class="rotulo">Seu plano</div><b>B05H</b> — “Luan achou um produto com potencial de”</div>
-        <div class="seta">→</div>
-        <div><div class="rotulo">Transcrição</div>02:14 — o <mark>Luan achou um produto com potencial de</mark> vender muito…</div>
-        <div class="seta">→</div>
-        <div><div class="rotulo">Timeline</div>O motion entra em 02:14, na trilha V2
-          <div class="tl"><div class="v v2">V2</div><div class="v v1">V1</div><div class="clip">B05H</div><div class="cab"></div></div>
+
+        <div class="bloco-ed">
+          <h3>2. Logo e ícones</h3>
+          <p class="ajuda-ed">Arraste os PNGs do design (fundo transparente, os ícones com pelo menos 520 px de altura). O kit recorta e padroniza. O arquivo com “logo” ou “kv” no nome vira o logo; marque à mão se precisar.</p>
+          <div id="ed-logo"></div>
+          <div class="solta" id="ed-solta" tabindex="0">Arraste os PNGs aqui ou <b>clique para escolher</b><input type="file" id="ed-arquivos" accept="image/png,image/webp" multiple hidden></div>
+          <div class="grade-ico" id="ed-icones"></div>
         </div>
+
+        <div class="bloco-ed">
+          <h3>3. Cores</h3>
+          <p class="ajuda-ed"><b>Degradê</b>: títulos, palavra-chave e botão de CTA (2 a 4 cores, na ordem em que aparecem no key visual). <b>Barrinha</b>: o traço acima do título. <b>Brilho</b>: a luz embaixo dos ícones.</p>
+          <div class="cores" id="ed-degrade"></div>
+          <div class="degrade-amostra" id="ed-degrade-amostra"></div>
+          <div class="cores" style="margin-top:14px">
+            <div id="ed-barra"></div>
+            <div id="ed-brilho"></div>
+            <button class="btn" id="ed-sugerir" style="margin-left:auto" title="Tira as cores mais fortes do logo">✨ Sugerir pelo logo</button>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <button class="btn cta" id="ed-salvar"></button>
+          <span id="ed-msg"></span>
+        </div>
+        <div id="ed-relatorio" style="margin-top:12px"></div>
+      </div>
+
+      <div class="lado">
+        <div class="bloco-ed" style="margin:0">
+          <h3>Prévia rápida</h3>
+          <p class="ajuda-ed" style="margin-bottom:10px">Só para ter uma ideia das cores. O motion de verdade está na amostra.</p>
+          <div class="mock" id="ed-mock"></div>
+        </div>
+        <div class="bloco-ed amostra" style="margin:0" id="ed-amostra"></div>
       </div>
     </div>
-    <p class="dim" style="margin-top:18px">Todos os tipos de peça (título, número, ícones, logo, botão de CTA…) e as boas práticas estão em <code>5-guias/plano-de-cenas.md</code>. Cada VSL nova já vem com um plano de exemplo completo na pasta <code>04-plano-de-cenas</code>.</p>
-  </section>
+  </div>
 
-  <section class="bloco" id="pasta">
-    <h2>A pasta da VSL</h2>
-    <p class="intro">Cada VSL tem a sua pasta, onde você quiser no computador (por exemplo, junto do projeto do FilmCraft). Tudo o que o kit gera para ela fica lá dentro. Algumas partes você preenche; outras o kit cria sozinho.</p>
-    <div class="pasta">
-      <div class="pasta-linha"><span class="nome">01-roteiro</span><span class="tag voce">você coloca</span><span>O roteiro do teleprompter (<code>teleprompter.txt</code>), com os blocos marcados assim: <code>--- BLOCO 5 · Título ---</code></span></div>
-      <div class="pasta-linha"><span class="nome">02-brutos</span><span class="tag voce">você coloca</span><span>Os vídeos da câmera. Se já estão no Drive, não precisa copiar: um atalho basta.</span></div>
-      <div class="pasta-linha"><span class="nome">03-b-rolls</span><span class="tag voce">você coloca</span><span>Os B-rolls, ou um atalho para a pasta deles no Drive.</span></div>
-      <div class="pasta-linha"><span class="nome">04-plano-de-cenas</span><span class="tag voce">você escreve</span><span>O seu plano de cenas (já vem um exemplo) e um print do apresentador (<code>referencia.png</code>), usado na prévia dos motions.</span></div>
-      <div class="pasta-linha"><span class="nome">05-motions</span><span class="tag kit">o kit cria</span><span>Os motions prontos, um arquivo .mov por cena.</span></div>
-      <div class="pasta-linha"><span class="nome">06-transcricoes</span><span class="tag kit">o kit cria</span><span>As transcrições de cada sequência.</span></div>
-      <div class="pasta-linha"><span class="nome">07-exports</span><span class="tag kit">o kit cria</span><span>Vídeos e XMLs exportados. As versões antigas vão para uma subpasta: nada é apagado.</span></div>
-      <div class="pasta-linha"><span class="nome arq">config.json</span><span class="tag juntos">com o Claude</span><span>As configurações da VSL: projeto do FilmCraft, nomes das sequências, enquadramento dos takes, pasta de entrega no Drive.</span></div>
-    </div>
-  </section>
-
-  <section class="bloco" id="palavras">
-    <h2>Palavras que você vai ver</h2>
-    <p class="intro">O kit usa alguns termos que talvez sejam novos.</p>
-    <div class="glossario">
-      <div class="termo"><b>App do Claude (aba Code)</b><span>O programa onde você conversa com o Claude. Ele consegue usar o seu computador para fazer as tarefas.</span></div>
-      <div class="termo"><b>Kit</b><span>A pasta <code class="kit-pasta">C:\STLFLIX_EDITOR</code>: instruções, ferramentas e o visual da STLFLIX que o Claude usa. As suas VSLs ficam fora dela.</span></div>
-      <div class="termo"><b>Sequência</b><span>Uma timeline dentro do projeto do FilmCraft, como “Corpo decupado” ou “Lead A”.</span></div>
-      <div class="termo"><b>Transcrição</b><span>O texto de tudo o que foi falado na sequência, com o tempo de cada frase.</span></div>
-      <div class="termo"><b>Decupagem</b><span>A escolha dos trechos de cada take que entram no vídeo, na ordem da copy. O Claude propõe a partir da transcrição dos brutos; você aprova e revisa na timeline.</span></div>
-      <div class="termo"><b>Motion</b><span>Lettering animado com o visual da STLFLIX (títulos, números, ícones) que aparece sobre o apresentador.</span></div>
-      <div class="termo"><b>Plano de cenas</b><span>O arquivo onde você lista os motions: em que frase entram e o que mostram.</span></div>
-      <div class="termo"><b>Frase-gatilho</b><span>As palavras faladas no momento em que o motion deve aparecer. É como o Claude acha o lugar dele.</span></div>
-      <div class="termo"><b>Renderizar</b><span>Transformar a descrição de um motion em vídeo de verdade (.mov com fundo transparente).</span></div>
-      <div class="termo"><b>Trilha V2</b><span>A segunda trilha de vídeo da timeline, acima dos takes. É onde os motions entram.</span></div>
-      <div class="termo"><b>XML</b><span>Um arquivo que guarda a montagem de uma sequência, para abrir em outro computador ou programa.</span></div>
-      <div class="termo"><b>Drive (G:)</b><span>O Google Drive compartilhado da empresa, onde ficam os brutos e as entregas.</span></div>
-      <div class="termo"><b>ArtCraft Launcher</b><span>O programa que instala e atualiza o FilmCraft. Baixe em <a href="https://getartcraft.com" target="_blank" rel="noopener">getartcraft.com</a> (ou no botão ⬇ ArtCraft, no topo).</span></div>
-    </div>
-  </section>
-
-  <section class="bloco duvidas" id="duvidas">
-    <h2>Dúvidas comuns</h2>
-    <p class="intro"></p>
-    <details><summary>Preciso saber programar?</summary><p>Não. Você conversa em português. Os comandos que aparecem no kit são para o Claude; você não precisa decorar nenhum.</p></details>
-    <details><summary>O Claude pode estragar o meu projeto?</summary><p>Ele sempre mostra o que vai mudar e espera você aprovar. Antes de apagar ou refazer algo, ele duplica a sequência como backup. E nada fica gravado no arquivo do projeto até você salvar com Ctrl+S. Se não gostar do resultado, diga o que está errado e peça para ele voltar como estava.</p></details>
-    <details><summary>Posso editar enquanto o Claude trabalha?</summary><p>Na timeline que ele está mexendo, não: espere ele terminar. Se precisar trabalhar em outro projeto, avise (“calma, estou em outro projeto”) e ele para.</p></details>
-    <details><summary>O motion entrou no lugar errado. E agora?</summary><p>Quase sempre é porque a frase-gatilho aparece duas vezes no vídeo, ou foi copiada do roteiro em vez da transcrição. Ajuste a frase no plano e peça para colocar de novo. Você também pode só arrastar o motion na timeline.</p></details>
-    <details><summary>Quero mudar o texto de um motion.</summary><p>Mude no plano de cenas e peça: “refaz o motion B05H”. Ele cria só aquele de novo.</p></details>
-    <details><summary>Algo deu errado e não sei o que é.</summary><p>Conte ao Claude o que você viu, do seu jeito: “a exportação saiu preta”, “o áudio está só de um lado”, “os motions não aparecem”. Os problemas que já aconteceram no time estão documentados no kit, e ele sabe resolver.</p></details>
-    <details><summary>Onde ficam os meus arquivos?</summary><p>Cada VSL fica na pasta que você escolheu ao criar (o painel mostra o caminho de cada uma). Motions, transcrições e exportações vão para dentro dela. Prefira um disco do computador, não o Drive: os renders ficam mais rápidos. Os vídeos pesados (brutos e B-rolls) podem continuar no Drive. Atualizar o kit (“atualiza o kit”) não mexe nas suas VSLs. Recebeu a pasta de uma VSL de outro editor? Peça: “Anota a VSL que está nesta pasta” e diga o caminho.</p></details>
-  </section>
-
-  <footer>Painel gerado em <span id="gerado"></span>. Para atualizar, peça ao Claude: “Abre o painel”.</footer>
+  <footer>
+    <span id="pc"></span>
+    <span>Atualizado em <span id="gerado"></span><span id="como-atualizar"> · para atualizar, peça “Abre o painel”</span></span>
+    <a href="ajuda.html">Como funciona</a>
+    <a href="https://getartcraft.com" target="_blank" rel="noopener">Baixar o ArtCraft (FilmCraft)</a>
+  </footer>
 </main>
 
 <script id="dados" type="application/json">__DADOS__</script>
 <script>
 (function () {
   var D = JSON.parse(document.getElementById("dados").textContent);
+  var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
   var pedido = function (t) { return t ? '<div class="pedido"><span>' + esc(t) + '</span><button>copiar</button></div>' : ""; };
+  var NOME_TIPO = { vsl: "VSL", anuncio: "Anúncio" };
+  var ESTADO = { ok: "pronto", aviso: "conferir", falta: "falta", info: "depois" };
 
-  document.getElementById("gerado").textContent = D.gerado;
-  [].forEach.call(document.querySelectorAll(".kit-pasta"), function (e) { e.textContent = D.kit; });
+  $("gerado").textContent = D.gerado;
 
-  // kit desatualizado?
-  if (D.atualizacao > 0) {
-    var av = document.getElementById("aviso-kit");
-    av.hidden = false;
-    av.innerHTML = "<div><b>Tem uma versão nova do kit</b> " +
-      '<span class="dim">(' + D.atualizacao + (D.atualizacao === 1 ? " mudança" : " mudanças") + "). Suas VSLs não são afetadas.</span></div>" +
-      pedido("Atualiza o kit");
-  }
-
-  // computador pronto?
-  var ARTCRAFT = "https://getartcraft.com";
-  var botaoArtcraft = function (cta) {
-    return '<a class="btn' + (cta ? " cta" : "") + '" href="' + ARTCRAFT + '" target="_blank" rel="noopener">⬇ Baixar o ArtCraft Launcher</a>';
+  // ---- app (servido pelo stlflix app em http://127.0.0.1): imagens e pastas passam pelo servidor local
+  var APP = location.protocol.indexOf("http") === 0;
+  var caminho = function (u) { return decodeURIComponent(String(u).replace(/^file:\/\/\/?/, "")); };
+  var img = function (u) { return u && APP ? "/arquivo?c=" + encodeURIComponent(caminho(u)) : u; };
+  var recarregarDepois = false;
+  var post = function (rota, dados) {
+    return fetch(rota, { method: "POST", headers: { "Content-Type": "application/json", "X-STLFLIX": "1" }, body: JSON.stringify(dados || {}) });
   };
+  if (APP) {
+    // pastas e motions: abre no Windows (explorador ou player) em vez de navegar
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest("a[href^='file:']");
+      if (!a) return;
+      e.preventDefault();
+      post("/api/abrir", { c: caminho(a.getAttribute("href")) });
+    });
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(function () {});
+    // a página recarrega sozinha quando o painel é gerado de novo (pelo botão ou pelo Claude)
+    var versao = null, bt = $("atualizar");
+    recarregarDepois = false;
+    bt.hidden = false; $("como-atualizar").hidden = true;
+    var olhar = function () {
+      fetch("/api/estado?ping=1", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (e) {
+        if (versao === null) versao = e.versao;
+        else if (e.versao !== versao) {
+          if (EM_CAMPANHA()) recarregarDepois = true;      // não recarrega no meio de uma campanha: espera você sair dela
+          else { try { sessionStorage.setItem("stlflix-rolagem", String(window.scrollY)); } catch (err) {} location.reload(); return; }
+        }
+        bt.disabled = e.gerando; bt.textContent = e.gerando ? "Atualizando…" : "↻ Atualizar";
+      }).catch(function () {});
+    };
+    olhar(); setInterval(olhar, 5000);
+    bt.addEventListener("click", function () { bt.disabled = true; bt.textContent = "Atualizando…"; post("/api/atualizar").then(olhar); });
+    try { var y = sessionStorage.getItem("stlflix-rolagem"); if (y) { sessionStorage.removeItem("stlflix-rolagem"); setTimeout(function () { window.scrollTo(0, Number(y)); }, 0); } } catch (err) {}
+  }
+
+  // ---- avisos do topo: kit desatualizado e computador sem alguma ferramenta
+  var avisos = "";
+  if (D.atualizacao > 0) {
+    avisos += '<div class="faixa"><div><b>Tem uma versão nova do kit</b> <span class="dim">(' + D.atualizacao +
+      (D.atualizacao === 1 ? " mudança" : " mudanças") + "). Seus projetos não são afetados.</span></div>" + pedido("Atualiza o kit") + "</div>";
+  }
   var faltam = D.ferramentas.filter(function (f) { return !f.ok && f.essencial; });
-  var grade = '<div class="ferramentas">' + D.ferramentas.map(function (f) {
-    var estado = f.ok ? "ok" : (f.essencial ? "falta" : "aviso");
-    var det = esc(f.detalhe) + (!f.ok && f.item === "FilmCraft" ? ' · <a href="' + ARTCRAFT + '" target="_blank" rel="noopener">baixar o ArtCraft Launcher</a>' : "");
-    return '<div class="ferr ' + estado + '"><span class="dot"></span><div><b>' + esc(f.item) + "</b><small>" + det + "</small></div></div>";
-  }).join("") + "</div>";
-  var pc = document.getElementById("cartao-pc");
-  if (!faltam.length) {
-    pc.innerHTML = '<div class="rotulo">Seu computador</div><div class="estado-pc"><span class="grande">✅</span><div><h3>Está tudo instalado</h3>' +
-      '<p class="dim" style="margin:0">FilmCraft, ferramentas de vídeo e o que o Claude precisa para trabalhar.</p></div></div>' +
-      '<p class="dim" style="margin:14px 0 8px;font-size:14px">O FilmCraft é instalado e atualizado pelo ArtCraft Launcher:</p>' + botaoArtcraft(false) +
-      '<details class="ferr-det"><summary>ver detalhes</summary>' + grade + "</details>";
-  } else {
-    pc.style.borderColor = "rgba(255,92,92,.4)";
+  if (faltam.length) {
     var temFC = faltam.some(function (f) { return f.item === "FilmCraft"; });
-    pc.innerHTML = '<div class="rotulo" style="color:var(--falta)">Seu computador</div><h3>Falta instalar: ' + esc(faltam.map(function (f) { return f.item; }).join(", ")) + "</h3>" +
-      (temFC ? '<p class="dim">O FilmCraft você instala pelo ArtCraft Launcher. Baixe, instale e abra o FilmCraft por ele:</p><p>' + botaoArtcraft(true) + "</p>" : "") +
-      '<p class="dim">O resto o Claude instala. Peça:</p>' + pedido("Instala o kit") + grade +
-      (temFC ? "" : '<p style="margin:14px 0 0">' + botaoArtcraft(false) + "</p>");
+    avisos += '<div class="faixa ruim"><div><b>Falta instalar: ' + esc(faltam.map(function (f) { return f.item; }).join(", ")) + "</b>" +
+      (temFC ? ' <span class="dim">O FilmCraft vem do <a href="https://getartcraft.com" target="_blank" rel="noopener">ArtCraft Launcher</a>; o resto o Claude instala.</span>' : "") +
+      "</div>" + pedido("Instala o kit") + "</div>";
   }
-
   if (D.erros && D.erros.length) {
-    document.getElementById("erros").innerHTML = '<div class="alerta">Não consegui ler: ' + esc(D.erros.join(" · ")) + "</div>";
+    avisos += '<div class="faixa ruim"><div><b>Não consegui ler:</b> <span class="dim">' + esc(D.erros.join(" · ")) + "</span></div></div>";
   }
+  $("avisos").innerHTML = avisos;
+  $("pc").innerHTML = (faltam.length ? "⚠ falta instalar algo" : "✅ computador pronto") + ' · <button class="linkbtn" id="ver-ferr">ver ferramentas</button>';
+  $("ver-ferr").addEventListener("click", function () {
+    var f = $("pc").parentNode.querySelector(".ferramentas");
+    if (f) { f.remove(); return; }
+    var g = document.createElement("div"); g.className = "ferramentas";
+    g.innerHTML = D.ferramentas.map(function (f) { return "<div><b>" + (f.ok ? "✅ " : (f.essencial ? "❌ " : "⚠ ")) + esc(f.item) + "</b>" + esc(f.detalhe) + "</div>"; }).join("");
+    $("pc").parentNode.appendChild(g);
+  });
 
-  // escolher a VSL: nada vem escolhido sozinho; a escolha fica guardada só neste navegador
+  // ---- projetos
+  var porId = function (id) { return D.projetos.filter(function (p) { return p.id === id; })[0] || null; };
+  var contagem = function (p) {
+    var conta = p.etapas.filter(function (e) { return e.estado !== "info"; });
+    return { feitos: conta.filter(function (e) { return e.estado === "ok"; }).length, total: conta.length };
+  };
+  var barra = function (c) { return '<div class="barra mini-barra"><i style="width:' + Math.round(100 * c.feitos / Math.max(c.total, 1)) + '%"></i></div>'; };
   var CHAVE = "stlflix-vsl";
   var lembrada = function () { try { return localStorage.getItem(CHAVE); } catch (err) { return null; } };
   var guardar = function (id) { try { if (id) localStorage.setItem(CHAVE, id); else localStorage.removeItem(CHAVE); } catch (err) {} };
-  var porId = function (id) { return D.projetos.filter(function (p) { return p.id === id; })[0] || null; };
-  var contagem = function (p) {
-    var conta = p.itens.filter(function (i) { return i.estado !== "info"; });
-    return { feitos: conta.filter(function (i) { return i.estado === "ok"; }).length, total: conta.length };
-  };
-  var barra = function (c) { return '<div class="barra"><i style="width:' + Math.round(100 * c.feitos / Math.max(c.total, 1)) + '%"></i></div>'; };
-  var nomeVsl = function (t) { return t.trim().replace(/\s+/g, "-").replace(/[^\wÀ-ſ-]/g, ""); };
 
+  var tela = { nome: "inicio", projeto: null, novoTipo: "vsl" };
   var atual = porId(lembrada());
-  var modo = atual ? "vsl" : "escolher";
-  var menu = document.getElementById("escolha");
-  var cartao = document.getElementById("cartao-vsl");
-  menu.innerHTML = '<option value="">Escolha a VSL…</option>' + D.projetos.map(function (p) {
-    return '<option value="' + esc(p.id) + '">' + esc(p.nome) + "</option>";
-  }).join("") + '<option value="__nova">＋ Criar VSL nova</option>';
+  if (atual) tela = { nome: "projeto", projeto: atual };
+  var telaSalva = null;                       // depois de recarregar, volta para a mesma tela
+  try { telaSalva = APP ? sessionStorage.getItem("stlflix-tela") : null; } catch (err) {}
+  if (/^#ir=/.test(location.hash)) telaSalva = decodeURIComponent(location.hash.slice(4));   // link direto: index.html#ir=campanhas
 
-  function escolher(id) { atual = porId(id); guardar(atual && atual.id); modo = atual ? "vsl" : "escolher"; desenhar(); }
+  // menu do topo: VSLs e anúncios em grupos, e os dois "criar"
+  var grupo = function (tipo, rotulo) {
+    var ps = D.projetos.filter(function (p) { return p.tipo === tipo; });
+    return ps.length ? '<optgroup label="' + rotulo + '">' + ps.map(function (p) { return '<option value="' + esc(p.id) + '">' + esc(p.id) + "</option>"; }).join("") + "</optgroup>" : "";
+  };
+  $("menu").innerHTML = '<option value="">Início</option>' + grupo("vsl", "VSLs") + grupo("anuncio", "Anúncios") +
+    '<optgroup label="Criar"><option value="__nova-vsl">＋ VSL nova</option><option value="__nova-anuncio">＋ Anúncio novo</option></optgroup>' +
+    '<optgroup label="Motions"><option value="__campanhas">🎨 Campanhas</option></optgroup>';
+
+  var EM_CAMPANHA = function () { return tela.nome === "campanhas" || tela.nome === "campanha"; };
+  function ir(destino) {
+    // o painel foi gerado de novo enquanto você estava nas campanhas: recarrega agora, já indo para o destino
+    if (APP && recarregarDepois && !/^campanha/.test(destino)) {
+      try { sessionStorage.setItem("stlflix-tela", destino); } catch (err) {}
+      return location.reload();
+    }
+    if (destino === "inicio") { tela = { nome: "inicio" }; guardar(null); }
+    else if (destino === "nova-vsl" || destino === "nova-anuncio") tela = { nome: "nova", novoTipo: destino.slice(5) };
+    else if (destino === "campanhas") tela = { nome: "campanhas" };
+    else if (destino === "nova-campanha") tela = { nome: "campanha", campanha: null };
+    else if (destino.indexOf("campanha:") === 0) tela = { nome: "campanha", campanha: destino.slice(9) };
+    else { var p = porId(destino); if (!p) return ir("inicio"); tela = { nome: "projeto", projeto: p }; guardar(p.id); }
+    try { sessionStorage.setItem("stlflix-tela", destino); } catch (err) {}
+    desenhar(); window.scrollTo(0, 0);
+  }
 
   function desenhar() {
-    if (modo === "escolher" && !D.projetos.length) modo = "nova";
-    menu.value = modo === "nova" ? "__nova" : (modo === "vsl" ? atual.id : "");
+    $("tela-inicio").hidden = tela.nome !== "inicio";
+    $("tela-nova").hidden = tela.nome !== "nova";
+    $("tela-projeto").hidden = tela.nome !== "projeto";
+    $("tela-campanhas").hidden = tela.nome !== "campanhas";
+    $("tela-campanha").hidden = tela.nome !== "campanha";
+    $("menu").value = tela.nome === "projeto" ? tela.projeto.id : tela.nome === "nova" ? "__nova-" + tela.novoTipo : EM_CAMPANHA() ? "__campanhas" : "";
+    if (tela.nome === "inicio") desenharInicio();
+    else if (tela.nome === "nova") desenharNova();
+    else if (tela.nome === "campanhas") Camp.lista();
+    else if (tela.nome === "campanha") Camp.editor(tela.campanha);
+    else desenharProjeto(tela.projeto);
+  }
 
-    if (modo === "nova") {
-      cartao.innerHTML = '<div class="rotulo">VSL nova</div><h3>Criar uma VSL nova</h3>' +
-        '<p class="dim">Cada VSL ganha uma pasta própria, no lugar do computador que você escolher. Dê um nome curto, sem espaços:</p>' +
-        '<input class="campo" id="nome-nova" placeholder="VSL-Nome" autocomplete="off" spellcheck="false">' +
-        '<p id="aviso-nome" style="color:var(--aviso);font-size:14px" hidden>Já existe uma VSL com esse nome. Escolha outro, ou abra a que já existe no menu.</p>' +
-        "<p>Tenha em mãos o roteiro do teleprompter (.txt) e o projeto da VSL salvo no FilmCraft. Comece uma conversa no app do Claude, na pasta do kit, e mande:</p>" +
-        '<div class="pedido"><span id="pedido-nova">Cria uma VSL nova chamada VSL-Nome</span><button>copiar</button></div>' +
-        '<p class="dim" style="margin:12px 0 0;font-size:14px">Ele pergunta onde salvar a pasta (abre a janela do Windows para você escolher; pode ser junto do projeto do FilmCraft) e mais algumas coisas. Depois, peça “Abre o painel” e ela aparece no menu.</p>' +
-        (D.projetos.length ? '<p style="margin:10px 0 0;font-size:14px"><button class="linkbtn" data-ir="escolher">voltar para as VSLs</button></p>' : "");
-      var campo = document.getElementById("nome-nova");
-      campo.addEventListener("input", function () {
-        var n = nomeVsl(campo.value);
-        document.getElementById("pedido-nova").textContent = "Cria uma VSL nova chamada " + (n || "VSL-Nome");
-        document.getElementById("aviso-nome").hidden = !porId(n);
-      });
-    } else if (modo === "escolher") {
-      cartao.innerHTML = '<div class="rotulo">Sua VSL</div><h3>Em qual VSL você vai trabalhar?</h3>' +
-        '<div class="lista-vsl">' + D.projetos.map(function (p) {
+  // ---- início
+  var LIMITE = 6;
+  var abertos = { vsl: false, anuncio: false };
+  function desenharInicio() {
+    ["vsl", "anuncio"].forEach(function (tipo) {
+      var ps = D.projetos.filter(function (p) { return p.tipo === tipo; });
+      $("n-" + tipo).textContent = ps.length ? ps.length : "";
+      var mostra = abertos[tipo] ? ps : ps.slice(0, LIMITE);
+      $("lista-" + tipo).innerHTML =
+        (ps.length ? "" : '<div class="vazio-lista">' + (tipo === "vsl" ? "Nenhuma VSL ainda." : "Nenhum anúncio ainda.") + "</div>") +
+        mostra.map(function (p) {
           var c = contagem(p);
-          return '<button class="opcao-vsl" data-vsl="' + esc(p.id) + '"><b>' + esc(p.nome) + "</b><small>" +
-            c.feitos + " de " + c.total + " prontos · agora: " + esc(p.proximo.titulo) + "</small></button>";
+          return '<button class="opcao" data-ir="' + esc(p.id) + '"><b>' + esc(p.id) + "</b>" + barra(c) +
+            "<small>" + (p.nome !== p.id ? esc(p.nome) + " · " : "") + "agora: " + esc(p.proximo.titulo) + "</small></button>";
         }).join("") +
-        '<button class="opcao-vsl nova" data-ir="nova"><b>＋ Criar uma VSL nova</b><small>para um roteiro que ainda não está no kit</small></button></div>';
-    } else {
-      var px = atual.proximo;
-      cartao.innerHTML = '<div class="rotulo">Trabalhando em</div><h3>' + esc(atual.nome) + "</h3>" +
-        '<div class="vsl-pasta">' + esc(atual.pasta) + "</div>" + barra(contagem(atual)) +
-        '<p style="margin-bottom:6px">Ao começar a conversa no app do Claude, avise em qual VSL vai trabalhar:</p>' + pedido("Vamos trabalhar na " + atual.id) +
-        '<div class="proximo" style="margin:16px 0 12px"><div class="rotulo">Próximo passo</div><p><b>' + esc(px.titulo) + "</b>: " + esc(px.detalhe) + "</p>" +
-        (px.pedido ? pedido(px.pedido) : '<p class="dim" style="margin:0">Essa parte é com você.</p>') + "</div>" +
-        '<p style="margin:0;font-size:14px"><a href="#suas-vsls">ver tudo desta VSL</a> · ' +
-        (atual.galeria && atual.galeria.some(function (p) { return p.cenas.length; }) ? '<a href="#motions">ver os motions</a> · ' : "") +
-        '<button class="linkbtn" data-ir="escolher">trocar de VSL</button></p>';
-    }
-    desenharAndamento();
+        (ps.length > LIMITE && !abertos[tipo] ? '<button class="linkbtn mais" data-mais="' + tipo + '">ver todos (' + ps.length + ")</button>" : "") +
+        '<button class="opcao nova" data-ir="nova-' + tipo + '"><b>＋ ' + (tipo === "vsl" ? "Criar uma VSL nova" : "Criar um anúncio novo") + "</b></button>";
+    });
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-mais]");
+    if (b) { abertos[b.dataset.mais] = true; desenharInicio(); }
+  });
+
+  // ---- criar novo
+  var limpaNome = function (t) { return t.trim().replace(/\s+/g, "-").replace(/[^\wÀ-ſ-]/g, ""); };
+  function desenharNova() {
+    var anuncio = tela.novoTipo === "anuncio";
+    var exemplo = anuncio ? "ADS-2300" : "VSL-Nome";
+    $("nova-titulo").textContent = anuncio ? "Criar um anúncio novo" : "Criar uma VSL nova";
+    var campo = $("nova-nome");
+    campo.value = ""; campo.placeholder = exemplo;
+    var atualiza = function () {
+      var n = limpaNome(campo.value) || exemplo;
+      $("nova-pedido").textContent = anuncio ? "Cria um anúncio novo chamado " + n : "Cria uma VSL nova chamada " + n;
+      $("nova-aviso").hidden = !porId(limpaNome(campo.value));
+    };
+    campo.oninput = atualiza; atualiza(); campo.focus();
   }
 
-  function desenharAndamento() {
-    var sec = document.getElementById("suas-vsls");
-    sec.hidden = modo !== "vsl";
-    desenharGaleria();
-    desenharCampanha();
-    if (sec.hidden) return;
-    var p = atual, c = contagem(p), px = p.proximo;
-    document.getElementById("projetos").innerHTML = '<div class="vsl"><div class="vsl-topo"><h3>' + esc(p.nome) + "</h3>" +
-      (p.uri ? '<a href="' + esc(p.uri) + '">abrir a pasta</a>' : "") +
-      '<span class="dim" style="font-size:14px">' + c.feitos + " de " + c.total + " prontos</span></div>" +
-      '<div class="vsl-pasta" style="margin-top:4px">' + esc(p.pasta) + "</div>" + barra(c) +
-      '<div class="proximo"><div class="rotulo">Agora</div><p><b>' + esc(px.titulo) + "</b>: " + esc(px.detalhe) + "</p>" + pedido(px.pedido) + "</div>" +
-      '<div class="itens">' + p.itens.map(function (i) {
-        return '<div class="item ' + esc(i.estado) + '"><span class="dot"></span><div><b>' + esc(i.titulo) + "</b><small>" + esc(i.detalhe) + "</small>" +
-          (i.pasta ? '<a href="' + esc(i.pasta) + '">abrir pasta</a>' : "") + "</div></div>";
-      }).join("") + "</div></div>";
+  // ---- um projeto
+  function desenharProjeto(p) {
+    var c = contagem(p);
+    $("p-tipo").textContent = NOME_TIPO[p.tipo]; $("p-tipo").className = "tipo " + p.tipo;
+    $("p-id").textContent = p.id;
+    $("p-nome").textContent = (p.nome !== p.id ? p.nome + " · " : "") + p.pasta;
+    $("p-pasta").href = p.uri || "#";
+    $("p-pasta").hidden = !p.uri;
+    var px = p.proximo;
+    $("p-prox-titulo").textContent = px.titulo;
+    $("p-prox-detalhe").textContent = px.detalhe.charAt(0).toUpperCase() + px.detalhe.slice(1) + ".";
+    $("p-prox-pedido").innerHTML = pedido(px.pedido || "Vamos trabalhar na " + p.id);
+    $("p-conta").textContent = c.feitos + " de " + c.total + " prontas";
+    $("p-etapas").innerHTML = p.etapas.map(function (e, i) {
+      return '<div class="etapa ' + e.estado + (e === px || e.titulo === px.titulo ? " atual" : "") + '"><div class="cab"><span class="n">' + (e.estado === "ok" ? "✓" : i + 1) +
+        "</span><b>" + esc(e.titulo) + "</b></div><small>" + esc(e.detalhe) + '</small><div class="pe"><span class="estado">' + ESTADO[e.estado] + "</span>" +
+        (e.pasta ? '<a href="' + esc(e.pasta) + '">pasta</a>' : "") + "</div></div>";
+    }).join("");
+    gal = { plano: 0, filtro: "todos" };
+    desenharGaleria(); desenharCampanha();
   }
 
-  // galeria: cada cena do plano com a miniatura do motion e a situação (pronto, mudou, falta)
+  // galeria: cada cena do plano com a miniatura do motion e a situação
   var ROTULO = { pronto: "pronto", mudou: "mudou", falta: "falta criar", "so-encaixe": "só encaixe" };
   var gal = { plano: 0, filtro: "todos" };
   function desenharGaleria() {
-    var sec = document.getElementById("motions");
-    var planos = modo === "vsl" && atual.galeria ? atual.galeria.filter(function (p) { return p.cenas.length; }) : [];
-    sec.hidden = !planos.length;
-    if (sec.hidden) return;
+    var p = tela.projeto;
+    var planos = p && p.galeria ? p.galeria.filter(function (x) { return x.cenas.length; }) : [];
+    $("sec-motions").hidden = !planos.length;
+    if (!planos.length) return;
     if (gal.plano >= planos.length) gal.plano = 0;
     var pl = planos[gal.plano];
     var conta = { todos: pl.cenas.length, pronto: 0, mudou: 0, falta: 0 };
     pl.cenas.forEach(function (c) { if (conta[c.estado] !== undefined) conta[c.estado]++; });
     var html = '<div class="gal-barra">' +
-      (planos.length > 1 ? planos.map(function (p, i) {
-        return '<button class="filtro" data-plano="' + i + '" aria-pressed="' + (i === gal.plano) + '">Plano ' + esc(p.chave) + "</button>";
+      (planos.length > 1 ? planos.map(function (x, i) {
+        return '<button class="filtro" data-plano="' + i + '" aria-pressed="' + (i === gal.plano) + '">' + (p.tipo === "anuncio" ? "Criativo " : "Plano ") + esc(x.chave) + "</button>";
       }).join("") + '<span style="width:12px"></span>' : "") +
-      [["todos", "Todos"], ["pronto", "Prontos"], ["mudou", "Mudaram"], ["falta", "Faltam"]].map(function (f) {
+      [["todos", "Todos"], ["pronto", "Prontos"], ["mudou", "Mudaram"], ["falta", "Faltam"]].filter(function (f) { return f[0] === "todos" || conta[f[0]]; }).map(function (f) {
         return '<button class="filtro" data-filtro="' + f[0] + '" aria-pressed="' + (gal.filtro === f[0]) + '">' + f[1] + "<b>" + conta[f[0]] + "</b></button>";
       }).join("") + "</div>";
-    if (conta.mudou || conta.falta) {
-      html += '<div class="proximo"><div class="rotulo">Para deixar em dia</div><p>' +
-        [conta.falta ? conta.falta + " ainda não foram criados" : "", conta.mudou ? conta.mudou + " mudaram no plano depois de criados" : ""].filter(Boolean).join(" e ") +
-        ".</p>" + pedido((conta.falta ? "Cria os motions pendentes da " : "Refaz os motions que mudaram da ") + atual.id) + "</div>";
-    }
     var bloco = null, cards = [];
     pl.cenas.forEach(function (c) {
       if (gal.filtro !== "todos" && c.estado !== gal.filtro) return;
@@ -683,14 +614,14 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line);
         bloco = c.bloco;
         cards.push('<div class="gal-bloco">Bloco ' + esc(c.bloco) + (c.blocoTitulo ? " · " + esc(c.blocoTitulo) : "") + "</div>");
       }
-      var img = c.mini ? '<a class="mini" href="' + esc(c.mov) + '" title="Abrir o motion ' + esc(c.id) + '"><img loading="lazy" src="' + esc(c.mini) + '" alt="Motion ' + esc(c.id) + '"></a>'
-        : '<div class="vazio">' + (c.estado === "so-encaixe" ? "Sem descrição no plano: só entra no encaixe" : c.mov ? "Motion criado, sem miniatura" : "Ainda não criado") + "</div>";
-      cards.push('<div class="motion">' + img + '<div class="corpo"><div class="cab"><span class="cod">' + esc(c.id) + '</span><span class="selo ' + esc(c.estado) + '">' +
+      var capa = c.mini ? '<a class="mini" href="' + esc(c.mov) + '" title="Abrir o motion ' + esc(c.id) + '"><img loading="lazy" src="' + esc(img(c.mini)) + '" alt="Motion ' + esc(c.id) + '"></a>'
+        : '<div class="vazio">' + (c.estado === "so-encaixe" ? "Só entra no encaixe" : c.mov ? "Criado, sem miniatura" : "Ainda não criado") + "</div>";
+      cards.push('<div class="motion">' + capa + '<div class="corpo"><div class="cab"><span class="cod">' + esc(c.id) + '</span><span class="selo ' + esc(c.estado) + '">' +
         ROTULO[c.estado] + '</span></div><div class="nome">' + esc(c.nome) + '</div><div class="gat">“' + esc(c.gatilho) + "”</div>" +
-        (c.linhas.length ? '<div class="desc">' + esc(c.linhas.join("\n")) + "</div>" : "") + "</div></div>");
+        (c.linhas.length ? '<details><summary>ver descrição</summary><div class="desc">' + esc(c.linhas.join("\n")) + "</div></details>" : "") + "</div></div>");
     });
     html += '<div class="gal-grade">' + (cards.length ? cards.join("") : '<p class="dim">Nenhuma cena neste filtro.</p>') + "</div>";
-    document.getElementById("galeria").innerHTML = html;
+    $("galeria").innerHTML = html;
   }
   document.addEventListener("click", function (e) {
     var b = e.target.closest("[data-filtro], [data-plano]");
@@ -700,21 +631,19 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line);
     desenharGaleria();
   });
 
-  // campanha da VSL: cores e ícones; clicar num ícone copia "ícone: nome" para o plano de cenas
+  // campanha: cores e ícones (fechado); clicar num ícone copia "ícone: nome" para o plano de cenas
   function desenharCampanha() {
-    var sec = document.getElementById("campanha");
-    var c = modo === "vsl" ? atual.campanha : null;
-    sec.hidden = !c;
-    if (!c) return;
+    var c = tela.projeto.campanha;
+    $("sec-campanha").hidden = !c || !c.existe;
+    if (!c || !c.existe) return;
     var degrade = c.cores.length > 1 ? "linear-gradient(90deg, " + c.cores.map(esc).join(", ") + ")" : (c.cores[0] || "transparent");
-    document.getElementById("campanha-conteudo").innerHTML = !c.existe
-      ? '<div class="alerta">A campanha <code>' + esc(c.id) + "</code> do config desta VSL não existe neste kit. Peça: " + pedido("Troca a campanha da " + atual.id) + "</div>"
-      : '<div class="camp-topo"><h3>' + esc(c.nome) + '</h3><code>' + esc(c.id) + '</code><span class="camp-degrade" style="background:' + degrade +
-        '"></span><span class="dim" style="font-size:14px">' + c.icones.length + " ícones</span></div>" +
-        '<div class="icones">' + c.icones.map(function (i) {
-          return '<button class="icone" data-icone="' + esc(i.nome) + '"><img loading="lazy" src="' + esc(i.uri) + '" alt="">' + esc(i.nome) + "<small>copiar</small></button>";
-        }).join("") + "</div>" +
-        (c.logo ? '<p class="dim" style="margin:18px 0 0;font-size:14px">Logo (peça <code>logo</code> no plano):</p><img class="camp-logo" loading="lazy" src="' + esc(c.logo) + '" alt="Logo da campanha">' : "");
+    $("campanha").innerHTML = "<summary>Ícones da campanha " + esc(c.nome) + '<span class="camp-degrade" style="background:' + degrade + '"></span>' +
+      "<small>clique num ícone para copiar e colar no plano de cenas</small></summary>" +
+      '<div class="icones">' + c.icones.map(function (i) {
+        return '<button class="icone" data-icone="' + esc(i.nome) + '"><img loading="lazy" src="' + esc(img(i.uri)) + '" alt="">' + esc(i.nome) + "<small>copiar</small></button>";
+      }).join("") + "</div>" +
+      (c.logo ? '<p class="dim" style="margin:16px 0 0;font-size:14px">Logo (peça <code>logo</code> no plano):</p><img class="camp-logo" loading="lazy" src="' + esc(img(c.logo)) + '" alt="Logo da campanha">' : "") +
+      (APP ? '<p style="margin:16px 0 0"><button class="btn" data-ir="campanha:' + esc(c.id) + '">🎨 Editar esta campanha</button></p>' : "");
   }
   document.addEventListener("click", function (e) {
     var b = e.target.closest("[data-icone]");
@@ -726,18 +655,15 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line);
     });
   });
 
-  menu.addEventListener("change", function () {
-    if (menu.value === "__nova") { modo = "nova"; desenhar(); }
-    else escolher(menu.value);
+  // navegação
+  $("menu").addEventListener("change", function () {
+    var v = $("menu").value;
+    ir(v === "" ? "inicio" : v.indexOf("__") === 0 ? v.slice(2) : v);
   });
   document.addEventListener("click", function (e) {
-    var b = e.target.closest("[data-vsl], [data-ir]");
-    if (!b) return;
-    if (b.dataset.vsl) escolher(b.dataset.vsl);
-    else if (b.dataset.ir === "escolher") escolher(null);
-    else { modo = b.dataset.ir; desenhar(); }
+    var b = e.target.closest("[data-ir]");
+    if (b) ir(b.dataset.ir);
   });
-  desenhar();
 
   // copiar pedidos
   function copiarTexto(texto, feito) {
@@ -757,6 +683,311 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line);
       setTimeout(function () { b.textContent = "copiar"; b.classList.remove("copiado"); }, 1500);
     });
   });
+
+  // ================= campanhas dos motions (só no app: precisa do servidor local para salvar) =================
+  var Camp = (function () {
+    var MARCA = ["#8DFB5E", "#2EE6A6", "#22C7F0", "#2F7BFF"];        // verde → azul da marca: número de resultado
+    var ALTURA = 520;
+    var lista = null, ed = null, relatorio = null, espera = null;
+    var slug = function (t) { return String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); };
+    var grad = function (cs) { return "linear-gradient(90deg, " + (cs.length > 1 ? cs.join(", ") : cs[0] + ", " + cs[0]) + ")"; };
+    var hexOk = function (c) { return /^#[0-9a-fA-F]{6}$/.test(c); };
+
+    function carregar() {
+      return fetch("/api/campanhas", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) { lista = d; return d; });
+    }
+    var porCid = function (id) { return (lista || []).filter(function (c) { return c.id === id; })[0] || null; };
+    var semApp = function (el) { el.innerHTML = '<div class="faixa ruim" style="grid-column:1/-1"><div><b>Abra pelo ícone STLFLIX EDITOR</b> <span class="dim">para criar e editar campanhas (esta página foi aberta como arquivo).</span></div></div>'; };
+
+    // ---- lista
+    function desenharLista() {
+      var el = $("camp-lista");
+      if (!APP) return semApp(el);
+      el.innerHTML = '<p class="dim"><span class="giro"></span> carregando…</p>';
+      carregar().then(function () {
+        el.innerHTML = lista.map(function (c) {
+          var capa = c.amostra.quadros.length ? '<img class="foto" src="' + esc(img(c.amostra.quadros[0])) + '" alt="">'
+            : c.logo ? '<img class="logo" src="' + esc(img(c.logo)) + '" alt="">' : '<span class="dim">sem logo</span>';
+          return '<button class="camp-card" data-ir="campanha:' + esc(c.id) + '"><div class="capa">' + capa + '</div><div class="faixa-cor" style="background:' +
+            esc(grad(c.degrade.length ? c.degrade : MARCA)) + '"></div><div class="corpo"><b>' + esc(c.nome) + ' <code>' + esc(c.id) + "</code></b><small>" +
+            c.icones.length + " ícones" + (c.logo ? " · logo" : " · sem logo") + "</small><small>" +
+            (c.usada_por.length ? "usada em " + esc(c.usada_por.join(", ")) : "nenhuma VSL usa ainda") + "</small></div></button>";
+        }).join("") + '<button class="camp-card nova" data-ir="nova-campanha">＋ Criar uma campanha nova</button>';
+      }).catch(function () { el.innerHTML = '<p class="msg-erro">Não consegui ler as campanhas. Feche e abra o STLFLIX EDITOR de novo.</p>'; });
+    }
+
+    // ---- editor (nova ou existente)
+    function abrirEditor(id) {
+      if (!APP) { $("ed-titulo").textContent = "Campanha"; return semApp($("ed-icones")); }
+      var monta = function () {
+        var c = id ? porCid(id) : null;
+        if (id && !c) return ir("campanhas");
+        var base = c || porCid("bf26") || { degrade: MARCA, barra: MARCA[3], brilho: "#07EF2D" };
+        ed = { id: c ? c.id : null, c: c, nome: c ? c.nome : "", codigo: c ? c.id : "", codigoManual: false,
+               degrade: (base.degrade && base.degrade.length ? base.degrade : MARCA).slice(), barra: base.barra || MARCA[3], brilho: base.brilho || "#07EF2D",
+               novos: [], mexeu: false };
+        $("ed-titulo").textContent = c ? c.nome : "Nova campanha";
+        $("ed-nome").value = ed.nome; $("ed-id").value = ed.codigo; $("ed-id").disabled = !!c;
+        $("ed-salvar").textContent = c ? "Salvar alterações" : "Criar campanha";
+        $("ed-msg").innerHTML = "";
+        $("ed-relatorio").innerHTML = relatorio && c && relatorio.id === c.id ? relatorio.html : "";
+        relatorio = null;
+        desenharCores(); desenharArquivos(); desenharMock(); desenharAmostra();
+      };
+      if (id && porCid(id)) { monta(); carregar().then(function () { if (tela.campanha === id && ed && !ed.mexeu) { ed.c = porCid(id); desenharAmostra(); } }); }
+      else carregar().then(monta);
+    }
+
+    function campoCor(rotulo, valor, onMuda, tirar) {
+      var d = document.createElement("div"); d.className = "cor-campo";
+      d.innerHTML = "<label>" + esc(rotulo) + '</label><div class="par"><input type="color" value="' + esc(valor) + '"><input type="text" value="' + esc(valor.toUpperCase()) + '" maxlength="7" spellcheck="false">' +
+        (tirar ? '<button class="tirar" title="Tirar esta cor">✕</button>' : "") + "</div>";
+      var cor = d.querySelector("[type=color]"), txt = d.querySelector("[type=text]");
+      cor.addEventListener("input", function () { txt.value = cor.value.toUpperCase(); onMuda(cor.value.toUpperCase()); });
+      txt.addEventListener("input", function () { var v = txt.value.trim(); if (v[0] !== "#") v = "#" + v; if (hexOk(v)) { cor.value = v; onMuda(v.toUpperCase()); } });
+      if (tirar) d.querySelector(".tirar").addEventListener("click", tirar);
+      return d;
+    }
+    function desenharCores() {
+      var box = $("ed-degrade"); box.innerHTML = "";
+      ed.degrade.forEach(function (c, i) {
+        box.appendChild(campoCor("Degradê " + (i + 1), c, function (v) { ed.degrade[i] = v; mexeu(); },
+          ed.degrade.length > 2 ? function () { ed.degrade.splice(i, 1); mexeu(); desenharCores(); } : null));
+      });
+      if (ed.degrade.length < 4) {
+        var mais = document.createElement("button"); mais.className = "btn"; mais.textContent = "＋ cor";
+        mais.addEventListener("click", function () { ed.degrade.push(ed.degrade[ed.degrade.length - 1]); mexeu(); desenharCores(); });
+        box.appendChild(mais);
+      }
+      $("ed-barra").innerHTML = ""; $("ed-barra").appendChild(campoCor("Barrinha", ed.barra, function (v) { ed.barra = v; mexeu(); }));
+      $("ed-brilho").innerHTML = ""; $("ed-brilho").appendChild(campoCor("Brilho dos ícones", ed.brilho, function (v) { ed.brilho = v; mexeu(); }));
+      $("ed-degrade-amostra").style.background = grad(ed.degrade);
+    }
+    function mexeu() { ed.mexeu = true; $("ed-degrade-amostra").style.background = grad(ed.degrade); desenharMock(); }
+
+    // ---- arquivos: logo e ícones (os atuais e os novos, ainda não enviados)
+    function analisar(arquivo) {
+      return new Promise(function (ok) {
+        var fr = new FileReader();
+        fr.onload = function () {
+          var im = new Image();
+          im.onload = function () {
+            var esc2 = Math.min(1, 512 / Math.max(im.naturalWidth, im.naturalHeight));
+            var w = Math.max(1, Math.round(im.naturalWidth * esc2)), h = Math.max(1, Math.round(im.naturalHeight * esc2));
+            var cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+            var cx = cv.getContext("2d"); cx.drawImage(im, 0, 0, w, h);
+            var px = cx.getImageData(0, 0, w, h).data, transp = false, y0 = h, y1 = -1;
+            for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) {
+              var a = px[(y * w + x) * 4 + 3];
+              if (a < 250) transp = true;
+              if (a > 8) { if (y < y0) y0 = y; if (y > y1) y1 = y; }
+            }
+            var base = arquivo.name.replace(/\.[^.]+$/, "");
+            ok({ arquivo: arquivo.name, ext: (arquivo.name.match(/\.[^.]+$/) || [".png"])[0].toLowerCase(), dados: fr.result, url: fr.result,
+                 transp: transp, altura: y1 >= y0 ? Math.round((y1 - y0 + 1) / esc2) : 0,
+                 logo: /logo|(^|[^a-z])kv([^a-z]|$)|key ?visual/i.test(base), nome: slug(base) || "icone" });
+          };
+          im.onerror = function () { ok(null); };
+          im.src = fr.result;
+        };
+        fr.readAsDataURL(arquivo);
+      });
+    }
+    function receber(arquivos) {
+      var lst = [].filter.call(arquivos, function (f) { return /\.(png|webp)$/i.test(f.name); });
+      if (!lst.length) { $("ed-msg").innerHTML = '<span class="msg-erro">Só PNG (ou WEBP) com fundo transparente.</span>'; return; }
+      Promise.all(lst.map(analisar)).then(function (rs) {
+        rs.forEach(function (r) {
+          if (!r) return;
+          if (r.logo) ed.novos.forEach(function (n) { n.logo = false; });     // um logo só
+          ed.novos.push(r);
+        });
+        ed.mexeu = true; desenharArquivos(); desenharMock();
+      });
+    }
+    var logoNovo = function () { return ed.novos.filter(function (n) { return n.logo; })[0] || null; };
+    function desenharArquivos() {
+      var c = ed.c, ln = logoNovo();
+      $("ed-logo").innerHTML = ln ? '<div class="rotulo">Logo novo</div><img class="logo-atual" src="' + esc(ln.url) + '" alt="">'
+        : c && c.logo ? '<div class="rotulo">Logo</div><img class="logo-atual" src="' + esc(img(c.logo)) + '&v=' + Date.now() + '" alt="">'
+        : '<p class="dim" style="font-size:14px">Ainda sem logo: inclua o PNG do logo (com “logo” no nome, ou marque “é o logo”).</p>';
+      var atuais = c ? c.icones.map(function (i) {
+        return '<div class="ico-card"><button class="x" data-tirar="' + esc(i.nome) + '" title="Tirar da campanha">✕</button><img src="' + esc(img(i.caminho)) + '&v=' + Date.now() + '" alt=""><span class="nm">' + esc(i.nome) + "</span></div>";
+      }) : [];
+      var novos = ed.novos.map(function (n, k) {
+        var erro = !n.transp ? "sem fundo transparente: não vai entrar" : "";
+        var aviso = !erro && !n.logo && n.altura && n.altura < ALTURA * 0.8 ? "pequeno (" + n.altura + " px): pode borrar" : "";
+        var subst = c && !n.logo && c.icones.some(function (i) { return i.nome === n.nome; }) ? "substitui o atual" : "";
+        return '<div class="ico-card novo' + (erro ? " ruim" : "") + '"><button class="x" data-descartar="' + k + '" title="Não enviar">✕</button><img src="' + esc(n.url) + '" alt="">' +
+          (n.logo ? '<span class="nm">logo</span>' : '<input value="' + esc(n.nome) + '" data-renomear="' + k + '" spellcheck="false" title="Nome do ícone no plano de cenas">') +
+          '<label><input type="checkbox" data-logo="' + k + '"' + (n.logo ? " checked" : "") + "> é o logo</label>" +
+          (erro ? '<small class="er">' + erro + "</small>" : aviso ? '<small class="av">' + aviso + "</small>" : subst ? '<small class="av">' + subst + "</small>" : '<small class="dim">novo</small>') + "</div>";
+      });
+      $("ed-icones").innerHTML = novos.concat(atuais).join("") ||
+        '<p class="dim" style="grid-column:1/-1;font-size:14px;margin:0">Nenhum ícone ainda.</p>';
+    }
+    function cliqueArquivos(e) {
+      var t = e.target;
+      if (t.dataset.descartar !== undefined) { ed.novos.splice(Number(t.dataset.descartar), 1); desenharArquivos(); desenharMock(); }
+      else if (t.dataset.logo !== undefined) {
+        var k = Number(t.dataset.logo), marcar = t.checked;
+        ed.novos.forEach(function (n, i) { n.logo = marcar && i === k; });
+        desenharArquivos(); desenharMock();
+      } else if (t.dataset.tirar) {
+        if (!confirm("Tirar o ícone “" + t.dataset.tirar + "” da campanha? Ele vai para a subpasta _removidos (não é apagado).")) return;
+        post("/api/campanha/tirar", { id: ed.id, nome: t.dataset.tirar }).then(function (r) { return r.json(); }).then(function (r) {
+          if (!r.ok) { $("ed-msg").innerHTML = '<span class="msg-erro">' + esc(r.erro) + "</span>"; return; }
+          carregar().then(function () { ed.c = porCid(ed.id); desenharArquivos(); desenharMock(); avisarAmostra(); });
+        });
+      }
+    }
+
+    // sugere o degradê pelas cores mais fortes do logo (agrupa por tom; ordena do verde/amarelo para o azul/violeta)
+    function sugerir() {
+      var ln = logoNovo(), src = ln ? ln.url : ed.c && ed.c.logo ? img(ed.c.logo) : null;
+      if (!src) { $("ed-msg").innerHTML = '<span class="msg-erro">Inclua o logo primeiro.</span>'; return; }
+      var im = new Image();
+      im.onload = function () {
+        var e2 = Math.min(1, 300 / Math.max(im.naturalWidth, im.naturalHeight));
+        var w = Math.round(im.naturalWidth * e2), h = Math.round(im.naturalHeight * e2);
+        var cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+        var cx = cv.getContext("2d"); cx.drawImage(im, 0, 0, w, h);
+        var px = cx.getImageData(0, 0, w, h).data, bins = {}, total = 0;
+        for (var i = 0; i < px.length; i += 4) {
+          if (px[i + 3] < 200) continue;
+          var r = px[i] / 255, g = px[i + 1] / 255, b = px[i + 2] / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), s = mx ? (mx - mn) / mx : 0;
+          if (s < 0.35 || mx < 0.3) continue;                      // cinzas, brancos e escuros não contam
+          var hh = mx === mn ? 0 : mx === r ? ((g - b) / (mx - mn)) % 6 : mx === g ? (b - r) / (mx - mn) + 2 : (r - g) / (mx - mn) + 4;
+          hh = (hh * 60 + 360) % 360;
+          var k = Math.floor(hh / 15), bn = bins[k] || (bins[k] = { n: 0, r: 0, g: 0, b: 0, h: 0 });
+          bn.n++; bn.r += px[i]; bn.g += px[i + 1]; bn.b += px[i + 2]; bn.h += hh; total++;
+        }
+        var top = Object.keys(bins).map(function (k) { return bins[k]; }).filter(function (b) { return b.n > total * 0.03; })
+          .sort(function (a, b) { return b.n - a.n; }).slice(0, 4);
+        if (top.length < 2) { $("ed-msg").innerHTML = '<span class="msg-erro">O logo tem pouca cor para sugerir um degradê: escolha à mão.</span>'; return; }
+        var hex = function (v) { return ("0" + Math.round(v).toString(16)).slice(-2); };
+        var cores = top.map(function (b) { return { h: b.h / b.n, c: ("#" + hex(b.r / b.n) + hex(b.g / b.n) + hex(b.b / b.n)).toUpperCase() }; })
+          .sort(function (a, b) { return ((a.h + 300) % 360) - ((b.h + 300) % 360); }).map(function (x) { return x.c; });   // começa no amarelo/verde
+        ed.degrade = cores; ed.barra = cores[cores.length - 1]; ed.brilho = cores[0];
+        mexeu(); desenharCores();
+        $("ed-msg").innerHTML = '<span class="dim">Sugestão tirada do logo: confira com o design.</span>';
+      };
+      im.src = src;
+    }
+
+    // prévia rápida (CSS): kicker, barra, título com palavra-chave no degradê, número de resultado, ícone com brilho, CTA
+    function desenharMock() {
+      var ic = ed.novos.filter(function (n) { return !n.logo && n.transp; })[0], icSrc = ic ? ic.url : ed.c && ed.c.icones[0] ? img(ed.c.icones[0].caminho) : null;
+      var g = grad(ed.degrade);
+      $("ed-mock").innerHTML = '<span class="k">O QUE VOCÊ GANHA</span><i class="bar" style="background:' + esc(ed.barra) + '"></i>' +
+        '<div class="t">Viver de <em style="background-image:' + esc(g) + '">impressão 3D</em></div>' +
+        '<div class="n" style="background-image:' + esc(grad(MARCA)) + '">R$ 5 mil</div>' +
+        (icSrc ? '<div class="ic"><i style="background:' + esc(ed.brilho) + '"></i><img src="' + esc(icSrc) + '" alt=""></div>' : "") +
+        '<span class="cta" style="background:' + esc(g) + '">QUERO AGORA</span>';
+    }
+
+    // amostra de verdade: 3 cenas renderizadas pelo kit (~1 min)
+    function avisarAmostra() { if (ed && ed.c) { ed.c.amostra.mudou = true; desenharAmostra(); } }
+    function desenharAmostra() {
+      var el = $("ed-amostra"), c = ed.c;
+      clearTimeout(espera);
+      if (!c) { el.innerHTML = "<h3>Amostra</h3><p class=\"ajuda-ed\" style=\"margin:0\">Depois de criar a campanha, o kit renderiza 3 cenas de teste (título, número, ícones, logo e CTA) para você aprovar.</p>"; return; }
+      var a = c.amostra, html = "<h3>Amostra</h3>";
+      if (a.gerando) {
+        html += '<p class="ajuda-ed"><span class="giro"></span> Renderizando 3 cenas de teste (cerca de 1 minuto)…</p>';
+        espera = setTimeout(function () { carregar().then(function () { if (tela.nome === "campanha" && ed && ed.id === c.id) { ed.c.amostra = porCid(c.id).amostra; desenharAmostra(); } }); }, 4000);
+      } else {
+        if (a.erro) html += '<p class="msg-erro">A amostra falhou: ' + esc(a.erro) + "</p>";
+        if (a.quadros.length) {
+          html += (a.mudou ? '<p class="msg-erro" style="color:var(--aviso)">A campanha mudou depois desta amostra: gere de novo.</p>' : '<p class="ajuda-ed">Clique num quadro para ampliar.</p>') +
+            '<div class="amostra-quadros">' + a.quadros.map(function (q) { return '<img src="' + esc(img(q)) + "&v=" + esc(a.feita) + '" alt="" data-zoom>'; }).join("") + "</div>" +
+            (a.previa ? '<details style="margin-top:10px"><summary class="dim" style="cursor:pointer;font-size:14px">ver o vídeo</summary><video controls src="' + esc(img(a.previa)) + "&v=" + esc(a.feita) + '"></video></details>' : "");
+        } else html += '<p class="ajuda-ed">Ainda sem amostra.</p>';
+      }
+      html += '<p style="margin:12px 0 0"><button class="btn' + (a.quadros.length && !a.mudou ? "" : " cta") + '" id="ed-gerar"' + (a.gerando ? " disabled" : "") + ">" +
+        (a.quadros.length ? "↻ Gerar a amostra de novo" : "▶ Gerar a amostra") + "</button></p>";
+      if (a.quadros.length && !a.gerando) {
+        html += '<div style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px"><div class="rotulo">Aprovou?</div>' +
+          '<p class="ajuda-ed" style="margin-bottom:8px">Para o time receber a campanha, ela precisa ir para o GitHub. Peça ao Claude:</p>' + pedido("Sobe a campanha " + c.id + " para o time") +
+          '<p class="ajuda-ed" style="margin:10px 0 8px">Para usar numa VSL ou anúncio:</p>' + pedido("Troca a campanha da VSL-Nome para " + c.id) + "</div>";
+      }
+      el.innerHTML = html;
+      var bg = $("ed-gerar");
+      if (bg) bg.addEventListener("click", function () {
+        bg.disabled = true;
+        post("/api/campanha/amostra", { id: c.id }).then(function () { c.amostra.gerando = true; c.amostra.erro = null; desenharAmostra(); });
+      });
+    }
+
+    // salvar: cria a campanha (nome, cores e arquivos) ou salva o que mudou
+    function salvar() {
+      var msg = $("ed-msg"), bt = $("ed-salvar");
+      var nome = $("ed-nome").value.trim(), cid = ed.c ? ed.c.id : slug($("ed-id").value);
+      if (!nome) { msg.innerHTML = '<span class="msg-erro">Dê um nome para a campanha.</span>'; return; }
+      if (!cid) { msg.innerHTML = '<span class="msg-erro">Falta o código (ex.: natal26).</span>'; return; }
+      if (!ed.c && porCid(cid)) { msg.innerHTML = '<span class="msg-erro">Já existe a campanha ' + esc(cid) + ": escolha outro código, ou abra a que existe.</span>"; return; }
+      var enviar = ed.novos.filter(function (n) { return n.transp; }).map(function (n) {
+        var nm = n.logo ? "logo-kv" : (slug(n.nome) || "icone").replace(/logo/g, "marca").replace(/(^|-)kv(-|$)/g, "$1k-v$2");
+        return { nome: nm + n.ext, dados: n.dados };
+      });
+      var cores = { degrade: ed.degrade, barra: ed.barra, brilho: ed.brilho };
+      bt.disabled = true; msg.innerHTML = '<span class="dim"><span class="giro"></span> salvando…</span>';
+      var json = function (r) { return r.json(); };
+      var passos = ed.c
+        ? post("/api/campanha/salvar", { id: cid, nome: nome, degrade: cores.degrade, barra: cores.barra, brilho: cores.brilho }).then(json).then(function (r) {
+            if (!r.ok || !enviar.length) return r;
+            return post("/api/campanha/importar", { id: cid, arquivos: enviar }).then(json);
+          })
+        : post("/api/campanha/nova", { id: cid, nome: nome, degrade: cores.degrade, barra: cores.barra, brilho: cores.brilho, arquivos: enviar }).then(json);
+      passos.then(function (r) {
+        bt.disabled = false;
+        if (!r.ok) { msg.innerHTML = '<span class="msg-erro">' + esc(r.erro || "não consegui salvar") + "</span>"; return; }
+        var linhas = (r.arquivos || []).map(function (a) {
+          return "<li>" + (a.nome ? "✅ " : "❌ ") + esc(a.arquivo) + (a.nome ? " → <code>" + esc(a.nome) + "</code>" : "") + (a.aviso ? ' <span style="color:var(--aviso)">' + esc(a.aviso) + "</span>" : "") + "</li>";
+        });
+        var probs = (r.problemas || []).map(function (p) { return '<li style="color:var(--aviso)">⚠ ' + esc(p) + "</li>"; });
+        relatorio = { id: cid, html: linhas.length || probs.length ? '<div class="bloco-ed"><div class="rotulo">O que entrou</div><ul style="margin:0;padding-left:18px;font-size:14px">' + linhas.concat(probs).join("") + "</ul></div>" : "" };
+        var nova = !ed.c;
+        // campanha nova: já começa a amostra (e só depois lê a lista, para ela aparecer como "renderizando")
+        (nova ? post("/api/campanha/amostra", { id: cid }) : Promise.resolve()).then(carregar).then(function () {
+          if (!nova) { var c2 = porCid(cid); c2.amostra.mudou = c2.amostra.quadros.length > 0; }
+          ir("campanha:" + cid);
+          $("ed-msg").innerHTML = '<span class="msg-ok">✓ ' + (nova ? "Campanha criada. A amostra já está sendo renderizada →" : "Salvo. Gere a amostra de novo para ver como ficou.") + "</span>";
+        });
+      }).catch(function () { bt.disabled = false; msg.innerHTML = '<span class="msg-erro">Não consegui falar com o STLFLIX EDITOR. Feche e abra de novo.</span>'; });
+    }
+
+    // ligações (uma vez)
+    if (APP) {
+      var solta = $("ed-solta"), inp = $("ed-arquivos");
+      solta.addEventListener("click", function () { inp.click(); });
+      solta.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") inp.click(); });
+      inp.addEventListener("change", function () { receber(inp.files); inp.value = ""; });
+      ["dragenter", "dragover"].forEach(function (t) { solta.addEventListener(t, function (e) { e.preventDefault(); solta.classList.add("sobre"); }); });
+      ["dragleave", "drop"].forEach(function (t) { solta.addEventListener(t, function (e) { e.preventDefault(); solta.classList.remove("sobre"); }); });
+      solta.addEventListener("drop", function (e) { receber(e.dataTransfer.files); });
+      $("ed-icones").addEventListener("click", cliqueArquivos);
+      $("ed-icones").addEventListener("input", function (e) {
+        var k = e.target.dataset.renomear;
+        if (k !== undefined) { ed.novos[Number(k)].nome = slug(e.target.value); }
+      });
+      $("ed-icones").addEventListener("change", function (e) { if (e.target.dataset.renomear !== undefined) desenharArquivos(); });
+      $("ed-nome").addEventListener("input", function () {
+        ed.mexeu = true;
+        if (!ed.c && !ed.codigoManual) $("ed-id").value = slug($("ed-nome").value).replace(/-?20(\d\d)$/, "$1").replace(/-/g, "").slice(0, 16);
+      });
+      $("ed-id").addEventListener("input", function () { ed.codigoManual = true; });
+      $("ed-sugerir").addEventListener("click", sugerir);
+      $("ed-salvar").addEventListener("click", salvar);
+      document.addEventListener("click", function (e) {
+        var z = e.target.closest("[data-zoom]");
+        if (z) { var d = document.createElement("div"); d.className = "zoom"; d.innerHTML = '<img src="' + esc(z.src) + '" alt="">'; d.addEventListener("click", function () { d.remove(); }); document.body.appendChild(d); }
+      });
+    }
+    return { lista: desenharLista, editor: abrirEditor };
+  })();
+
+  if (telaSalva) ir(telaSalva); else desenhar();
 })();
 </script>
 </body>

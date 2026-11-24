@@ -39,7 +39,17 @@ def todas():
         p = os.path.abspath(p)
         if not any(_igual(p, q) for _, q, _ in saida):
             saida.append((os.path.basename(p), p, os.path.isfile(os.path.join(p, "config.json"))))
-    return saida
+    # pasta anotada que sumiu, mas a mesma VSL existe em outro lugar (o kit ou a VSL mudou de disco): esquece o endereço velho
+    existentes = {n.lower() for n, _, e in saida if e}
+    return [s for s in saida if s[2] or s[0].lower() not in existentes]
+
+
+def tipo(pasta, cfg=None):
+    """'anuncio' ou 'vsl': o campo "tipo" do config.json; sem ele, pastas que começam com ADS são anúncios."""
+    t = ((cfg or {}).get("tipo") or "").lower()
+    if t:
+        return "anuncio" if t in ("anuncio", "anúncio", "ads") else "vsl"
+    return "anuncio" if os.path.basename(os.path.normpath(pasta)).upper().startswith("ADS") else "vsl"
 
 
 def anotar(pasta):
@@ -56,6 +66,14 @@ def tirar(nome_ou_pasta):
     alvo = resolver(nome_ou_pasta)
     _gravar([p for p in _anotadas() if not _igual(p, alvo)])
     return alvo
+
+
+def limpar():
+    """Tira da lista as pastas que não existem mais. Não apaga nada do disco. Devolve as que saíram."""
+    fora = [p for p in _anotadas() if not os.path.isfile(os.path.join(p, "config.json"))]
+    if fora:
+        _gravar([p for p in _anotadas() if p not in fora])
+    return fora
 
 
 def resolver(nome_ou_pasta):

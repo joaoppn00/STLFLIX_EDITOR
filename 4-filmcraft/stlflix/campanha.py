@@ -123,6 +123,41 @@ def nova(cid, nome, de=None, cores=None, barra=None, brilho=None):
     return importar(cid, de) if de else []
 
 
+def salvar(cid, nome=None, degrade=None, barra=None, brilho=None, texto_logo=None):
+    """Muda nome e cores no campanha.json (o resto do arquivo fica como está)."""
+    arq = os.path.join(pasta(cid), "campanha.json")
+    cfg = ler(cid) or {"logo": {"arquivo": "logo-kv.png"}, "cores": {}}
+    if nome:
+        cfg["nome"] = nome
+    if texto_logo is not None:
+        cfg.setdefault("logo", {"arquivo": "logo-kv.png"})["texto"] = texto_logo
+    cores = cfg.setdefault("cores", {})
+    if degrade:
+        cores["degrade"] = list(degrade)
+    if barra:
+        cores["barra"] = barra
+    if brilho:
+        cores["brilho"] = brilho
+    for c in list(cores.get("degrade") or []) + [cores.get("barra"), cores.get("brilho")]:
+        if c is not None and not HEX.match(str(c)):
+            raise ValueError(f"cor inválida: {c} (use #RRGGBB)")
+    json.dump(cfg, open(arq, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    return cfg
+
+
+def tirar_icone(cid, nome):
+    """Tira um ícone da campanha sem apagar: vai para a subpasta _removidos (fora da lista e do git)."""
+    if nome != slug(nome) and nome != "logo-kv":
+        raise ValueError("nome de ícone inválido")
+    origem = os.path.join(pasta(cid), nome + ".png")
+    if not os.path.exists(origem):
+        raise FileNotFoundError(f"{nome}.png não está na campanha {cid}")
+    import datetime
+    destino = os.path.join(pasta(cid), "_removidos")
+    os.makedirs(destino, exist_ok=True)
+    os.replace(origem, os.path.join(destino, f"{nome} ({datetime.datetime.now():%d-%m %Hh%M}).png"))
+
+
 def conferir(cid):
     """Problemas que estragariam os motions da campanha (lista vazia = tudo certo)."""
     if not os.path.isdir(pasta(cid)):

@@ -99,81 +99,85 @@ def _exemplo():
     return json.load(open(os.path.join(KIT, "projetos", "_MODELO-VSL", "config.json"), encoding="utf-8"))
 
 
-def _item(titulo, estado, detalhe, quem="voce", pedido=None, pasta=None):
-    return dict(titulo=titulo, estado=estado, detalhe=detalhe, quem=quem, pedido=pedido, pasta=pasta)
+def _etapa(titulo, estado, detalhe, pedido=None, pasta=None):
+    """Uma das 6 etapas. estado: ok (pronto), aviso (conferir), falta, info (ainda não é a hora)."""
+    return dict(titulo=titulo, estado=estado, detalhe=detalhe, pedido=pedido, pasta=pasta)
+
+
+def _mexido(pasta):
+    """Quando a pasta foi mexida por último (ela e o que está logo dentro): o painel põe as mais recentes no topo."""
+    try:
+        return max([os.path.getmtime(pasta)] + [e.stat().st_mtime for e in os.scandir(pasta)])
+    except OSError:
+        return 0
+
+
+# sequência só com os takes da câmera (comum nos anúncios): não é montagem, não precisa de transcrição nem de motions
+SEQ_BRUTOS = ("brutos",)
 
 
 def projeto(pasta):
     proj = Projeto(pasta)
     vid = os.path.basename(proj.pasta)          # nome da pasta: é como o editor chama a VSL nos pedidos
     nome = proj["nome"] or vid
-    itens = {}
+    tipo = vsls.tipo(proj.pasta, proj.cfg)
+    anuncio = tipo == "anuncio"
+    seqs = {k: v for k, v in proj["sequencias"].items() if k.lower() not in SEQ_BRUTOS}
+    palavra_seq = "criativos" if anuncio else "sequências"
+    pasta_tr = proj.caminho(proj["pastas"]["transcricoes"])
 
+    # 1. Preparar: projeto do FilmCraft, sequências (criativos) e roteiro
+    problemas = []                               # (estado, detalhe, pedido)
     fc = proj["filmcraft"]["projeto"]
-    if fc and os.path.exists(proj.caminho(fc)):
-        itens["filmcraft"] = _item("Projeto do FilmCraft", "ok", os.path.basename(fc))
-    else:
-        itens["filmcraft"] = _item("Projeto do FilmCraft", "falta",
-                                   "caminho do .fcproj não encontrado" if fc else "falta o caminho do .fcproj no config.json",
-                                   "claude", f"Configura o projeto do FilmCraft da {vid}")
-
-    seqs = proj["sequencias"]
-    lista = ", ".join(f"{k} → {v}" for k, v in seqs.items())
+    if not (fc and os.path.exists(proj.caminho(fc))):
+        problemas.append(("falta", "caminho do projeto do FilmCraft não encontrado" if fc else "falta ligar o projeto do FilmCraft",
+                          f"Configura o projeto do FilmCraft da {vid}"))
     if not seqs:
-        itens["sequencias"] = _item("Sequências", "falta", "nenhuma sequência no config.json", "claude",
-                                    f"Configura as sequências da {vid}")
-    elif seqs == _exemplo()["sequencias"]:
-        itens["sequencias"] = _item("Sequências", "aviso", f"ainda são as do exemplo ({lista}): confira os nomes no FilmCraft",
-                                    "claude", f"Configura as sequências da {vid}")
-    else:
-        itens["sequencias"] = _item("Sequências", "ok", lista)
-
+        problemas.append(("falta", f"nenhum dos {palavra_seq} anotado", f"Configura os {palavra_seq} da {vid}"))
+    elif seqs in (_exemplo()["sequencias"], {"c1": "Criativo 1"}):
+        problemas.append(("aviso", f"os nomes dos {palavra_seq} ainda são os do exemplo", f"Configura os {palavra_seq} da {vid}"))
     rot = proj.caminho(proj["roteiro"])
     if not os.path.exists(rot):
-        itens["roteiro"] = _item("Roteiro (teleprompter)", "falta", f"salve o roteiro em {proj['roteiro']}",
-                                 pasta=_uri(os.path.dirname(rot)))
+        problemas.append(("falta", "falta o roteiro (teleprompter .txt)", f"Coloca o roteiro da {vid} no kit"))
+    elif not anuncio and not ler_roteiro(rot):
+        problemas.append(("aviso", "o roteiro não tem as marcações de bloco (--- BLOCO 5 · Título ---)", f"Marca os blocos no roteiro da {vid}"))
+    if problemas:
+        e, d, ped = sorted(problemas, key=lambda p: p[0] != "falta")[0]
+        preparar = _etapa("Preparar", e, d + (f" (+{len(problemas) - 1})" if len(problemas) > 1 else ""), ped,
+                          _uri(os.path.dirname(rot)))
     else:
-        n = len(ler_roteiro(rot))
-        itens["roteiro"] = (_item("Roteiro (teleprompter)", "ok", f"{n} blocos marcados", pasta=_uri(os.path.dirname(rot))) if n else
-                            _item("Roteiro (teleprompter)", "aviso", "sem marcações --- BLOCO 5 · Título ---: a transcrição não vai dividir por blocos",
-                                  pasta=_uri(os.path.dirname(rot))))
+        preparar = _etapa("Preparar", "ok", f"FilmCraft, roteiro e {len(seqs)} {palavra_seq if len(seqs) > 1 else palavra_seq[:-1]}",
+                          pasta=_uri(os.path.dirname(rot)))
 
-    for chave, pasta_mod, titulo in (("brutos", "02-brutos", "Brutos da câmera"), ("brolls", "03-b-rolls", "B-rolls")):
-        p = os.path.join(proj.pasta, pasta_mod)
-        n = len(_conteudo(p))
-        itens[chave] = (_item(titulo, "ok", f"{n} itens", pasta=_uri(p)) if n else
-                        _item(titulo, "aviso", "vazia (tudo bem se estão só no Drive)", pasta=_uri(p)))
-
-    feitas = [k for k in seqs if os.path.exists(proj.arquivo_transcricao(k))] if seqs else []
-    pasta_tr = proj.caminho(proj["pastas"]["transcricoes"])
-    pasta_brutos = os.path.join(pasta_tr, "brutos")
-    takes = [n[:-5] for n in _conteudo(pasta_brutos) if n.endswith(".json") and n != "takes.json"]
-    decups = sorted(n for n in _conteudo(pasta_tr) if n.startswith("decupagem-") and n.endswith(".md"))
-    ja_decupada = bool(feitas) and not takes        # a sequência já foi transcrita sem passar pela decupagem do kit
+    # 2. Transcrever os brutos (cada take da câmera)
+    feitas = [k for k in seqs if os.path.exists(proj.arquivo_transcricao(k))]
+    takes = [n[:-5] for n in _conteudo(os.path.join(pasta_tr, "brutos")) if n.endswith(".json") and n != "takes.json"]
+    ja_decupada = bool(feitas) and not takes        # montada direto no FilmCraft, sem a decupagem do kit
     if takes:
-        itens["brutos_tr"] = _item("Transcrição dos brutos", "ok", f"{len(takes)} takes · brutos.md", pasta=_uri(pasta_tr))
+        brutos = _etapa("Transcrever os brutos", "ok", f"{len(takes)} takes transcritos", pasta=_uri(pasta_tr))
     elif ja_decupada:
-        itens["brutos_tr"] = _item("Transcrição dos brutos", "info", "não usada: a sequência já foi decupada")
+        brutos = _etapa("Transcrever os brutos", "info", "não precisou: a montagem foi feita direto no FilmCraft")
     else:
-        itens["brutos_tr"] = _item("Transcrição dos brutos", "falta", "cada take da câmera, para o Claude decupar",
-                                   "claude", f"Abre o FilmCraft e transcreve os brutos da {vid}")
-    if decups:
-        itens["decupagem"] = _item("Decupagem", "ok", "escrita: " + ", ".join(decups), pasta=_uri(pasta_tr))
-    elif ja_decupada:
-        itens["decupagem"] = _item("Decupagem", "info", "feita direto no FilmCraft")
-    else:
-        alvo = next(iter(seqs), "corpo")
-        itens["decupagem"] = _item("Decupagem", "falta" if takes else "info",
-                                   "o Claude cruza os brutos com a copy, você aprova e ele monta a sequência" if takes else "depois da transcrição dos brutos",
-                                   "claude" if takes else "voce", f"Faz a decupagem do {alvo} da {vid}" if takes else None)
+        brutos = _etapa("Transcrever os brutos", "falta", "o Claude ouve cada take da câmera",
+                        f"Abre o FilmCraft e transcreve os brutos da {vid}")
+
+    # 3. Decupar: decupagem montada e transcrita (é da transcrição da montagem que saem as frases-gatilho)
+    decups = [n for n in _conteudo(pasta_tr) if n.startswith("decupagem-") and n.endswith(".md")]
     falta_tr = [k for k in seqs if k not in feitas]
     if seqs and not falta_tr:
-        itens["transcricao"] = _item("Transcrição das sequências", "ok", ", ".join(feitas), pasta=_uri(pasta_tr))
+        decupar = _etapa("Decupar", "ok", "montado e transcrito: " + ", ".join(feitas), pasta=_uri(pasta_tr))
+    elif feitas or decups:
+        decupar = _etapa("Decupar", "aviso", (f"prontos: {', '.join(feitas)} · " if feitas else "decupagem escrita · ")
+                         + "falta transcrever a montagem de " + ", ".join(falta_tr),
+                         f"Transcreve {'o ' + falta_tr[0] if anuncio else falta_tr[0]} da {vid}", _uri(pasta_tr))
+    elif takes:
+        alvo = next(iter(seqs), "corpo")
+        decupar = _etapa("Decupar", "falta", "o Claude cruza os brutos com a copy, você aprova e ele monta",
+                         f"Faz a decupagem do {alvo} da {vid}")
     else:
-        itens["transcricao"] = _item("Transcrição das sequências", "aviso" if feitas else "falta",
-                                     ("feitas: " + ", ".join(feitas) + " · " if feitas else "") + "faltam: " + (", ".join(falta_tr) or "configure as sequências"),
-                                     "claude", f"Abre o FilmCraft e transcreve {falta_tr[0] if falta_tr else 'o corpo'} da {vid}", _uri(pasta_tr))
+        decupar = _etapa("Decupar", "info", "depois de transcrever os brutos")
 
+    # 4. Plano de cenas
     ids, erros, faltam_planos = [], [], []
     for p in proj.plano():
         if not os.path.exists(p):
@@ -184,65 +188,62 @@ def projeto(pasta):
         erros += plano.validar(cenas)
     pasta_pl = os.path.dirname(proj.plano()[0])
     if faltam_planos and not ids:
-        itens["plano"] = _item("Plano de cenas", "falta", f"escreva {faltam_planos[0]} (tem um exemplo na pasta), ou peça um rascunho ao Claude",
-                               "voce", f"Faz um rascunho do plano de cenas da {vid}", _uri(pasta_pl))
+        plano_e = _etapa("Plano de cenas", "falta", "você escreve, ou pede um rascunho ao Claude",
+                         f"Faz um rascunho do plano de cenas da {vid}", _uri(pasta_pl))
     elif erros or faltam_planos:
-        itens["plano"] = _item("Plano de cenas", "aviso",
-                               f"{len(ids)} cenas · " + "; ".join(erros[:2] + [f"falta {f}" for f in faltam_planos]),
-                               "claude", f"Confere o plano de cenas da {vid}", _uri(pasta_pl))
+        plano_e = _etapa("Plano de cenas", "aviso", f"{len(ids)} cenas · " + "; ".join(erros[:1] + [f"falta {f}" for f in faltam_planos[:1]]),
+                         f"Confere o plano de cenas da {vid}", _uri(pasta_pl))
     else:
-        itens["plano"] = _item("Plano de cenas", "ok", f"{len(ids)} cenas", pasta=_uri(pasta_pl))
+        plano_e = _etapa("Plano de cenas", "ok", f"{len(ids)} cenas", pasta=_uri(pasta_pl))
 
-    ref = proj["motions"]["referencia"]
-    itens["referencia"] = (_item("Quadro de referência", "ok", os.path.basename(ref)) if ref and os.path.exists(proj.caminho(ref)) else
-                           _item("Quadro de referência", "aviso", "sem quadro do apresentador: a prévia dos motions sai em fundo cinza",
-                                 "claude", f"Exporta um quadro do apresentador para a referência da {vid}"))
-
+    # 5. Motions (com a campanha e o quadro de referência, que só servem a eles)
     cid = proj["motions"]["campanha"]
     ccfg = campanhas.ler(cid)
     camp = dict(id=cid, nome=ccfg.get("nome") or cid, existe=os.path.isdir(campanhas.pasta(cid)),
                 cores=(ccfg.get("cores") or {}).get("degrade") or [], logo=_uri(os.path.join(campanhas.pasta(cid), "logo-kv.png")),
                 icones=[dict(nome=n, uri=_uri(os.path.join(campanhas.pasta(cid), n + ".png"))) for n in campanhas.icones(cid)])
-    itens["campanha"] = (_item("Campanha dos motions", "ok", f"{camp['nome']} · {len(camp['icones'])} ícones") if camp["existe"] else
-                         _item("Campanha dos motions", "falta", f"a campanha '{cid}' não existe neste kit (atualize o kit ou escolha outra)",
-                               "claude", f"Troca a campanha da {vid}"))
-
     pasta_mov = proj.caminho(proj["pastas"]["motions"])
     movs = arquivos_motion(pasta_mov) if os.path.isdir(pasta_mov) else {}
     sem = [i for i in ids if i not in movs]
     est = estado_motions(proj.pasta)
     mudaram = [c["id"] for p in (est or {}).get("planos", []) for c in p["cenas"] if c["estado"] == "mudou"]
-    txt_mudaram = f"{len(mudaram)} mudaram no plano depois do render ({', '.join(mudaram[:4])}{' …' if len(mudaram) > 4 else ''})"
-    if not ids:
-        itens["motions"] = _item("Motions criados", "falta", "depois do plano de cenas", pasta=_uri(pasta_mov))
+    if not camp["existe"]:
+        motions = _etapa("Motions", "falta", f"a campanha '{cid}' não existe neste kit", f"Troca a campanha da {vid}")
+    elif not ids:
+        motions = _etapa("Motions", "info", "depois do plano de cenas")
     elif not sem and not mudaram:
-        itens["motions"] = _item("Motions criados", "ok", f"todos os {len(ids)} prontos", pasta=_uri(pasta_mov))
+        motions = _etapa("Motions", "ok", f"todos os {len(ids)} prontos", pasta=_uri(pasta_mov))
     elif not sem:
-        itens["motions"] = _item("Motions criados", "aviso", f"todos os {len(ids)} criados · {txt_mudaram}",
-                                 "claude", f"Refaz os motions que mudaram da {vid}", _uri(pasta_mov))
+        motions = _etapa("Motions", "aviso", f"{len(mudaram)} mudaram no plano e precisam ser refeitos",
+                         f"Refaz os motions que mudaram da {vid}", _uri(pasta_mov))
     else:
         feitos = len(ids) - len(sem)
-        itens["motions"] = _item("Motions criados", "aviso" if feitos else "falta",
-                                 f"{feitos} de {len(ids)} prontos · faltam {', '.join(sem[:6])}{' …' if len(sem) > 6 else ''}"
-                                 + (f" · {txt_mudaram}" if mudaram else ""),
-                                 "claude", f"Cria os motions {' e '.join(sem[:2])} da {vid} para eu ver" if not feitos else
-                                 f"Cria os motions que faltam da {vid}" + (" e refaz os que mudaram" if mudaram else ""),
-                                 _uri(pasta_mov))
+        motions = _etapa("Motions", "aviso" if feitos else "falta", f"{feitos} de {len(ids)} prontos",
+                         f"Cria os motions {' e '.join(sem[:2])} da {vid} para eu ver" if not feitos else
+                         f"Cria os motions que faltam da {vid}" + (" e refaz os que mudaram" if mudaram else ""), _uri(pasta_mov))
 
+    # 6. Entregar
     pasta_exp = proj.caminho(proj["pastas"]["exports"])
     n = len(_conteudo(pasta_exp))
-    itens["exports"] = _item("Exports", "ok" if n else "info", f"{n} arquivos" if n else "nada exportado ainda", pasta=_uri(pasta_exp))
+    alvo = next(iter(seqs), "corpo")
+    if n:
+        entregar = _etapa("Entregar", "ok", f"{n} arquivos exportados", pasta=_uri(pasta_exp))
+    elif motions["estado"] == "ok":
+        entregar = _etapa("Entregar", "falta", "pôr os motions na timeline, revisar, conferir e exportar",
+                          f"Coloca os motions no {alvo} da {vid} e confere antes de exportar", _uri(pasta_exp))
+    else:
+        entregar = _etapa("Entregar", "info", "no fim: motions na timeline, conferir e exportar", pasta=_uri(pasta_exp))
 
-    proximo = None
-    for k in ("filmcraft", "sequencias", "roteiro", "brutos_tr", "decupagem", "transcricao", "plano", "motions"):
-        if itens[k]["estado"] in ("falta", "aviso"):
-            proximo = itens[k]
-            break
-    if proximo is None:
-        proximo = _item("Encaixar e entregar", "info", "motions prontos: coloque na timeline, revise e cheque antes de exportar",
-                        "claude", f"Coloca os motions no {next(iter(seqs))} da {vid} e checa antes de exportar" if seqs else None)
-    return dict(id=vid, nome=nome, pasta=proj.pasta, uri=_uri(proj.pasta), itens=list(itens.values()), proximo=proximo,
-                galeria=galeria(proj, est) if est else None, campanha=camp)
+    etapas = [preparar, brutos, decupar, plano_e, motions, entregar]
+    # próximo passo: o primeiro pendente depois da última etapa pronta (aviso antigo de uma etapa já passada não trava o painel)
+    ultima_ok = max((i for i, e in enumerate(etapas) if e["estado"] == "ok"), default=-1)
+    pendentes = [e for e in etapas if e["estado"] in ("falta", "aviso")]
+    proximo = next((e for e in etapas[ultima_ok + 1:] if e["estado"] in ("falta", "aviso")), None) or \
+        (pendentes[0] if pendentes else None) or \
+        _etapa("Tudo pronto", "ok", "revise na timeline e exporte uma nova versão quando quiser", f"Confere tudo antes de exportar a {vid}")
+    return dict(id=vid, nome=nome, tipo=tipo, pasta=proj.pasta, uri=_uri(proj.pasta), etapas=etapas, proximo=proximo,
+                galeria=galeria(proj, est) if est else None, campanha=camp,
+                mexido=_mexido(proj.pasta))
 
 
 def gerar(abrir=True):
@@ -255,13 +256,16 @@ def gerar(abrir=True):
             projetos.append(projeto(p))
         except (OSError, ValueError, KeyError) as e:
             erros.append(f"{n}: {e}")
-    projetos.sort(key=lambda p: p["nome"].lower())
+    projetos.sort(key=lambda p: -p["mexido"])       # os mexidos por último primeiro
     dados = dict(gerado=datetime.datetime.now().strftime("%d/%m/%Y %H:%M"), kit=KIT, atualizacao=atualizacao(),
                  ferramentas=ferramentas(), projetos=projetos, erros=erros)
     modelo = open(os.path.join(KIT, "painel", "modelo.html"), encoding="utf-8").read()
     js = json.dumps(dados, ensure_ascii=False).replace("</", "<\\/")
     saida = os.path.join(KIT, "painel", "index.html")
-    open(saida, "w", encoding="utf-8").write(modelo.replace("__DADOS__", js))
+    tmp = saida + ".novo"                        # grava inteiro e troca: a janela do app nunca lê o arquivo pela metade
+    open(tmp, "w", encoding="utf-8").write(modelo.replace("__DADOS__", js))
+    os.replace(tmp, saida)
     if abrir:
-        os.startfile(saida)
+        from . import servidor
+        servidor.abrir(se_fechado=True)          # app STLFLIX EDITOR; se já está aberto, ele recarrega sozinho
     return saida, dados

@@ -34,8 +34,10 @@ def cmd_nova(a):
     shutil.copytree(vsls.MODELO, destino, ignore=shutil.ignore_patterns(".gitkeep"))
     arq = os.path.join(destino, "config.json")
     cfg = json.load(open(arq, encoding="utf-8"))
-    cfg["nome"] = a.nome or os.path.basename(destino)
+    cfg = {"nome": a.nome or os.path.basename(destino), "tipo": a.tipo, **{k: v for k, v in cfg.items() if k not in ("nome", "tipo")}}
     cfg["filmcraft"]["projeto"] = ""
+    if a.tipo == "anuncio":
+        cfg["sequencias"] = {"c1": "Criativo 1"}       # um criativo por sequência; o editor troca pelos nomes reais
     if a.campanha:
         cfg["motions"]["campanha"] = a.campanha
     json.dump(cfg, open(arq, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
@@ -85,6 +87,9 @@ def cmd_vsls(a):
         print(f"✓ anotada: {vsls.anotar(a.anotar)}")
     if a.tirar:
         print(f"✓ tirada da lista (a pasta continua no disco): {vsls.tirar(a.tirar)}")
+    if a.limpar:
+        fora = vsls.limpar()
+        print(f"✓ {len(fora)} endereço(s) que não existem mais saíram da lista" if fora else "✓ a lista já estava limpa")
     lista = vsls.todas()
     if not lista:
         print("nenhuma VSL neste computador ainda: crie com `nova`")
@@ -409,9 +414,14 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("painel", help="página com as ferramentas instaladas e o que falta em cada VSL (não precisa de --projeto)")
     p.add_argument("--sem-abrir", action="store_true", help="só gera painel/index.html")
+    p = sub.add_parser("app", help="abre o app STLFLIX EDITOR (o painel numa janela própria; liga o servidor local se precisar)")
+    p.add_argument("--se-fechado", action="store_true", help="não abre outra janela se já houver uma aberta (só atualiza)")
+    sub.add_parser("servidor", help="roda o servidor local do app (o `app` liga sozinho, em segundo plano)")
+    sub.add_parser("atalhos", help="cria o atalho STLFLIX EDITOR na área de trabalho e no menu Iniciar")
     p = sub.add_parser("vsls", help="lista as VSLs deste computador (não precisa de --projeto)")
     p.add_argument("--anotar", metavar="PASTA", help="põe na lista uma pasta de VSL que já existe (copiada de outro editor, por exemplo)")
     p.add_argument("--tirar", metavar="VSL", help="tira da lista (não apaga a pasta)")
+    p.add_argument("--limpar", action="store_true", help="tira da lista as pastas que não existem mais (não apaga nada)")
     p = sub.add_parser("campanha", help="campanhas visuais dos motions: listar, nova, importar, conferir (não precisa de --projeto)")
     p.add_argument("acao", choices=["listar", "nova", "importar", "conferir"])
     p.add_argument("id", nargs="?", help="código da campanha, ex.: natal26 (pasta em 2-design-system/campanhas)")
@@ -424,6 +434,7 @@ def main(argv=None):
     p = sub.add_parser("nova", help="cria a pasta da VSL (no caminho de --projeto) a partir de projetos/_MODELO-VSL")
     p.add_argument("--nome", help="nome da VSL (padrão: o nome da pasta)")
     p.add_argument("--campanha", help="pasta em 2-design-system/campanhas (padrão: a do modelo)")
+    p.add_argument("--tipo", choices=["vsl", "anuncio"], default="vsl", help="vsl (padrão) ou anuncio: o painel separa os dois")
     sub.add_parser("abrir", help="abre o FilmCraft com o controle ligado e o projeto do config")
     sub.add_parser("status", help="o que já está preenchido / gerado no projeto")
     p = sub.add_parser("transcrever-brutos", help="transcreve cada take da câmera (para a decupagem) e escreve 06-transcricoes/brutos.md")
@@ -476,11 +487,21 @@ def main(argv=None):
     if a.cmd == "painel":
         from . import painel
         saida, dados = painel.gerar(abrir=not a.sem_abrir)
-        print(f"✓ painel: {saida} ({len(dados['projetos'])} VSLs)")
+        n = {t: sum(p["tipo"] == t for p in dados["projetos"]) for t in ("vsl", "anuncio")}
+        print(f"✓ painel: {saida} ({n['vsl']} VSLs, {n['anuncio']} anúncios)")
         return
     if a.cmd == "escolher-pasta":
         print(vsls.escolher_pasta() or "✗ nenhuma pasta escolhida")
         return
+    if a.cmd in ("app", "servidor", "atalhos"):
+        from . import servidor
+        if a.cmd == "servidor":
+            return servidor.servir()
+        if a.cmd == "atalhos":
+            for lnk in servidor.criar_atalhos():
+                print(f"✓ atalho: {lnk}")
+            return
+        return None if servidor.abrir(se_fechado=a.se_fechado) else sys.exit(1)
     try:
         if a.cmd == "vsls":
             return cmd_vsls(a)

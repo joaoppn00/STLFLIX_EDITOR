@@ -136,20 +136,18 @@ if ($node) {
     if ($LASTEXITCODE -eq 0) { Anotar $true "HyperFrames" "$HF_VERSAO" } else { Anotar $false "HyperFrames" "não foi possível rodar npx hyperframes@$HF_VERSAO" }
 }
 
-# Atalho do painel na área de trabalho (abre o painel atualizado sem precisar pedir ao Claude)
-$ATALHO = Join-Path ([Environment]::GetFolderPath("Desktop")) "Painel STLFLIX.lnk"
-if (-not (Test-Path $ATALHO) -and (Test-Path $VENV_PY) -and -not $Verificar) {
-    $lnk = (New-Object -ComObject WScript.Shell).CreateShortcut($ATALHO)
-    $lnk.TargetPath = $env:ComSpec
-    $lnk.Arguments = "/c `"`"$(Join-Path $KIT 'stlflix.cmd')`" painel`""
-    $lnk.WorkingDirectory = $KIT
-    $lnk.WindowStyle = 7
-    $lnk.IconLocation = "$env:SystemRoot\System32\imageres.dll,1"
-    $lnk.Description = "Painel do editor STLFLIX: escolher a VSL, ver o que falta e o próximo passo"
-    $lnk.Save()
+# App STLFLIX EDITOR (o painel numa janela própria, com o ícone da marca): atalho na área de trabalho e no menu Iniciar.
+# Refeito a cada instalação, para acompanhar o kit se ele mudar de pasta. Tira o atalho antigo "Painel STLFLIX".
+$ATALHO = Join-Path ([Environment]::GetFolderPath("Desktop")) "STLFLIX EDITOR.lnk"
+if ((Test-Path $VENV_PY) -and -not $Verificar) {
+    & $VENV_PY -m stlflix atalhos | Out-Null
 }
-if (Test-Path $ATALHO) { Anotar $true "Atalho do painel" "na área de trabalho" $false }
-else { Anotar $false "Atalho do painel" "rode o instalador sem -Verificar para criar" $false }
+if (Test-Path $ATALHO) {
+    $alvo = (New-Object -ComObject WScript.Shell).CreateShortcut($ATALHO).WorkingDirectory
+    if ($alvo -eq $KIT) { Anotar $true "App STLFLIX EDITOR" "ícone na área de trabalho e no menu Iniciar" $false }
+    else { Anotar $false "App STLFLIX EDITOR" "o ícone aponta para outra pasta do kit: rode o instalador sem -Verificar" $false }
+}
+else { Anotar $false "App STLFLIX EDITOR" "rode o instalador sem -Verificar para criar o ícone" $false }
 
 # Modelo do Whisper (transcrição): baixado aqui se ainda não estiver no computador. Se faltar mesmo assim,
 # a primeira transcrição baixa sozinha (stlflix/transcrever.py: garantir_modelo).
