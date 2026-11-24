@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STLFLIX EDITOR</title>
+<meta name="description" content="O kit do time de edição da STLFLIX: VSLs e anúncios 9:16 no FilmCraft, com o Claude fazendo o repetitivo.">
+<link rel="icon" href="icone.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0d0e14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Sora:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0e14; --surface: #15161e; --surface-2: #1c1d28; --line: #262838;
+  --text: #f6fafe; --text-dim: #9a9cab; --accent: #5665f0; --accent-soft: rgba(86,101,240,.14); --accent-text: #aab3ff;
+  --cta: #b8f23c; --ok: #3ddc84;
+  --grad: linear-gradient(90deg, #22d3ee 0%, #4f63e8 50%, #b14cf0 100%);
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 "Inter", system-ui, sans-serif; }
+main { max-width: 920px; margin: 0 auto; padding: 0 16px 72px; }
+h1, h2, h3 { font-family: "Sora", "Inter", sans-serif; font-weight: 700; margin: 0; letter-spacing: -.01em; line-height: 1.2; }
+h2 { font-size: 26px; margin-bottom: 16px; }
+h3 { font-size: 17px; margin-bottom: 4px; }
+p { margin: 0 0 12px; }
+a { color: var(--accent-text); }
+code { font: 14px ui-monospace, Consolas, monospace; background: var(--surface-2); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+section { margin-top: 64px; }
+
+.hero { padding: 72px 0 0; text-align: center; }
+.hero img { width: 112px; height: 112px; filter: drop-shadow(0 18px 40px rgba(79,99,232,.35)); }
+.hero h1 { font-size: clamp(34px, 7vw, 56px); margin-top: 22px; letter-spacing: .01em; }
+.hero h1 span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero .lead { font-size: 19px; color: #c9cbd6; max-width: 640px; margin: 18px auto 30px; }
+.botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 8px; border-radius: 11px; padding: 12px 20px; font: 600 15.5px "Inter", sans-serif;
+  text-decoration: none; border: 1px solid var(--line); background: var(--surface-2); color: var(--text); }
+.btn.cta { background: var(--cta); color: #10140a; border-color: transparent; }
+.btn:hover { filter: brightness(1.08); }
+
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+.card .ico { font-size: 24px; margin-bottom: 10px; }
+.card p { color: var(--text-dim); font-size: 15.5px; margin: 0; }
+
+.lista { display: grid; gap: 10px; }
+.req { display: grid; grid-template-columns: 28px 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; }
+.req .ico { font-size: 20px; line-height: 1.5; }
+.req p { margin: 0; color: var(--text-dim); font-size: 15.5px; }
+
+.passos { counter-reset: p; display: grid; gap: 12px; }
+.passo { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; display: grid; grid-template-columns: 44px 1fr; gap: 0 14px; }
+.passo::before { counter-increment: p; content: counter(p); font: 700 26px "Sora", sans-serif; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; line-height: 1.1; }
+.passo p { color: #c9cbd6; font-size: 16px; }
+.passo p:last-child { margin: 0; }
+.pedido { display: flex; align-items: center; gap: 10px; background: var(--accent-soft); border: 1px solid rgba(86,101,240,.4);
+  border-radius: 10px; padding: 10px 10px 10px 14px; font-size: 15.5px; margin: 10px 0 4px; }
+.pedido span { flex: 1; overflow-wrap: anywhere; }
+.pedido button { flex: none; background: var(--accent); color: #fff; border: 0; border-radius: 7px; padding: 7px 14px; font: 600 13px "Inter", sans-serif; cursor: pointer; }
+.pedido button.copiado { background: var(--ok); color: #06210f; }
+
+.app { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 28px; }
+.app ul { margin: 8px 0 0; padding-left: 20px; color: #c9cbd6; }
+.app li { margin: 6px 0; }
+.icone-grande { display: grid; justify-items: center; gap: 10px; }
+.icone-grande img { width: 96px; height: 96px; }
+.icone-grande b { font: 600 14px "Inter", sans-serif; }
+.icone-grande small { color: var(--text-dim); font-size: 13.5px; text-align: center; }
+
+footer { margin-top: 72px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--text-dim); font-size: 14px; display: flex; gap: 8px 20px; flex-wrap: wrap; }
+
+@media (max-width: 760px) {
+  .cards, .app { grid-template-columns: 1fr; }
+  .passo { grid-template-columns: 1fr; }
+  .passo::before { margin-bottom: 6px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <div class="hero">
+    <img src="icone.svg" alt="">
+    <h1>STLFLIX <span>EDITOR</span></h1>
+    <p class="lead">O kit do time de edição da STLFLIX para <b>VSLs e anúncios</b> verticais (9:16). Você edita no FilmCraft; o Claude faz o repetitivo e sempre pede antes de mexer na sua timeline.</p>
+    <div class="botoes">
+      <a class="btn cta" href="#instalar">Instalar no meu computador</a>
+      <a class="btn" href="https://github.com/sherecks/STLFLIX_EDITOR/blob/main/COMECE-AQUI.md">Guia completo</a>
+    </div>
+  </div>
+
+  <section>
+    <div class="cards">
+      <div class="card"><div class="ico">🎙️</div><h3>Transcreve e decupa</h3><p>Ouve os brutos da câmera, cruza com a copy e monta a decupagem para você aprovar.</p></div>
+      <div class="card"><div class="ico">✨</div><h3>Cria os motions</h3><p>Títulos, números e ícones animados com o visual da campanha, a partir do seu plano de cenas.</p></div>
+      <div class="card"><div class="ico">🎯</div><h3>Encaixa e confere</h3><p>Coloca cada motion na frase certa da timeline e confere tudo antes de exportar.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>O app STLFLIX EDITOR</h2>
+    <div class="app">
+      <div>
+        <p>Depois de instalado, o kit ganha um ícone no seu computador. Ele abre sozinho quando você começa uma conversa com o Claude e mostra:</p>
+        <ul>
+          <li>suas <b>VSLs</b> e seus <b>anúncios</b>, os mais recentes primeiro;</li>
+          <li>o <b>próximo passo</b> de cada um, com a frase pronta para mandar ao Claude;</li>
+          <li>as <b>6 etapas</b>, do roteiro à entrega;</li>
+          <li>a <b>galeria dos motions</b> e os ícones da campanha.</li>
+        </ul>
+      </div>
+      <div class="icone-grande"><img src="icone-192.png" alt="Ícone do app STLFLIX EDITOR"><b>STLFLIX EDITOR</b><small>na área de trabalho e no menu Iniciar</small></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Do que você precisa</h2>
+    <div class="lista">
+      <div class="req"><div class="ico">💬</div><div><h3>App do Claude para computador</h3><p>Com login feito e a aba <b>Code</b> liberada. Baixe em <a href="https://claude.ai/download" target="_blank" rel="noopener">claude.ai/download</a>.</p></div></div>
+      <div class="req"><div class="ico">🎬</div><div><h3>FilmCraft 0.13 ou mais novo</h3><p>Instalado pelo ArtCraft Launcher: <a href="https://getartcraft.com" target="_blank" rel="noopener">getartcraft.com</a>.</p></div></div>
+      <div class="req"><div class="ico">☁️</div><div><h3>Google Drive para computador</h3><p>Conectado, onde ficam os brutos e as entregas.</p></div></div>
+      <div class="req"><div class="ico">⚡</div><div><h3>Recomendado: placa de vídeo NVIDIA</h3><p>Sem ela tudo funciona; só a transcrição fica mais lenta.</p></div></div>
+    </div>
+    <p style="color:var(--text-dim);margin-top:14px">O resto (Git, Node.js, Python, ffmpeg, transcrição e motions) o Claude instala para você.</p>
+  </section>
+
+  <section id="instalar">
+    <h2>Instalar (uma vez só, 5 a 15 minutos)</h2>
+    <div class="passos">
+      <div class="passo"><div>
+        <h3>Abra o app do Claude</h3>
+        <p>Vá na aba <b>Code</b> e comece uma <b>conversa nova</b>. Se ele pedir uma pasta, escolha qualquer uma (por exemplo, Documentos).</p>
+      </div></div>
+      <div class="passo"><div>
+        <h3>Cole esta mensagem</h3>
+        <div class="pedido"><span id="msg">Instale o kit STLFLIX_EDITOR deste repositório: https://github.com/sherecks/STLFLIX_EDITOR. Clone em C:\STLFLIX_EDITOR e siga as instruções de instalação do próprio kit.</span><button>copiar</button></div>
+      </div></div>
+      <div class="passo"><div>
+        <h3>Acompanhe e aprove</h3>
+        <p>O Claude confere o que falta, pede permissão antes de instalar (é normal) e pode pedir para você fechar e abrir o app do Claude no meio do caminho.</p>
+      </div></div>
+      <div class="passo"><div>
+        <h3>Pronto: o ícone STLFLIX EDITOR aparece</h3>
+        <p>Na área de trabalho e no menu Iniciar. Daqui em diante, comece sempre a conversa na pasta <code>C:\STLFLIX_EDITOR</code> (app do Claude → aba Code → conversa nova → essa pasta): o app abre sozinho e o Claude pergunta em qual VSL ou anúncio vamos trabalhar.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>STLFLIX EDITOR · kit do time de edição da STLFLIX</span>
+    <a href="https://github.com/sherecks/STLFLIX_EDITOR">Repositório</a>
+    <a href="https://github.com/sherecks/STLFLIX_EDITOR/blob/main/COMECE-AQUI.md">Comece aqui</a>
+  </footer>
+</main>
+<script>
+document.addEventListener("click", function (e) {
+  var b = e.target.closest(".pedido button");
+  if (!b) return;
+  var feito = function () { b.textContent = "copiado"; b.classList.add("copiado"); setTimeout(function () { b.textContent = "copiar"; b.classList.remove("copiado"); }, 1500); };
+  var t = b.previousElementSibling.textContent;
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(feito, feito); else feito();
+});
+</script>
+</body>
+</html>
