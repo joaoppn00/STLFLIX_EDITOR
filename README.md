@@ -16,7 +16,6 @@ Ele sempre mostra o que vai fazer e espera você aprovar antes de mexer na sua t
 ## Do que você precisa
 
 - O **app do Claude para computador** (https://claude.ai/download), com login feito e a aba **Code** liberada.
-- O **convite deste repositório aceito** na sua conta do GitHub (chega por e-mail).
 - O **FilmCraft 0.13 ou mais novo**, instalado pelo **ArtCraft Launcher** (https://getartcraft.com).
 - O **Google Drive para computador** conectado (normalmente a unidade G:).
 
@@ -29,7 +28,7 @@ O resto (Git, Node.js, Python, ffmpeg, transcrição e motions) o Claude instala
 
    > Instale o kit STLFLIX_EDITOR deste repositório: `https://github.com/sherecks/STLFLIX_EDITOR`. Clone em `C:\STLFLIX_EDITOR` e siga as instruções de instalação do próprio kit.
 
-3. Acompanhe e aprove os pedidos de permissão (é normal). Pode abrir uma janela de login do GitHub: entre com a conta que recebeu o convite.
+3. Acompanhe e aprove os pedidos de permissão (é normal).
 4. No fim, aparece o ícone **STLFLIX EDITOR** na área de trabalho e no menu Iniciar, o app abre, e o Claude te mostra como abrir a conversa na pasta do kit.
 
 ## Depois de instalado
