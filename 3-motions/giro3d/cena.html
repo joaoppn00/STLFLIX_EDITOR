@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Giro 3D</title>
+<style>
+  html, body { margin: 0; background: transparent; }
+  #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: transparent; }
+  #three-layer { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+</style>
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/"
+    }
+  }
+</script>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-no-timeline data-start="0" data-duration="__DURACAO__" data-width="1080" data-height="1920">
+  <canvas id="three-layer" width="1080" height="1920"></canvas>
+</div>
+<script type="module">
+  // Giro 3D da STLFLIX (gerado por 3-motions/giro3d/giro3d.mjs; não edite a cópia da pasta de trabalho)
+  // Movimento: o modelo desce do alto numa hélice, girando e crescendo, e pousa no centro; depois "respira".
+  import * as THREE from "three";
+  import { STLLoader } from "three/addons/loaders/STLLoader.js";
+  import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+  const CFG = __CONFIG__;
+  const LUZ = CFG.luz || "cinema";
+  const W = 1080, H = 1920, DIST = 780;
+  const SAIDA_S = CFG.saida === false ? 0 : Number(CFG.saida) > 0 ? Number(CFG.saida) : 1.2;
+  const POUSO = Math.max(1, Math.min(CFG.pouso || 3.8, CFG.duracao - SAIDA_S - 0.3));
+  const VIS_H = 2 * DIST * Math.tan((30 / 2) * Math.PI / 180), VIS_W = VIS_H * W / H;   // tamanho visível no centro
+
+  const canvas = document.getElementById("three-layer");
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
+  renderer.setSize(W, H, false);
+  renderer.setPixelRatio(1);
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.8;
+
+  const scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;   // reflexos de estúdio
+  scene.environmentIntensity = 0.35;
+
+  const camera = new THREE.PerspectiveCamera(30, W / H, 1, 5000);
+  camera.position.set(0, 0, DIST);
+  camera.lookAt(0, 0, 0);
+  scene.add(camera);
+
+  // Luzes presas à câmera (posições relativas a ela)
+  const key = new THREE.DirectionalLight(0xfff1e0, 1.7);   key.position.set(-420, 520, -60);
+  const fill = new THREE.DirectionalLight(0xdfe8ff, 0.35); fill.position.set(500, -60, -200);
+  const rimL = new THREE.DirectionalLight(0xffffff, 1.6);  rimL.position.set(-520, 260, -1300);
+  const rimR = new THREE.DirectionalLight(0xffffff, 1.3);  rimR.position.set(560, 160, -1300);
+  if (LUZ === "campanha") {
+    rimL.color.set(CFG.cores?.[2] || 0x22c7f0); rimL.intensity = 2.6;
+    rimR.color.set(CFG.cores?.[0] || 0x8dfb5e); rimR.intensity = 2.0;
+  }
+  if (LUZ.startsWith("cinema")) {
+    // Cinematográfico (padrão): luz lateral forte da esquerda, o lado direito cai para a sombra,
+    // e um fio de contorno quente atrás à direita para o modelo não sumir no escuro.
+    const forte = LUZ === "cinema-forte";
+    scene.environmentIntensity = forte ? 0.06 : 0.12;
+    renderer.toneMappingExposure = 0.9;
+    key.intensity = forte ? 3.4 : 3.0; key.position.set(-760, 300, -420);
+    fill.intensity = forte ? 0.0 : 0.08;
+    rimL.intensity = 0.0;
+    rimR.color.set(0xfff4e6); rimR.intensity = forte ? 2.4 : 2.0; rimR.position.set(620, 380, -1400);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    key.castShadow = true;
+    key.shadow.mapSize.set(4096, 4096);
+    Object.assign(key.shadow.camera, { left: -170, right: 170, top: 170, bottom: -170, near: 1, far: 3000 });
+    key.shadow.bias = -0.0004; key.shadow.normalBias = 0.6; key.shadow.radius = 3;
+    scene.add(key.target);
+  }
+  camera.add(key, fill, rimL, rimR);
+
+  // Materiais: "pla" (fosco, como peça impressa), "brilho" (resina/verniz), "metal" (dourado, prata…)
+  const ACABAMENTO = {
+    pla: { roughness: 0.5, metalness: 0 },
+    brilho: { roughness: 0.22, metalness: 0 },
+    metal: { roughness: 0.35, metalness: 0.55 },
+  };
+  const material = (p) => new THREE.MeshStandardMaterial({ color: new THREE.Color(p.cor || "#E9E6DF"),
+    ...(ACABAMENTO[p.acabamento] || ACABAMENTO.pla) });
+
+  // Montagem: modelo (peças no sistema do arquivo) → "girar" deixa em pé e de frente → centraliza e ajusta o tamanho
+  const grau = (v = [0, 0, 0]) => v.map((x) => (x * Math.PI) / 180);
+  const modelo = new THREE.Group();
+  modelo.rotation.set(...grau(CFG.girar));
+  const encaixe = new THREE.Group();          // centraliza e escala (calculado quando tudo carregou)
+  encaixe.add(modelo);
+  const grupo = new THREE.Group();            // o movimento
+  grupo.add(encaixe);
+  scene.add(grupo);
+
+  // O render divide o vídeo em blocos e abre a página de novo em cada um: sem esta espera, o 1º quadro de cada
+  // bloco saía vazio (o modelo "piscava" a cada segundo). O HyperFrames só captura quando esta promessa resolve.
+  let montado;
+  window.__hf = window.__hf || {};
+  window.__hf.buildReady = window.__hf.buildReady || {};
+  window.__hf.buildReady["giro3d-modelo"] = new Promise((ok) => { montado = ok; });
+
+  const loader = new STLLoader();
+  let faltam = CFG.pecas.length;
+  CFG.pecas.forEach((p, i) => {
+    loader.load(`assets/peca-${i}.stl`, (geo) => {
+      for (const a of p.ajustes || []) {
+        if (a.mover) geo.translate(...a.mover);
+        if (a.girar) { const [x, y, z] = grau(a.girar); geo.rotateX(x); geo.rotateY(y); geo.rotateZ(z); }
+        if (a.escala) geo.scale(a.escala, a.escala, a.escala);
+      }
+      const m = new THREE.Mesh(geo, material(p));
+      m.castShadow = m.receiveShadow = true;
+      modelo.add(m);
+      if (--faltam === 0) encaixar();
+    });
+  });
+
+  function encaixar() {
+    grupo.position.set(0, 0, 0); grupo.rotation.set(0, 0, 0); grupo.scale.setScalar(1);   // mede parado, não no meio do voo
+    grupo.updateMatrixWorld(true);
+    const caixa = new THREE.Box3().setFromObject(modelo);
+    const tam = caixa.getSize(new THREE.Vector3()), meio = caixa.getCenter(new THREE.Vector3());
+    // o maior lado cabe em ~78% da largura e ~45% da altura do quadro (× "tamanho" do config)
+    const s = Math.min((0.78 * VIS_W) / Math.max(tam.x, tam.z), (0.45 * VIS_H) / tam.y) * (CFG.tamanho || 1);
+    encaixe.scale.setScalar(s);
+    encaixe.position.copy(meio).multiplyScalar(-s);
+    key.target.position.set(0, FIM_Y, 0);     // a sombra acompanha onde o modelo pousa
+    pronto = true;
+    renderAt(window.__hfThreeTime || 0);
+    montado();
+  }
+
+  const clamp = (x) => Math.min(1, Math.max(0, x));
+  const outExpo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));
+  const TAU = Math.PI * 2;
+  const inBack = (x) => 2 * x * x * x - x * x;          // começa recuando um pouco e dispara
+  const SAIDA = SAIDA_S;                                        // segundos da saída (0 = fica na tela até o fim)
+  const FIM_Y = (CFG.altura || 0) * VIS_H;    // onde pousa: 0 = centro; 0.25 = um quarto da tela acima
+
+  let pronto = false;
+  function renderAt(t) {
+    if (!pronto) return;                       // antes de montar, não desenha nada (nem o modelo fora do lugar)
+    // hélice: desce em espiral em volta de um eixo vertical, pequeno e girando, e assenta
+    const u = 1 - outExpo(clamp(t / POUSO));
+    const th = u * TAU * 1.5;
+    grupo.position.set(300 * u * Math.sin(th), FIM_Y + 620 * u, 300 * u * Math.cos(th) - 300 * u);
+    grupo.rotation.set(0, -u * TAU * 2, 0);
+    grupo.scale.setScalar(1 - 0.55 * u);
+    // respiro depois do pouso (nunca para de vez)
+    const s = Math.max(0, t - POUSO), k = clamp(s / 0.8);
+    grupo.rotation.y += k * 0.22 * Math.sin(s * 0.9);
+    grupo.position.y += k * 4 * Math.sin(s * 1.6);
+    // saída: a hélice ao contrário. Abaixa um pouco (antecipação), gira acelerando e sobe para fora da tela
+    if (SAIDA > 0 && t > CFG.duracao - SAIDA) {
+      const v = clamp((t - (CFG.duracao - SAIDA)) / SAIDA);
+      const sobe = inBack(v), gira = v * v * v;
+      const ts = gira * TAU * 1.5;
+      grupo.position.x += 300 * gira * Math.sin(ts);
+      grupo.position.z += 300 * gira * Math.cos(ts) - 300 * gira;
+      grupo.position.y += 760 * sobe;
+      grupo.rotation.y += gira * TAU * 2;
+      grupo.scale.multiplyScalar(1 - 0.55 * Math.max(0, sobe));
+    }
+    renderer.render(scene, camera);
+  }
+
+  window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+  renderAt(window.__hfThreeTime || 0);
+</script>
+</body>
+</html>

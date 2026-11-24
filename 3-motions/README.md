@@ -22,6 +22,8 @@ node 3-motions/motions.mjs migrar  --build <build.mjs antigo> --gatilhos <plano 
 
 A linguagem do plano está em `5-guias/plano-de-cenas.md`.
 
+**Modelo 3D girando** (STL/3MF da STLFLIX): não passa pelo plano de cenas. É o `giro3d/giro3d.mjs`, com o modelo descendo em hélice e luz cinema. Ver `giro3d/README.md`.
+
 ## Como funciona
 
 ```

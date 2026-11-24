@@ -87,6 +87,8 @@ powershell -ExecutionPolicy Bypass -File 1-instalacao/instalar.ps1 [-Verificar]
 
 **Biblioteca de motions** (`3-motions/biblioteca/`): motions genéricos, sem texto de VSL, para reusar em VSLs e anúncios. Hoje: `celular-plataformas` (26 = 13 B-rolls da plataforma × celular no centro / ao lado). Quando o editor pedir "o celular com o STLSeller", "motion da plataforma" etc., use o `.mov` de lá (importar e pôr acima da câmera, escala 200) em vez de renderizar de novo; se o `.mov` não existe na máquina, `node 3-motions/motions.mjs render --projeto 3-motions/biblioteca/celular-plataformas --so P11C`. Detalhes em `3-motions/biblioteca/README.md`.
 
+**Motion de modelo 3D** (`3-motions/giro3d/`, skill `motion-3d`): o padrão do time para mostrar um modelo da STLFLIX. O modelo desce em hélice, pousa no centro e sai subindo, com luz cinema (sombra de um lado), em `.mov` transparente para a V2. `node 3-motions/giro3d/giro3d.mjs preparar|quadros|render --modelo <pasta do modelo> [--projeto VSL]`. A receita de cada modelo (peças, cores, como ficar em pé) fica em `<pasta do modelo>/giro3d.json`; confira com `quadros` (~10 s) antes do `render` (~20 s). Detalhes em `3-motions/giro3d/README.md`.
+
 Qualquer comando do `motions.mjs` aceita `--arquivo <plano.md>` no lugar do plano do config (ex.: o rascunho).
 
 **Permissões**: `.claude/settings.json` libera os comandos do kit que só leem e pede confirmação para `--aplicar`, `reconectar`, `exportar-xml`, commit/push e apagar arquivos. Não afrouxe essas regras sem o editor pedir.
@@ -101,7 +103,7 @@ Quando o editor pedir "abre o painel" (ou quiser saber o que falta), ou depois d
 
 ## Fluxo de uma VSL
 
-Cada etapa tem uma skill em `.claude/skills/`: `instalar-kit`, `nova-vsl`, `campanha`, `decupar`, `transcrever`, `plano-de-cenas`, `gerar-motions`, `encaixar-motions`, `finalizar`, `problemas`.
+Cada etapa tem uma skill em `.claude/skills/`: `instalar-kit`, `nova-vsl`, `campanha`, `decupar`, `transcrever`, `plano-de-cenas`, `gerar-motions`, `motion-3d`, `encaixar-motions`, `finalizar`, `problemas`.
 
 1. `nova` → editor preenche `config.json`, `01-roteiro/teleprompter.txt` e as pastas de assets; importa os brutos no projeto do FilmCraft.
 2. `abrir` → `transcrever-brutos`.
